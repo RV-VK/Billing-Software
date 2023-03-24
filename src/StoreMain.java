@@ -170,9 +170,7 @@ public class StoreMain{
                                     System.out.println(">> Invalid Extension given");
                                     System.out.println(">> Try \"product list help\" for proper syntax");
                                 }
-
                             }
-
                             else if(commandlet.length==5)
                             {
                                 int pageLength=0;
@@ -213,6 +211,56 @@ public class StoreMain{
                                     System.out.println(">> Try \"product list help\" for proper syntax");
                                 }
                             }
+                            else if(commandlet.length==7)
+                            {
+                                if(commandlet[2].equals("-s"))
+                              {
+                                List<String> productAttributes= Arrays.asList("id","code","name","unitcode","type","price","stock","costprice");
+                                String attribute=commandlet[3];
+                                attribute=attribute.replace(":","");
+                                String searchText=commandlet[4];
+                                if(productAttributes.contains(attribute))
+                                {
+                                    int pageLength=0;
+                                    if(commandlet[5].equals("-p"))
+                                    {
+                                        try{
+                                            pageLength=Integer.parseInt(commandlet[6]);
+                                        }
+                                        catch(Exception e)
+                                        {
+                                            System.out.println(">> Invalid page Size input");
+                                            System.out.println(">> Try \"product list help\" for proper syntax");
+                                            break;
+                                        }
+                                        Product.list(attribute,searchText,pageLength);
+                                    }
+                                    else
+                                    {
+                                        System.out.println(">> Invalid Command Extension format !!!");
+                                        System.out.println("Try \"product list help\" for proper syntax");
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    System.out.println("Given attribute is not a searchable attribute!!");
+                                    System.out.println("Try \"product list help\" for proper syntax");
+                                }
+
+                            }
+                                else {
+                                    System.out.println(">> Invalid Extension given");
+                                    System.out.println(">> Try \"product list help\" for proper syntax");
+                                }
+
+                            }
+                            else if(commandlet.length==8)
+                            {
+
+
+                            }
+
                             break;
                         case "edit":
                             break;

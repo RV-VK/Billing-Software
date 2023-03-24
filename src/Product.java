@@ -247,6 +247,40 @@ public class Product {
             }
         }
 
+         public static void list(String attribute,String searchText,int pageLength)
+         {
+             Connection listConnection=DBHelper.getConnection();
+             try{
+                 Statement listStatement=listConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+                 String listQuery="SELECT * FROM PRODUCT WHERE "+attribute+" = '"+searchText+"'"+" ORDER BY ID";
+                 ResultSet listResultSet=listStatement.executeQuery(listQuery);
+                 if(listResultSet.next()) {
+                     listResultSet.beforeFirst();
+                     int pageCount=1;
+                     int pageContentLength=1;
+                     System.out.println(">> page "+pageCount);
+                     while (listResultSet.next()) {
+                         System.out.println(">> id: " + listResultSet.getInt(1) + ", productCode: " + listResultSet.getString(2) + ", productname: " + listResultSet.getString(3) + ", type: " + listResultSet.getString(4) + ", unitCode: " + listResultSet.getString(5) + ", quantity: " + listResultSet.getFloat(6) + ", price: " + listResultSet.getDouble(7) + ", costprice: " + listResultSet.getDouble(8));
+                         if(pageContentLength%pageLength==0)
+                         {
+                             pageCount++;
+                             System.out.println("\n\n\n");
+                             System.out.println(">> page "+pageCount);
+                         }
+                         pageContentLength++;
+                     }
+                 }
+                 else {
+                     System.out.println(">> SearchText not Found ! Please try with an existing attribute value");
+                 }
+             }
+             catch(Exception e)
+             {
+                 System.out.println(">> "+e);
+             }
+
+         }
+
 
     }
 
