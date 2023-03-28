@@ -257,7 +257,39 @@ public class StoreMain{
                             }
                             else if(commandlet.length==8)
                             {
+                                if(commandlet[2].equals("-s"))
+                                {
+                                    List<String> productAttributes= Arrays.asList("id","code","name","unitcode","type","price","stock","costprice");
+                                    String attribute=commandlet[3];
+                                    attribute=attribute.replace(":","");
+                                    String searchText=commandlet[4];
+                                    int pageLength=0;
+                                    int pageNumber=0;
+                                    if(productAttributes.contains(attribute))
+                                    {
 
+
+                                        if(commandlet[5].equals("-p"))
+                                        {
+                                            try{
+                                                pageLength=Integer.parseInt(commandlet[6]);
+                                                pageNumber=Integer.parseInt(commandlet[7]);
+                                            }
+                                            catch(Exception e)
+                                            {
+                                                System.out.println(">> Invalid page Size (or) page Number input");
+                                                System.out.println(">> Try \"product list help\" for proper syntax");
+                                            }
+                                            Product.list(attribute,searchText,pageLength,pageNumber);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        System.out.println("Given attribute is not a searchable attribute!!");
+                                        System.out.println("Try \"product list help\" for proper syntax");
+                                    }
+
+                                }
 
                             }
 

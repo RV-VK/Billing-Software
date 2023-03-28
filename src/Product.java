@@ -250,6 +250,7 @@ public class Product {
          public static void list(String attribute,String searchText,int pageLength)
          {
              Connection listConnection=DBHelper.getConnection();
+
              try{
                  Statement listStatement=listConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
                  String listQuery="SELECT * FROM PRODUCT WHERE "+attribute+" = '"+searchText+"'"+" ORDER BY ID";
@@ -278,6 +279,42 @@ public class Product {
              {
                  System.out.println(">> "+e);
              }
+
+         }
+         public static void list(String attribute,String searchText,int pageLength,int pageNumber )
+         {
+             Connection listConnection=DBHelper.getConnection();
+             int rowCount;
+                 try {
+                     Statement listStatement = listConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+                     String listQuery = "SELECT * FROM PRODUCT WHERE "+attribute+" = '"+searchText+"'"+" ORDER BY ID";
+                     ResultSet listResultSet = listStatement.executeQuery(listQuery);
+                     if(listResultSet.next()) {
+                         listResultSet.last();
+                         rowCount = listResultSet.getRow();
+                         listResultSet.beforeFirst();
+                         if (rowCount > ((pageLength * pageNumber)-pageLength)) {
+                             int rowPosition = (pageLength * pageNumber) - pageLength;
+                             listResultSet.absolute(rowPosition-1);
+                             int index=0;
+                             System.out.println(">> page : "+pageNumber);
+                             while (listResultSet.next() && index < pageLength)
+                             {
+                                 System.out.println(">> id: " + listResultSet.getInt(1) + ", productCode: " + listResultSet.getString(2) + ", productname: " + listResultSet.getString(3) + ", type: " + listResultSet.getString(4) + ", unitCode: " + listResultSet.getString(5) + ", quantity: " + listResultSet.getFloat(6) + ", price: " + listResultSet.getDouble(7) + ", costprice: " + listResultSet.getDouble(8));
+                                 index++;
+                             }
+                         } else {
+                             System.out.println(">> Requested page doesnt exist !!!");
+                             System.out.println(">> Existing page count with given pagination " + ((rowCount/pageLength)+1));
+                         }
+                     }
+                     else {
+                         System.out.println(">> SearchText not Found ! Please try with an existing attribute value");
+                     }
+                 } catch (Exception e) {
+                     System.out.println(">> " + e);
+                     e.printStackTrace();
+                 }
 
          }
 
