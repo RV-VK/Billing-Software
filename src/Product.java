@@ -4,25 +4,25 @@ public class Product {
     private int id;
     private String code;
     private String name;
-    private String unitCode;
+    private String unitcode;
     private String type;
     private float availableQuantity;
     private double price;
     private double costPrice;
-    public Product(String code, String name, String unitCode, String type, float availableQuantity, double price, double costPrice) {
+    public Product(String code, String name, String unitcode, String type, float availableQuantity, double price, double costPrice) {
         this.code = code;
         this.name = name;
-        this.unitCode = unitCode;
+        this.unitcode = unitcode;
         this.type = type;
         this.availableQuantity = availableQuantity;
         this.price = price;
         this.costPrice = costPrice;
     }
 
-    public Product(String code, String name, String unitCode, String type, float availableQuantity, double price) {
+    public Product(String code, String name, String unitcode, String type, float availableQuantity, double price) {
         this.code = code;
         this.name = name;
-        this.unitCode = unitCode;
+        this.unitcode = unitcode;
         this.type = type;
         this.availableQuantity = availableQuantity;
         this.price = price;
@@ -52,12 +52,12 @@ public class Product {
         this.name = name;
     }
 
-    public String getUnitCode() {
-        return unitCode;
+    public String getunitcode() {
+        return unitcode;
     }
 
-    public void setUnitCode(String unitCode) {
-        this.unitCode = unitCode;
+    public void setunitcode(String unitcode) {
+        this.unitcode = unitcode;
     }
 
     public String getType() {
@@ -104,10 +104,10 @@ public class Product {
                 System.out.println(">>Product code Already exists!!! Please try with a unique Product code");
             }
             else {
-                PreparedStatement productCreateStatement=productCreateConnection.prepareStatement("INSERT INTO PRODUCT(CODE,NAME,UNITCODE,TYPE,PRICE,STOCK) VALUES (?,?,?,?,?,?)");
+                PreparedStatement productCreateStatement=productCreateConnection.prepareStatement("INSERT INTO PRODUCT(CODE,NAME,unitcode,TYPE,PRICE,STOCK) VALUES (?,?,?,?,?,?)");
                 productCreateStatement.setString(1,product.getCode());
                 productCreateStatement.setString(2,product.getName());
-                productCreateStatement.setString(3, product.getUnitCode());
+                productCreateStatement.setString(3, product.getunitcode());
                 productCreateStatement.setString(4,product.getType());
                 productCreateStatement.setDouble(5,product.getPrice());
                 productCreateStatement.setFloat(6,product.getAvailableQuantity());
@@ -147,7 +147,7 @@ public class Product {
             Statement listStatement=listConnection.createStatement();
             ResultSet listresultSet=listStatement.executeQuery("SELECT * FROM PRODUCT ORDER BY ID LIMIT 20 ");
             while(listresultSet.next()) {
-                System.out.println(">> id: "+listresultSet.getInt(1)+", productCode: "+listresultSet.getString(2)+", productname: "+listresultSet.getString(3)+", type: "+listresultSet.getString(4)+", unitCode: "+listresultSet.getString(5)+", quantity: "+listresultSet.getFloat(6)+", price: "+listresultSet.getDouble(7)+", costprice: "+listresultSet.getDouble(8));
+                System.out.println(">> id: "+listresultSet.getInt(1)+", code: "+listresultSet.getString(2)+", name: "+listresultSet.getString(3)+", type: "+listresultSet.getString(4)+", unitcode: "+listresultSet.getString(5)+", quantity: "+listresultSet.getFloat(6)+", price: "+listresultSet.getDouble(7)+", costprice: "+listresultSet.getDouble(8));
             }
         }
         catch(Exception e)
@@ -167,7 +167,7 @@ public class Product {
             int pageContentLength=1;
             System.out.println(">> page "+pageCount);
             while(listresultSet.next()) {
-                System.out.println(">> id: "+listresultSet.getInt(1)+", productCode: "+listresultSet.getString(2)+", productname: "+listresultSet.getString(3)+", type: "+listresultSet.getString(4)+", unitCode: "+listresultSet.getString(5)+", quantity: "+listresultSet.getFloat(6)+", price: "+listresultSet.getDouble(7)+", costprice: "+listresultSet.getDouble(8));
+                System.out.println(">> id: "+listresultSet.getInt(1)+", code: "+listresultSet.getString(2)+", name: "+listresultSet.getString(3)+", type: "+listresultSet.getString(4)+", unitcode: "+listresultSet.getString(5)+", quantity: "+listresultSet.getFloat(6)+", price: "+listresultSet.getDouble(7)+", costprice: "+listresultSet.getDouble(8));
                 if(pageContentLength%pageLength==0)
                 {
                     pageCount++;
@@ -215,7 +215,7 @@ public class Product {
                 System.out.println("page "+pageNumber+" ("+begin+"-"+end+")");
                 while(listResultSet.next())
                 {
-                    System.out.println(">> id: "+listResultSet.getInt(1)+", productCode: "+listResultSet.getString(2)+", productname: "+listResultSet.getString(3)+", type: "+listResultSet.getString(4)+", unitCode: "+listResultSet.getString(5)+", quantity: "+listResultSet.getFloat(6)+", price: "+listResultSet.getDouble(7)+", costprice: "+listResultSet.getDouble(8));
+                    System.out.println(">> id: "+listResultSet.getInt(1)+", code: "+listResultSet.getString(2)+", name: "+listResultSet.getString(3)+", type: "+listResultSet.getString(4)+", unitcode: "+listResultSet.getString(5)+", quantity: "+listResultSet.getFloat(6)+", price: "+listResultSet.getDouble(7)+", costprice: "+listResultSet.getDouble(8));
                 }
             }
             catch(Exception e) {
@@ -234,7 +234,7 @@ public class Product {
                 if(listResultSet.next()) {
                     listResultSet.beforeFirst();
                     while (listResultSet.next()) {
-                        System.out.println(">> id: " + listResultSet.getInt(1) + ", productCode: " + listResultSet.getString(2) + ", productname: " + listResultSet.getString(3) + ", type: " + listResultSet.getString(4) + ", unitCode: " + listResultSet.getString(5) + ", quantity: " + listResultSet.getFloat(6) + ", price: " + listResultSet.getDouble(7) + ", costprice: " + listResultSet.getDouble(8));
+                        System.out.println(">> id: " + listResultSet.getInt(1) + ", code: " + listResultSet.getString(2) + ", name: " + listResultSet.getString(3) + ", type: " + listResultSet.getString(4) + ", unitcode: " + listResultSet.getString(5) + ", quantity: " + listResultSet.getFloat(6) + ", price: " + listResultSet.getDouble(7) + ", costprice: " + listResultSet.getDouble(8));
                     }
                 }
                 else {
@@ -261,7 +261,7 @@ public class Product {
                      int pageContentLength=1;
                      System.out.println(">> page "+pageCount);
                      while (listResultSet.next()) {
-                         System.out.println(">> id: " + listResultSet.getInt(1) + ", productCode: " + listResultSet.getString(2) + ", productname: " + listResultSet.getString(3) + ", type: " + listResultSet.getString(4) + ", unitCode: " + listResultSet.getString(5) + ", quantity: " + listResultSet.getFloat(6) + ", price: " + listResultSet.getDouble(7) + ", costprice: " + listResultSet.getDouble(8));
+                         System.out.println(">> id: " + listResultSet.getInt(1) + ", code: " + listResultSet.getString(2) + ", name: " + listResultSet.getString(3) + ", type: " + listResultSet.getString(5) + ", unitcode: " + listResultSet.getString(4) + ", quantity: " + listResultSet.getFloat(6) + ", price: " + listResultSet.getDouble(7) + ", costprice: " + listResultSet.getDouble(8));
                          if(pageContentLength%pageLength==0)
                          {
                              pageCount++;
@@ -300,7 +300,7 @@ public class Product {
                              System.out.println(">> page : "+pageNumber);
                              while (listResultSet.next() && index < pageLength)
                              {
-                                 System.out.println(">> id: " + listResultSet.getInt(1) + ", productCode: " + listResultSet.getString(2) + ", productname: " + listResultSet.getString(3) + ", type: " + listResultSet.getString(4) + ", unitCode: " + listResultSet.getString(5) + ", quantity: " + listResultSet.getFloat(6) + ", price: " + listResultSet.getDouble(7) + ", costprice: " + listResultSet.getDouble(8));
+                                 System.out.println(">> id: " + listResultSet.getInt(1) + ", code: " + listResultSet.getString(2) + ", name: " + listResultSet.getString(3) + ", type: " + listResultSet.getString(4) + ", unitcode: " + listResultSet.getString(5) + ", quantity: " + listResultSet.getFloat(6) + ", price: " + listResultSet.getDouble(7) + ", costprice: " + listResultSet.getDouble(8));
                                  index++;
                              }
                          } else {
@@ -316,6 +316,32 @@ public class Product {
                      e.printStackTrace();
                  }
 
+         }
+         public static void edit(int id,String attribute,String value) throws SQLException {
+             Connection editConnection=DBHelper.getConnection();
+             try{
+                 editConnection.setAutoCommit(false);
+                 String idCheckQuery="SELECT * FROM PRODUCT WHERE ID="+id;
+                 Statement idCheckStatement=editConnection.createStatement();
+                 ResultSet idCheckResultSet=idCheckStatement.executeQuery(idCheckQuery);
+                 if(idCheckResultSet.next())
+                 {
+                     String editQuery="UPDATE PRODUCT SET "+attribute.toUpperCase()+"="+"'"+value+"'"+" WHERE ID="+id;
+                     Statement editStatement=editConnection.createStatement();
+                     editStatement.executeUpdate(editQuery);
+                 }
+                 else {
+                     System.out.println(">> The id you have entered does not exist");
+                     System.out.println(">> Please try with an existing id");
+                 }
+                 editConnection.commit();
+             }
+             catch(Exception e)
+             {
+                 e.printStackTrace();
+                 System.out.println(">> Template Mismatch! Please Try \"product edit help\" for proper attribute Constraints");
+                 editConnection.rollback();
+             }
          }
 
 

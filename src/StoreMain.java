@@ -1,7 +1,7 @@
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+
 public class StoreMain{
     static Scanner scanner;
     public static void main(String[] args) throws SQLException {
@@ -12,6 +12,13 @@ public class StoreMain{
             String[] arguments=command.split("\\,");
             String[] commandlet=arguments[0].split(" ");
             String commandString=commandlet[0];
+            HashMap<String,String> attributeMap=new HashMap<>();
+            attributeMap.put("id","");
+            attributeMap.put("code","");
+            attributeMap.put("name","");
+            attributeMap.put("unitcode","");
+            attributeMap.put("type","");
+            attributeMap.put("price","");
             switch(commandString)
             {
                 case "product":
@@ -267,8 +274,6 @@ public class StoreMain{
                                     int pageNumber=0;
                                     if(productAttributes.contains(attribute))
                                     {
-
-
                                         if(commandlet[5].equals("-p"))
                                         {
                                             try{
@@ -282,6 +287,11 @@ public class StoreMain{
                                             }
                                             Product.list(attribute,searchText,pageLength,pageNumber);
                                         }
+                                        else
+                                        {
+                                            System.out.println("Given attribute is not a searchable attribute!!");
+                                            System.out.println("Try \"product list help\" for proper syntax");
+                                        }
                                     }
                                     else
                                     {
@@ -290,12 +300,196 @@ public class StoreMain{
                                     }
 
                                 }
+                                else
+                                {
+                                    System.out.println(">> Invalid Extension given");
+                                    System.out.println(">> Try \"product list help\" for proper syntax");
+                                }
 
                             }
 
                             break;
                         case "edit":
-                            break;
+                            if(arguments.length==1&&arguments[0].equals("product edit help"))
+                            {
+                                System.out.println(">> Edit product using following template. Copy the product data from the list, edit the attribute values. \n" +
+                                        ">> id: <id - 6>, name: <name-edited>, unitcode: <unitcode>,  type: <type>, price: <price>\n" +
+                                        "\n" +
+                                        ">> You can also restrict the product data by editable attributes. Id attribute is mandatory for all the edit operation.\n" +
+                                        ">> id: <id - 6>, name: <name-edited>, unitcode: <unitcode-edited>\n" +
+                                        "\n" +
+                                        ">> You can not give empty or null values to the mandatory attributes.\n" +
+                                        ">> id: <id - 6>, name: , unitcode: null\n" +
+                                        ">>\n" +
+                                        " \n" +
+                                        " \tid\t - number, mandatory\t\n" +
+                                        "\tname - text, min 3 - 30 char, mandatory\n" +
+                                        "\tunitcode - text, kg/l/piece/combo, mandatory\n" +
+                                        "\ttype - text, between enumerated values, mandatory \n" +
+                                        "\tcostprice - numeric, mandatory\n" +
+                                        "\t\n" +
+                                        ">\tproduct edit id:<id - 6>, name: <name-edited>, unitcode: <unitcode>,  type: <type>, price: <price>\n" +
+                                        "                         or\n" +
+                                        "> product edit :enter\n" +
+                                        "> id: <id - 6>, name: <name-edited>, unitcode: <unitcode>,  type: <type>, price: <price>");
+                            }
+                            else if(arguments.length==1&&arguments[0].equals("product edit"))
+                            {
+                                System.out.print("> ");
+                                String paramaters=scanner.nextLine();
+                                String[] productAttributes=paramaters.split("\\,");
+                                if(productAttributes[0].contains("id")) {
+                                    for (String attribute : productAttributes) {
+                                        if (attribute.contains("id")) {
+                                            String[] keyValues = attribute.split("\\:");
+                                            attributeMap.put("id", keyValues[1]);
+                                        }
+                                        else if (attribute.contains("code")&&!attribute.contains("unit")) {
+                                            String[] keyValues = attribute.split("\\:");
+                                            attributeMap.put("code", keyValues[1]);
+                                        }
+                                        else if (attribute.contains("name")) {
+                                            String[] keyValues = attribute.split("\\:");
+                                            attributeMap.put("name", keyValues[1]);
+                                        } else if (attribute.contains("unitcode")) {
+                                            String[] keyValues = attribute.split("\\:");
+                                            attributeMap.put("unitcode", keyValues[1]);
+                                        } else if (attribute.contains("type")) {
+                                            String[] keyValues = attribute.split("\\:");
+                                            attributeMap.put("type", keyValues[1]);
+                                        } else if (attribute.contains(("price"))) {
+                                            String[] keyValues = attribute.split("\\:");
+                                            attributeMap.put("price", keyValues[1]);
+                                        } else {
+                                            System.out.println(">> Invalid attribute given!!! : "+attribute);
+                                            System.out.println(">> Try \" product edit help\" for proper syntax");
+                                            break;
+                                        }
+                                    }
+                                    if(attributeMap.get("id").equals(""))
+                                    {
+                                        System.out.println(">> Id should not be null");
+                                        System.out.println(">> Try \"product edit help\" for proper Syntax");
+                                        break;
+                                    }
+                                    int id=0;
+                                    try{
+                                        id=Integer.parseInt(attributeMap.get("id"));
+                                    }
+                                    catch(Exception e)
+                                    {
+                                        System.out.println(">> Id must be a number");
+                                    }
+                                    if(!attributeMap.get("name").equals(""))
+                                    {
+                                        Product.edit(id,"name",attributeMap.get("name"));
+                                    }
+                                    if(!attributeMap.get("code").equals(""))
+                                    {
+                                        Product.edit(id,"code",attributeMap.get("code"));
+                                    }
+                                    if(!attributeMap.get("unitcode").equals(("")))
+                                    {
+                                        Product.edit(id,"unitcode",attributeMap.get("unitcode"));
+                                    }
+                                    if(!attributeMap.get("type").equals(("")))
+                                    {
+                                        Product.edit(id,"type",attributeMap.get("type"));
+                                    }
+                                    if(!attributeMap.get("price").equals(("")))
+                                    {
+                                        Product.edit(id,"price",attributeMap.get("price"));
+                                    }
+                                }
+                                else {
+                                    System.out.println(">> Id is a Mandatory argument for every Edit operation");
+                                    System.out.println(">> For every Edit operation the first argument must be product's ID");
+                                    System.out.println(">> Try \"product edit help\" for proper syntax");
+                                    break;
+                                }
+                            }
+                            else if(arguments.length>6)
+                            {
+                                System.out.println(">>Too many Arguments for command "+commandString+" "+operationString);
+                                break;
+                            }
+                            else if(!commandlet[2].contains("id"))
+                            {
+                                System.out.println(">> Id is a Mandatory argument for every Edit operation");
+                                System.out.println(">> For every Edit operation the first argument must be product's ID");
+                                System.out.println(">> Try \"product edit help\" for proper syntax");
+                                break;
+                            }
+                            else{
+                                attributeMap.put("id",commandlet[3]);
+                                if(attributeMap.get("id").equals("")) {
+                                    System.out.println(">> Id should not be null");
+                                    System.out.println(">> Try \"product edit help\" for proper Syntax");
+                                    break;
+                                }
+                                    int id=0;
+                                try{
+                                     id=Integer.parseInt(attributeMap.get("id"));
+                                }
+                                catch(Exception e){
+                                    System.out.println(">> Id must be a Number!");
+                                    System.out.println(">> Please Try \"product edit help\" for proper Syntax");
+                                }
+                                for(int index=1;index<arguments.length;index++)
+                                {
+                                    if(arguments[index].contains("name"))
+                                    {
+                                        String keyValues[]=arguments[index].split("\\:");
+                                        attributeMap.put("name",keyValues[1]);
+                                    }
+                                    else if(arguments[index].contains("code"))
+                                    {
+                                        String keyValues[]=arguments[index].split("\\:");
+                                        attributeMap.put("code",keyValues[1]);
+                                    }
+                                    else if(arguments[index].contains("unitcode"))
+                                    {
+                                        String keyValues[]=arguments[index].split("\\:");
+                                        attributeMap.put("unitcode",keyValues[1]);
+                                    }
+                                    else if(arguments[index].contains("type"))
+                                    {
+                                        String keyValues[]=arguments[index].split("\\:");
+                                        attributeMap.put("type",keyValues[1]);
+                                    }
+                                    else if(arguments[index].contains("price"))
+                                    {
+                                        String keyValues[]=arguments[index].split("\\:");
+                                        attributeMap.put("price",keyValues[1]);
+                                    }
+                                    else {
+                                        System.out.println(">> Invalid attribute given!!! : "+arguments[index]);
+                                        System.out.println(">> Try \"product edit help\" for proper syntax");
+                                    }
+                                }
+
+                                if(!attributeMap.get("name").equals(""))
+                                {
+                                    Product.edit(id,"name",attributeMap.get("name"));
+                                }
+                                if(!attributeMap.get("code").equals(""))
+                                {
+                                    Product.edit(id,"code",attributeMap.get("code"));
+                                }
+                                if(!attributeMap.get("unitcode").equals(("")))
+                                {
+                                    Product.edit(id,"unitcode",attributeMap.get("unitcode"));
+                                }
+                                if(!attributeMap.get("type").equals(("")))
+                                {
+                                    Product.edit(id,"type",attributeMap.get("type"));
+                                }
+                                if(!attributeMap.get("price").equals(("")))
+                                {
+                                    Product.edit(id,"price",attributeMap.get("price"));
+                                }
+                            }
+                                break;
                         case "delete":
                             break;
                         default:
