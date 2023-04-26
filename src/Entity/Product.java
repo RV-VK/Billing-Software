@@ -13,6 +13,17 @@ public class Product {
     private float availableQuantity;
     private double price;
     private double costPrice;
+
+    public Product(int id,String code, String name, String unitcode, String type, float availableQuantity, double price, double costPrice) {
+        this.id=id;
+        this.code = code;
+        this.name = name;
+        this.unitcode = unitcode;
+        this.type = type;
+        this.availableQuantity = availableQuantity;
+        this.price = price;
+        this.costPrice = costPrice;
+    }
     public Product(String code, String name, String unitcode, String type, float availableQuantity, double price, double costPrice) {
         this.code = code;
         this.name = name;

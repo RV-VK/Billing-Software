@@ -1,6 +1,8 @@
 package CLIController;
 
 import Entity.Product;
+import Service.ProductService;
+import Service.ProductServiceImplementation;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -16,12 +18,17 @@ public class StoreMain{
             String[] commandlet=arguments[0].split(" ");
             String commandString=commandlet[0];
             HashMap<String,String> attributeMap=new HashMap<>();
-            attributeMap.put("id","");
-            attributeMap.put("code","");
-            attributeMap.put("name","");
-            attributeMap.put("unitcode","");
-            attributeMap.put("type","");
-            attributeMap.put("price","");
+            attributeMap.put("id",null);
+            attributeMap.put("code",null);
+            attributeMap.put("name",null);
+            attributeMap.put("unitcode",null);
+            attributeMap.put("type",null);
+            attributeMap.put("price",null);
+            HashMap<String,String> listAttributesMap=new HashMap<>();
+            listAttributesMap.put("Pagelength",null);
+            listAttributesMap.put("Pagenumber",null);
+            listAttributesMap.put("Attribute",null);
+            listAttributesMap.put("Searchtext",null);
             switch(commandString)
             {
                 case "product":
@@ -30,7 +37,7 @@ public class StoreMain{
                     {
                         case "create":
                             String nameRegex="^[a-zA-Z]*{3,30}$";
-                            String codeRegex="^[a-zA-Z0-9]+{2,6}$";
+                            String codeRegex="^[a-zA-Z0-9]{2,6}$";
                             if(arguments.length==1&&arguments[0].equals("product create help"))
                             {
                                 System.out.println(">> create product using the following template\n" +
@@ -93,7 +100,16 @@ public class StoreMain{
                                     }
                                 }
                                 Product product=new Product(code,name,unitcode,type,stock,price);
-                                Product.create(product);
+                                ProductService productService=new ProductServiceImplementation();
+                                int resultCode=productService.createProductService(product);
+                                if(resultCode==1)
+                                {
+                                    System.out.println(">> Product Created Successfully!");
+                                }
+                                else
+                                {
+                                    System.out.println(">> Product Creation failed");
+                                }
                                 break;
 
                             }
@@ -136,12 +152,24 @@ public class StoreMain{
                                 }
                             }
                             Product product=new Product(code,name,unitcode,type,stock,price);
-                            Product.create(product);
+                            ProductService productService=new ProductServiceImplementation();
+                            int resultCode=productService.createProductService(product);
+                            if(resultCode==1)
+                            {
+                                System.out.println(">> Product Created Successfully!");
+                            }
+                            else
+                            {
+                                System.out.println(">> Product Creation failed");
+                            }
                             break;
                         case "count":
-                            Product.count();
+                            ProductService countProduct=new ProductServiceImplementation();
+                            int productCount=countProduct.countProductService();
+                            System.out.println(">> ProductCount "+productCount);
                             break;
                         case "list":
+                            ProductService listService=new ProductServiceImplementation();
                             if(commandlet.length==3&&commandlet[2].equals("help"))
                             {
                                 System.out.println(">> List product with the following options\n" +
@@ -154,7 +182,7 @@ public class StoreMain{
                             }
                             else if(commandlet.length==2)
                             {
-                                 Product.list();
+                                 listService.listProductService(listAttributesMap);
                                  break;
                             }
                             else if(commandlet.length==4)
@@ -169,7 +197,8 @@ public class StoreMain{
                                     System.out.println(">> Invalid page Size input");
                                     System.out.println(">> Try \"product list help\" for proper syntax");
                                 }
-                                    Product.list(pageLength);
+                                    listAttributesMap.put("Pagelength", String.valueOf(pageLength));
+                                    listService.listProductService(listAttributesMap);
                                 }
                                else if(commandlet[2].equals("-s"))
                                 {
@@ -196,7 +225,9 @@ public class StoreMain{
                                         System.out.println(">> Invalid page Size (or) page Number input");
                                         System.out.println(">> Try \"product list help\" for proper syntax");
                                     }
-                                    Product.list(pageLength,pageNumber);
+                                    listAttributesMap.put("Pagelength", String.valueOf(pageLength));
+                                    listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
+                                    listService.listProductService(listAttributesMap);
                                 }
                                 else if(commandlet[2].equals("-s"))
                                 {
@@ -206,7 +237,9 @@ public class StoreMain{
                                     String searchText=commandlet[4];
                                     if(productAttributes.contains(attribute))
                                     {
-                                           Product.list(attribute,searchText);
+                                           listAttributesMap.put("Attribute",attribute);
+                                           listAttributesMap.put("Searchtext",searchText);
+                                           listService.listProductService(listAttributesMap);
                                     }
                                     else
                                     {
@@ -229,6 +262,8 @@ public class StoreMain{
                                 String attribute=commandlet[3];
                                 attribute=attribute.replace(":","");
                                 String searchText=commandlet[4];
+                                listAttributesMap.put("Attribute",attribute);
+                                listAttributesMap.put("Searchtext",searchText);
                                 if(productAttributes.contains(attribute))
                                 {
                                     int pageLength=0;
@@ -243,7 +278,8 @@ public class StoreMain{
                                             System.out.println(">> Try \"product list help\" for proper syntax");
                                             break;
                                         }
-                                        Product.list(attribute,searchText,pageLength);
+                                        listAttributesMap.put("Pagelength", String.valueOf(pageLength));
+                                        listService.listProductService(attributeMap);
                                     }
                                     else
                                     {
@@ -275,6 +311,8 @@ public class StoreMain{
                                     String searchText=commandlet[4];
                                     int pageLength=0;
                                     int pageNumber=0;
+                                    listAttributesMap.put("Attribute",attribute);
+                                    listAttributesMap.put("Searchtext",searchText);
                                     if(productAttributes.contains(attribute))
                                     {
                                         if(commandlet[5].equals("-p"))
@@ -288,7 +326,9 @@ public class StoreMain{
                                                 System.out.println(">> Invalid page Size (or) page Number input");
                                                 System.out.println(">> Try \"product list help\" for proper syntax");
                                             }
-                                            Product.list(attribute,searchText,pageLength,pageNumber);
+                                            listAttributesMap.put("Pagelength", String.valueOf(pageLength));
+                                            listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
+                                            listService.listProductService(listAttributesMap);
                                         }
                                         else
                                         {
@@ -310,9 +350,13 @@ public class StoreMain{
                                 }
 
                             }
-
+                            for(Map.Entry<String,String> entry:listAttributesMap.entrySet())
+                            {
+                                entry.setValue(null);
+                            }
                             break;
                         case "edit":
+                            ProductService productEdit=new ProductServiceImplementation();
                             if(arguments.length==1&&arguments[0].equals("product edit help"))
                             {
                                 System.out.println(">> Edit product using following template. Copy the product data from the list, edit the attribute values. \n" +
@@ -347,17 +391,19 @@ public class StoreMain{
                                             String[] keyValues = attribute.split("\\:");
                                             attributeMap.put("id", keyValues[1]);
                                         }
-                                        else if (attribute.contains("code")&&!attribute.contains("unit")) {
-                                            String[] keyValues = attribute.split("\\:");
-                                            attributeMap.put("code", keyValues[1]);
-                                        }
                                         else if (attribute.contains("name")) {
                                             String[] keyValues = attribute.split("\\:");
                                             attributeMap.put("name", keyValues[1]);
-                                        } else if (attribute.contains("unitcode")) {
+                                        }
+                                        else if (attribute.contains("unitcode")) {
                                             String[] keyValues = attribute.split("\\:");
                                             attributeMap.put("unitcode", keyValues[1]);
-                                        } else if (attribute.contains("type")) {
+                                        }
+                                        else if (attribute.contains("code")&&!attribute.contains("unitcode")) {
+                                                String[] keyValues = attribute.split("\\:");
+                                                attributeMap.put("code", keyValues[1]);
+                                        }
+                                        else if (attribute.contains("type")) {
                                             String[] keyValues = attribute.split("\\:");
                                             attributeMap.put("type", keyValues[1]);
                                         } else if (attribute.contains(("price"))) {
@@ -377,32 +423,13 @@ public class StoreMain{
                                     }
                                     int id=0;
                                     try{
-                                        id=Integer.parseInt(attributeMap.get("id"));
+                                        id=Integer.parseInt(attributeMap.get("id").trim());
                                     }
                                     catch(Exception e)
                                     {
                                         System.out.println(">> Id must be a number");
                                     }
-                                    if(!attributeMap.get("name").equals(""))
-                                    {
-                                        Product.edit(id,"name",attributeMap.get("name"));
-                                    }
-                                    if(!attributeMap.get("code").equals(""))
-                                    {
-                                        Product.edit(id,"code",attributeMap.get("code"));
-                                    }
-                                    if(!attributeMap.get("unitcode").equals(("")))
-                                    {
-                                        Product.edit(id,"unitcode",attributeMap.get("unitcode"));
-                                    }
-                                    if(!attributeMap.get("type").equals(("")))
-                                    {
-                                        Product.edit(id,"type",attributeMap.get("type"));
-                                    }
-                                    if(!attributeMap.get("price").equals(("")))
-                                    {
-                                        Product.edit(id,"price",attributeMap.get("price"));
-                                    }
+                                    productEdit.editProductService(attributeMap);
                                 }
                                 else {
                                     System.out.println(">> Id is a Mandatory argument for every Edit operation");
@@ -445,7 +472,7 @@ public class StoreMain{
                                         String[] keyValues =arguments[index].split("\\:");
                                         attributeMap.put("name",keyValues[1]);
                                     }
-                                    else if(arguments[index].contains("code"))
+                                    else if(arguments[index].contains("code")&&!arguments[index].contains("unitcode"))
                                     {
                                         String[] keyValues =arguments[index].split("\\:");
                                         attributeMap.put("code",keyValues[1]);
@@ -471,29 +498,76 @@ public class StoreMain{
                                     }
                                 }
 
-                                if(!attributeMap.get("name").equals(""))
+                                productEdit.editProductService(attributeMap);
+                            }
+                            for(Map.Entry<String,String> entry:listAttributesMap.entrySet())
+                            {
+                                entry.setValue(null);
+                            }
+                            break;
+                        case "delete":
+                            ProductService deleteProduct=new ProductServiceImplementation();
+                            String numberRegex="^[0-9]*$";
+                            String procodeRegex="^[a-zA-Z0-9]{2,6}$";
+                            if(commandlet.length==3)
+                            {
+                               if(commandlet[2].matches(numberRegex))
+                               {
+                                   System.out.println(">> Are you sure want to delete the product y/n ? : ");
+                                   String prompt=scanner.nextLine();
+                                   if(prompt.equals("y")) {
+                                       deleteProduct.deleteProductService(commandlet[2]);
+                                   }
+                                   else if(prompt.equals("n")){
+                                       System.out.println(">> Delete operation cancelled");
+                                   }
+                                   else {
+                                       System.out.println("Invalid delete prompt!!! Please select between y/n");
+                                   }
+                               }
+                               else if(commandlet[2].equals("help"))
+                               {
+                                   System.out.println("> product delete help \n" +
+                                           ">> delete product using the following template\n" +
+                                           "\t\n" +
+                                           "\t\tproductid - numeric, existing\n" +
+                                           ">> product delete -c <code>\n" +
+                                           "\t \n" +
+                                           "\n" +
+                                           "> product delete <id>");
+                               }
+                               else
+                               {
+                                   System.out.println(">> Invalid format for id!!!");
+                                   System.out.println("Try \"product delete help\" for proper syntax");
+                               }
+                            }
+                            else if(commandlet.length==4 && commandlet[2].equals("-c"))
+                            {
+                                if(commandlet[3].matches(procodeRegex))
                                 {
-                                    Product.edit(id,"name",attributeMap.get("name"));
+                                    System.out.println(">> Are you sure want to delete the product y/n ? : ");
+                                    String prompt=scanner.nextLine();
+                                    if(prompt.equals("y")) {
+                                        deleteProduct.deleteProductService(commandlet[3]);
+                                    }
+                                    else if(prompt.equals("n")){
+                                        System.out.println(">> Delete operation cancelled");
+                                    }
+                                    else {
+                                        System.out.println("Invalid delete prompt!!! Please select between y/n");
+                                    }
                                 }
-                                if(!attributeMap.get("code").equals(""))
+                                else
                                 {
-                                    Product.edit(id,"code",attributeMap.get("code"));
-                                }
-                                if(!attributeMap.get("unitcode").equals(("")))
-                                {
-                                    Product.edit(id,"unitcode",attributeMap.get("unitcode"));
-                                }
-                                if(!attributeMap.get("type").equals(("")))
-                                {
-                                    Product.edit(id,"type",attributeMap.get("type"));
-                                }
-                                if(!attributeMap.get("price").equals(("")))
-                                {
-                                    Product.edit(id,"price",attributeMap.get("price"));
+                                    System.out.println(">> Invalid format for product Code!!!");
+                                    System.out.println("Try \"product delete help\" for proper syntax");
                                 }
                             }
-                                break;
-                        case "delete":
+                            else {
+                                System.out.println("Invalid command format");
+                                System.out.println("Try \"product delete help\" for proper syntax");
+                            }
                             break;
                         default:
                             System.out.println("Invalid operation for command "+"\""+commandString+"\"");
