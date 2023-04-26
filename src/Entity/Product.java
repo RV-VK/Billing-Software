@@ -1,3 +1,7 @@
+package Entity;
+
+import DBConnection.DBHelper;
+
 import java.sql.*;
 
 public class Product {
@@ -101,7 +105,7 @@ public class Product {
             ResultSet codeResultSet=codeRepeatCheckStatement.executeQuery(codeQuery);
             if(codeResultSet.next())
             {
-                System.out.println(">>Product code Already exists!!! Please try with a unique Product code");
+                System.out.println(">>Entity.Product code Already exists!!! Please try with a unique Entity.Product code");
             }
             else {
                 PreparedStatement productCreateStatement=productCreateConnection.prepareStatement("INSERT INTO PRODUCT(CODE,NAME,unitcode,TYPE,PRICE,STOCK) VALUES (?,?,?,?,?,?)");
@@ -113,7 +117,7 @@ public class Product {
                 productCreateStatement.setFloat(6,product.getAvailableQuantity());
                 productCreateStatement.executeUpdate();
                 productCreateConnection.commit();
-                System.out.println(">>Product added Successfully !!!");
+                System.out.println(">>Entity.Product added Successfully !!!");
             }
         }
         catch(Exception e){
@@ -125,7 +129,7 @@ public class Product {
     }
     public static void count()
     {
-        Connection getCountConnection=DBHelper.getConnection();
+        Connection getCountConnection= DBHelper.getConnection();
         try {
             Statement countStatement = getCountConnection.createStatement();
             ResultSet countResultSet=countStatement.executeQuery("SELECT COUNT(ID) FROM PRODUCT");
@@ -133,7 +137,7 @@ public class Product {
             while(countResultSet.next()) {
                 count = countResultSet.getInt(1);
             }
-            System.out.println(">> Product count : "+count);
+            System.out.println(">> Entity.Product count : "+count);
         }
         catch(Exception e) {
             System.out.println(">> Something went Wrong! Please Try Again");
@@ -142,7 +146,7 @@ public class Product {
 
     public static void list()
     {
-        Connection listConnection=DBHelper.getConnection();
+        Connection listConnection= DBHelper.getConnection();
         try{
             Statement listStatement=listConnection.createStatement();
             ResultSet listresultSet=listStatement.executeQuery("SELECT * FROM PRODUCT ORDER BY ID LIMIT 20 ");
@@ -159,7 +163,7 @@ public class Product {
 
     public static void list(int pageLength)
     {
-        Connection listConnection=DBHelper.getConnection();
+        Connection listConnection= DBHelper.getConnection();
         try{
             Statement listStatement=listConnection.createStatement();
             ResultSet listresultSet=listStatement.executeQuery("SELECT * FROM PRODUCT ORDER BY ID");
@@ -185,7 +189,7 @@ public class Product {
     }
     public static  void list(int pageLength,int pageNumber)
     {
-        Connection listConnection=DBHelper.getConnection();
+        Connection listConnection= DBHelper.getConnection();
         int count=0;
         try {
             Statement countStatement = listConnection.createStatement();
@@ -226,7 +230,7 @@ public class Product {
 
         public static void list(String attribute,String searchText)
         {
-            Connection listConnection=DBHelper.getConnection();
+            Connection listConnection= DBHelper.getConnection();
             try{
                 Statement listStatement=listConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
                 String listQuery="SELECT * FROM PRODUCT WHERE "+attribute+" = '"+searchText+"'"+" ORDER BY ID LIMIT 20";
@@ -249,7 +253,7 @@ public class Product {
 
          public static void list(String attribute,String searchText,int pageLength)
          {
-             Connection listConnection=DBHelper.getConnection();
+             Connection listConnection= DBHelper.getConnection();
 
              try{
                  Statement listStatement=listConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -283,7 +287,7 @@ public class Product {
          }
          public static void list(String attribute,String searchText,int pageLength,int pageNumber )
          {
-             Connection listConnection=DBHelper.getConnection();
+             Connection listConnection= DBHelper.getConnection();
              int rowCount;
                  try {
                      Statement listStatement = listConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -318,7 +322,7 @@ public class Product {
 
          }
          public static void edit(int id,String attribute,String value) throws SQLException {
-             Connection editConnection=DBHelper.getConnection();
+             Connection editConnection= DBHelper.getConnection();
              try{
                  editConnection.setAutoCommit(false);
                  String idCheckQuery="SELECT * FROM PRODUCT WHERE ID="+id;

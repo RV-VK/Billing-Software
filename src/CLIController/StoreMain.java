@@ -1,4 +1,7 @@
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
+package CLIController;
+
+import Entity.Product;
+
 import java.sql.SQLException;
 import java.util.*;
 
@@ -439,27 +442,27 @@ public class StoreMain{
                                 {
                                     if(arguments[index].contains("name"))
                                     {
-                                        String keyValues[]=arguments[index].split("\\:");
+                                        String[] keyValues =arguments[index].split("\\:");
                                         attributeMap.put("name",keyValues[1]);
                                     }
                                     else if(arguments[index].contains("code"))
                                     {
-                                        String keyValues[]=arguments[index].split("\\:");
+                                        String[] keyValues =arguments[index].split("\\:");
                                         attributeMap.put("code",keyValues[1]);
                                     }
                                     else if(arguments[index].contains("unitcode"))
                                     {
-                                        String keyValues[]=arguments[index].split("\\:");
+                                        String[] keyValues =arguments[index].split("\\:");
                                         attributeMap.put("unitcode",keyValues[1]);
                                     }
                                     else if(arguments[index].contains("type"))
                                     {
-                                        String keyValues[]=arguments[index].split("\\:");
+                                        String[] keyValues =arguments[index].split("\\:");
                                         attributeMap.put("type",keyValues[1]);
                                     }
                                     else if(arguments[index].contains("price"))
                                     {
-                                        String keyValues[]=arguments[index].split("\\:");
+                                        String[] keyValues =arguments[index].split("\\:");
                                         attributeMap.put("price",keyValues[1]);
                                     }
                                     else {
