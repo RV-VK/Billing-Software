@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ProductDAOImplementation implements ProductDAO{
     @Override
-    public Product create(Product product) throws SQLException {
+    public Product create(Product product) throws SQLException, ApplicationErrorException {
         Connection productCreateConnection = DBHelper.getConnection();
         try {
             productCreateConnection.setAutoCommit(false);
@@ -37,13 +37,13 @@ public class ProductDAOImplementation implements ProductDAO{
         }
         catch(Exception e){
             productCreateConnection.rollback();
-            return null;
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
 
     }
 
     @Override
-    public int count() {
+    public int count() throws ApplicationErrorException {
         Connection getCountConnection= DBHelper.getConnection();
         try {
             Statement countStatement = getCountConnection.createStatement();
@@ -55,13 +55,13 @@ public class ProductDAOImplementation implements ProductDAO{
             return count;
         }
         catch(Exception e) {
-            return -1;
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
 
     }
 
     @Override
-    public List<Product> list() {
+    public List<Product> list() throws ApplicationErrorException {
         Connection listConnection= DBHelper.getConnection();
         List<Product> productList=new ArrayList<>();
         try{
@@ -75,13 +75,13 @@ public class ProductDAOImplementation implements ProductDAO{
         }
         catch(Exception e)
         {
-            return null;
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
 
     }
 
     @Override
-    public List<Product> list(int pageLength) {
+    public List<Product> list(int pageLength) throws ApplicationErrorException {
         Connection listConnection= DBHelper.getConnection();
         List<Product> productList=new ArrayList<>();
         try{
@@ -95,14 +95,14 @@ public class ProductDAOImplementation implements ProductDAO{
         }
         catch(Exception e)
         {
-            return null;
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
 
 
     }
 
     @Override
-    public List<Product> list(int pageLength, int pageNumber) {
+    public List<Product> list(int pageLength, int pageNumber) throws ApplicationErrorException {
         Connection listConnection= DBHelper.getConnection();
         List<Product> productList=new ArrayList<>();
         int count=0;
@@ -115,7 +115,7 @@ public class ProductDAOImplementation implements ProductDAO{
             }
         }
         catch(Exception e) {
-            System.out.println(">> Something went Wrong! Please Try Again");
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
         if(count<=((pageLength*pageNumber)-pageLength))
         {
@@ -141,15 +141,14 @@ public class ProductDAOImplementation implements ProductDAO{
             }
 
             catch(Exception e) {
-                System.out.println(">> Something Went Wrong !!!");
-                return null;
+                throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
             }
         }
 
     }
 
     @Override
-    public List<Product> list(String attribute, String searchText) {
+    public List<Product> list(String attribute, String searchText) throws ApplicationErrorException {
         Connection listConnection= DBHelper.getConnection();
         List<Product> productList=new ArrayList<>();
         try{
@@ -171,13 +170,13 @@ public class ProductDAOImplementation implements ProductDAO{
         }
         catch(Exception e)
         {
-            System.out.println(">> "+e);
-            return null;
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+
         }
 
     }
     @Override
-    public List<Product> list(String attribute, String searchText, int pageLength, int offset) {
+    public List<Product> list(String attribute, String searchText, int pageLength, int offset) throws ApplicationErrorException {
         Connection listConnection= DBHelper.getConnection();
         List<Product> productList=new ArrayList<>();
         try {
@@ -198,14 +197,12 @@ public class ProductDAOImplementation implements ProductDAO{
                 return null;
             }
         } catch (Exception e) {
-            System.out.println(">> " + e);
-            e.printStackTrace();
-            return null;
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
     }
 
     @Override
-    public boolean edit(int id, String attribute, String value) throws SQLException {
+    public boolean edit(int id, String attribute, String value) throws SQLException, ApplicationErrorException {
         Connection editConnection= DBHelper.getConnection();
         try{
             editConnection.setAutoCommit(false);
@@ -228,31 +225,55 @@ public class ProductDAOImplementation implements ProductDAO{
         }
         catch(Exception e)
         {
-            e.printStackTrace();
-            System.out.println(">> Template Mismatch! Please Try \"product edit help\" for proper attribute Constraints");
             editConnection.rollback();
-            return false;
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
     }
     @Override
-    public boolean delete(String parameter) {
+    public int delete(String parameter) throws ApplicationErrorException {
         Connection getCountConnection= DBHelper.getConnection();
         String numberRegex="^[0-9]*$";
         String procodeRegex="^[a-zA-Z0-9]{2,6}$";
         try {
             Statement countStatement = getCountConnection.createStatement();
             if(parameter.matches(numberRegex)) {
-                boolean status = countStatement.execute("DELETE FROM PRODUCT WHERE ID='" + parameter + "'");
-                return status;
-            }
+                ResultSet stockResultSet=countStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='"+parameter+"'");
+                stockResultSet.next();
+                float stock=stockResultSet.getFloat(1);
+                if(stock>0)
+                {
+                  return 0;
+                }
+                else {
+                    if(countStatement.execute("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE ID='" + parameter + "'"))
+                    {
+                        return 1;
+                    }
+                    else {
+                        return -1;
+                    }
+                }
+                }
             else if(parameter.matches(procodeRegex)) {
-                boolean status=countStatement.execute("DELETE FROM PRODUCT WHERE CODE='"+parameter+"'");
-                return status;
+                ResultSet stockResultSet=countStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='"+parameter+"'");
+                stockResultSet.next();
+                float stock=stockResultSet.getFloat(1);
+                if(stock>0)
+                {
+                    return 0;
+                }
+                else {
+                    if (countStatement.execute("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE CODE='" + parameter + "'")) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
             }
         }
         catch(Exception e) {
-            return false;
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
-        return false;
+        return -1;
     }
 }

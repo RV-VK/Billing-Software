@@ -1,5 +1,6 @@
 package Service;
 
+import DAO.ApplicationErrorException;
 import DAO.ProductDAO;
 import DAO.ProductDAOImplementation;
 import Entity.Product;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ProductServiceImplementation implements ProductService{
-    public int createProductService(Product product) throws SQLException {
+    public int createProductService(Product product) throws SQLException, ApplicationErrorException {
         ProductDAO productcreateDAO=new ProductDAOImplementation();
         Product productResult=productcreateDAO.create(product);
         if(productResult!=null)
@@ -22,14 +23,12 @@ public class ProductServiceImplementation implements ProductService{
             return -1;
         }
     }
-    public int countProductService()
-    {
+    public int countProductService() throws ApplicationErrorException {
         ProductDAO productCountDAO=new ProductDAOImplementation();
         return productCountDAO.count();
     }
-    public void listProductService(HashMap<String,String> listattributes)
-    {
-        List<Product> productList=new ArrayList<>();
+    public void listProductService(HashMap<String,String> listattributes) throws ApplicationErrorException {
+        List<Product> productList;
         ProductDAO listProductDAO=new ProductDAOImplementation();
         if(Collections.frequency(listattributes.values(),null)==listattributes.size())
         {
@@ -85,12 +84,44 @@ public class ProductServiceImplementation implements ProductService{
         }
 
     }
-    public void editProductService(HashMap<String,String> attributeMap) throws SQLException {
+    public int editProductService(HashMap<String,String> attributeMap) throws SQLException, ApplicationErrorException {
         ProductDAO productEditDAO=new ProductDAOImplementation();
-        int id=Integer.parseInt(attributeMap.get("id").trim());
+        String numberRegex="^[0-9]*$";
+        String procodeRegex="^[a-zA-Z0-9]{2,6}$";
+        String nameRegex="^[a-zA-Z]{3,30}$";
+        int id;
+        try {
+             id = Integer.parseInt(attributeMap.get("id").trim());
+        }
+        catch (NumberFormatException e)
+        {
+            return 0;
+        }
+        if(!attributeMap.get("name").matches(nameRegex))
+        {
+            return 0;
+        }
+        if(!attributeMap.get("code").matches(procodeRegex))
+        {
+            return 0;
+        }
+        if(!attributeMap.get("type").matches(nameRegex))
+        {
+            return 0;
+        }
+        if(!attributeMap.get("price").matches(numberRegex))
+        {
+            return 0;
+        }
+
+        boolean status;
         if(attributeMap.get("name") != null)
         {
-            productEditDAO.edit(id,"name",attributeMap.get("name"));
+            status=productEditDAO.edit(id, "name",attributeMap.get("name"));
+            if(!status)
+            {
+                return -1;
+            }
         }
         if(attributeMap.get("code") != null)
         {
@@ -108,12 +139,10 @@ public class ProductServiceImplementation implements ProductService{
         {
             productEditDAO.edit(id,"price",attributeMap.get("price"));
         }
-
+        return 1;
     }
-    public void deleteProductService(String parameter)
-    {
+    public int deleteProductService(String parameter) throws ApplicationErrorException {
         ProductDAO deleteProductDAO=new ProductDAOImplementation();
-        deleteProductDAO.delete(parameter);
-
+        return deleteProductDAO.delete(parameter);
     }
 }

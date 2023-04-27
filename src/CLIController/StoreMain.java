@@ -1,5 +1,6 @@
 package CLIController;
 
+import DAO.ApplicationErrorException;
 import Entity.Product;
 import Service.ProductService;
 import Service.ProductServiceImplementation;
@@ -9,7 +10,7 @@ import java.util.*;
 
 public class StoreMain{
     static Scanner scanner;
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ApplicationErrorException {
         scanner=new Scanner(System.in);
         do{
             System.out.print("> ");
@@ -36,7 +37,7 @@ public class StoreMain{
                     switch(operationString)
                     {
                         case "create":
-                            String nameRegex="^[a-zA-Z]*{3,30}$";
+                            String nameRegex="^[a-zA-Z]{3,30}$";
                             String codeRegex="^[a-zA-Z0-9]{2,6}$";
                             if(arguments.length==1&&arguments[0].equals("product create help"))
                             {
@@ -78,6 +79,16 @@ public class StoreMain{
                                 String unitcode=productAttributes[2];
                                 String type=productAttributes[3];
                                 double price=0;
+                                if(!code.matches(codeRegex))
+                                {
+                                    System.out.println(">> Invalid format for 1st argument \"code\"");
+                                    System.out.println(">> Try \"product create help\" for proper syntax");
+                                }
+                                if(!name.matches(nameRegex))
+                                {
+                                    System.out.println(">> Invalid format for 2nd argument \"name\"");
+                                    System.out.println(">> Try \"product create help\" for proper syntax");
+                                }
                                 try {
                                     price = Double.parseDouble(productAttributes[4]);
                                 }
@@ -429,8 +440,23 @@ public class StoreMain{
                                     {
                                         System.out.println(">> Id must be a number");
                                     }
-                                    productEdit.editProductService(attributeMap);
+                                    int statusCode=productEdit.editProductService(attributeMap);
+                                    if(statusCode==1)
+                                    {
+                                        System.out.println(">> Product Edited Succesfully");
+                                    }
+                                    else if(statusCode==-1)
+                                    {
+                                        System.out.println(">> Product edit failed!!!");
+                                        System.out.println(">>Please check the Id you have entered!!!");
+                                    }
+                                    else if(statusCode==0)
+                                    {
+                                        System.out.println(">>Invalid format of attributes given for edit Command!!!");
+                                        System.out.println(">>Try \"product edit help\" for proper syntax");
+                                    }
                                 }
+
                                 else {
                                     System.out.println(">> Id is a Mandatory argument for every Edit operation");
                                     System.out.println(">> For every Edit operation the first argument must be product's ID");
@@ -498,7 +524,21 @@ public class StoreMain{
                                     }
                                 }
 
-                                productEdit.editProductService(attributeMap);
+                                int statusCode=productEdit.editProductService(attributeMap);
+                                if(statusCode==1)
+                                {
+                                    System.out.println(">> Product Edited Succesfully");
+                                }
+                                else if(statusCode==-1)
+                                {
+                                    System.out.println(">> Product edit failed!!!");
+                                    System.out.println(">>Please check the Id you have entered!!!");
+                                }
+                                else if(statusCode==0)
+                                {
+                                    System.out.println(">>Invalid format of attributes given for edit Command!!!");
+                                    System.out.println(">>Try \"product edit help\" for proper syntax");
+                                }
                             }
                             for(Map.Entry<String,String> entry:listAttributesMap.entrySet())
                             {
@@ -516,7 +556,16 @@ public class StoreMain{
                                    System.out.println(">> Are you sure want to delete the product y/n ? : ");
                                    String prompt=scanner.nextLine();
                                    if(prompt.equals("y")) {
-                                       deleteProduct.deleteProductService(commandlet[2]);
+                                       if(deleteProduct.deleteProductService(commandlet[2])==1)
+                                       {
+                                           System.out.println("Product Deletion Successfull!!!");
+                                       }
+                                       else if(deleteProduct.deleteProductService(commandlet[2])==-1)
+                                       {
+                                           System.out.println(">> Product Deletion Failed!!!");
+                                           System.out.println(">> Please check the Id (or) Code that you have entered!!!");
+                                           System.out.println("Try \"product delete help\" for proper syntax");
+                                       }
                                    }
                                    else if(prompt.equals("n")){
                                        System.out.println(">> Delete operation cancelled");
@@ -549,7 +598,23 @@ public class StoreMain{
                                     System.out.println(">> Are you sure want to delete the product y/n ? : ");
                                     String prompt=scanner.nextLine();
                                     if(prompt.equals("y")) {
-                                        deleteProduct.deleteProductService(commandlet[3]);
+                                        if(deleteProduct.deleteProductService(commandlet[3])==1)
+                                        {
+                                            System.out.println(">> Product Deletion Successfull!!!");
+                                        }
+                                        else if(deleteProduct.deleteProductService(commandlet[3])==-1)
+                                        {
+                                            System.out.println(">> Product Deletion Failed!!!");
+                                            System.out.println(">> Please check the Id (or) Code that you have entered!!!");
+                                            System.out.println("Try \"product delete help\" for proper syntax");
+                                        }
+                                        else if(deleteProduct.deleteProductService(commandlet[3])==0)
+                                        {
+                                            System.out.println(">> Product cannot be deleted!!!");
+                                            System.out.println(">>Selected Product has stock left and should not be deleted!!!");
+                                            System.out.println(">>Please check the selected product to be deleted!!!");
+                                        }
+
                                     }
                                     else if(prompt.equals("n")){
                                         System.out.println(">> Delete operation cancelled");
