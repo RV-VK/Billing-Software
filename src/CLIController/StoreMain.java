@@ -12,6 +12,7 @@ public class StoreMain{
     static Scanner scanner;
     public static void main(String[] args) throws SQLException, ApplicationErrorException {
         scanner=new Scanner(System.in);
+        System.out.println("___________________WELCOME TO THE BILLING SOFTWARE_____________________");
         do{
             System.out.print("> ");
             String command=scanner.nextLine();
