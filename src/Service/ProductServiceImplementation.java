@@ -1,10 +1,6 @@
 package Service;
-
-import DAO.ApplicationErrorException;
-import DAO.ProductDAO;
-import DAO.ProductDAOImplementation;
+import DAO.*;
 import Entity.Product;
-
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,13 +9,17 @@ import java.util.List;
 public class ProductServiceImplementation implements ProductService{
     public int createProductService(Product product) throws SQLException, ApplicationErrorException {
         ProductDAO productcreateDAO=new ProductDAOImplementation();
-        Product productResult=productcreateDAO.create(product);
-        if(productResult!=null)
-        {
-          return 1;
+        UnitDAO unitCheckDAO=new UnitDAOImplementation();
+        if(unitCheckDAO.isAvailable(product.getunitcode())) {
+            Product productResult = productcreateDAO.create(product);
+            if (productResult != null) {
+                return 1;
+            } else {
+                return -1;
+            }
         }
         else{
-            return -1;
+            return 0;
         }
     }
     public int countProductService() throws ApplicationErrorException {

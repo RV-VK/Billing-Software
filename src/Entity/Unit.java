@@ -1,13 +1,23 @@
 package Entity;
 
 public class Unit {
-    String name;
-    String code;
-    String description;
-    String isDividable;
+    private int id;
+    private String name;
+    private String code;
+    private String description;
+    private boolean isDividable;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
 
-    public Unit(String name, String code, String description, String isDividable) {
+
+    public Unit(String name, String code, String description, boolean isDividable) {
         this.name = name;
         this.code = code;
         this.description = description;
@@ -38,11 +48,11 @@ public class Unit {
         this.description = description;
     }
 
-    public String getIsDividable() {
+    public boolean getIsDividable() {
         return isDividable;
     }
 
-    public void setIsDividable(String isDividable) {
+    public void setIsDividable(boolean isDividable) {
         this.isDividable = isDividable;
     }
 }

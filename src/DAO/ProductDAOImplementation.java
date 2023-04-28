@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ProductDAOImplementation implements ProductDAO{
     @Override
-    public Product create(Product product) throws SQLException, ApplicationErrorException {
+    public Product create(Product product) throws ApplicationErrorException, SQLException {
         Connection productCreateConnection = DBHelper.getConnection();
         try {
             productCreateConnection.setAutoCommit(false);
@@ -32,12 +32,13 @@ public class ProductDAOImplementation implements ProductDAO{
                 productCreateResultSet.next();
                 Product createdProduct=new Product(productCreateResultSet.getInt(1),productCreateResultSet.getString(2),productCreateResultSet.getString(3),productCreateResultSet.getString(4),productCreateResultSet.getString(5),productCreateResultSet.getFloat(6),productCreateResultSet.getDouble(7),productCreateResultSet.getDouble(8));
                 productCreateConnection.commit();
+                productCreateConnection.setAutoCommit(true);
                 return createdProduct;
             }
         }
         catch(Exception e){
             productCreateConnection.rollback();
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+                throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
 
     }
@@ -215,6 +216,7 @@ public class ProductDAOImplementation implements ProductDAO{
                 Statement editStatement=editConnection.createStatement();
                 editStatement.executeUpdate(editQuery);
                 editConnection.commit();
+                editConnection.setAutoCommit(true);
                 return true;
             }
             else {
@@ -238,7 +240,10 @@ public class ProductDAOImplementation implements ProductDAO{
             Statement countStatement = getCountConnection.createStatement();
             if(parameter.matches(numberRegex)) {
                 ResultSet stockResultSet=countStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='"+parameter+"'");
-                stockResultSet.next();
+                if(!stockResultSet.next())
+                {
+                    return -1;
+                }
                 float stock=stockResultSet.getFloat(1);
                 if(stock>0)
                 {
@@ -249,14 +254,15 @@ public class ProductDAOImplementation implements ProductDAO{
                     {
                         return 1;
                     }
-                    else {
-                        return -1;
-                    }
+
                 }
                 }
             else if(parameter.matches(procodeRegex)) {
                 ResultSet stockResultSet=countStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='"+parameter+"'");
-                stockResultSet.next();
+                if(!stockResultSet.next())
+                {
+                    return -1;
+                }
                 float stock=stockResultSet.getFloat(1);
                 if(stock>0)
                 {

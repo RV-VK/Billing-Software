@@ -118,9 +118,10 @@ public class StoreMain{
                                 {
                                     System.out.println(">> Product Created Successfully!");
                                 }
-                                else
+                                else if(resultCode==-1)
                                 {
-                                    System.out.println(">> Product Creation failed");
+                                    System.out.println(">> Product Creation failed!!!");
+                                    System.out.println(">> The Product code you have entered already exists!!!");
                                 }
                                 break;
 
@@ -170,9 +171,14 @@ public class StoreMain{
                             {
                                 System.out.println(">> Product Created Successfully!");
                             }
-                            else
+                            else if(resultCode==-1)
                             {
                                 System.out.println(">> Product Creation failed");
+                            }
+                            else if(resultCode==0)
+                            {
+                                System.out.println(">> Product Creation Failed!!!");
+                                System.out.println(">> The Unit you have entered does not exist!!!");
                             }
                             break;
                         case "count":
