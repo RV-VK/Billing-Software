@@ -99,6 +99,25 @@ public class UserDAOImplemetation implements UserDAO{
 
     }
 
+    public List<User> list(String searchText) throws ApplicationErrorException{
+        Connection listConnection=DBHelper.getConnection();
+        List<User> userList=new ArrayList<>();
+        try{
+            Statement listStatement=listConnection.createStatement();
+            String listQuery="SELECT * FROM USERS WHERE ID ILIKE "+searchText+" OR USERTYPE ILIKE '"+searchText+"' OR USERNAME ILIKE '"+searchText+"' OR FIRSTNAME ILIKE '"+searchText+"' OR LASTNAME ILIKE '"+searchText+"' OR PHONENUMBER ILIKE '"+searchText+"'";
+            ResultSet listresultSet=listStatement.executeQuery(listQuery);
+            while (listresultSet.next()){
+                User listedUser=new User(listresultSet.getInt(1),listresultSet.getString(3),listresultSet.getString(2),listresultSet.getString(4),listresultSet.getString(5),listresultSet.getString(6),listresultSet.getLong(7));
+                userList.add(listedUser);
+            }
+            return userList;
+        } catch (SQLException e) {
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+        }
+
+    }
+
+
     @Override
     public List list(int pageLength, int pageNumber) throws ApplicationErrorException {
         Connection listConnection= DBHelper.getConnection();

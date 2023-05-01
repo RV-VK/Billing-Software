@@ -81,6 +81,10 @@ public class ProductServiceImplementation implements ProductService{
                 System.out.println(">> id: "+product.getId()+", code: "+product.getCode()+", name: "+product.getName()+", type: "+product.getType()+", unitcode: "+product.getunitcode()+", quantity: "+product.getAvailableQuantity()+", price: "+product.getPrice()+", costprice: "+product.getCostPrice());
             }
         }
+        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-1&&listattributes.get("Searchtext")!=null)
+        {
+            productList=listProductDAO.list(listattributes.get("Searchtext"));
+        }
 
     }
     public int editProductService(HashMap<String,String> attributeMap) throws SQLException, ApplicationErrorException {

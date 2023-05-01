@@ -10,6 +10,7 @@ public interface UserDAO {
     int count() throws ApplicationErrorException;
     List list() throws ApplicationErrorException;
     List list(int pageLength) throws ApplicationErrorException;
+    List list(String searchText) throws ApplicationErrorException;
     List list(int pageLength,int pageNumber) throws ApplicationErrorException;
     List list(String attribute,String searchText) throws ApplicationErrorException;
     List list(String attribute,String searchText,int pageLength,int offset) throws ApplicationErrorException;

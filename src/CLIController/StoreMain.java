@@ -220,6 +220,9 @@ public class StoreMain{
                                 }
                                else if(commandlet[2].equals("-s"))
                                 {
+                                    String searchText=commandlet[3];
+                                    listAttributesMap.put("Searchtext",searchText);
+                                    listService.listProductService(listAttributesMap);
 
                                 }
                                else

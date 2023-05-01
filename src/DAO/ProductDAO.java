@@ -13,6 +13,7 @@ public interface ProductDAO {
     List list(int pageLength,int pageNumber) throws ApplicationErrorException;
     List list(String attribute,String searchText) throws ApplicationErrorException;
     List list(String attribute,String searchText,int pageLength,int offset ) throws ApplicationErrorException;
+    List list(String searchText) throws ApplicationErrorException;
     boolean edit(int id,String attribute,String value) throws SQLException, ApplicationErrorException;
     int delete(String parameter) throws ApplicationErrorException;
 }
