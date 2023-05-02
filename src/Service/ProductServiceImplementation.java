@@ -9,65 +9,53 @@ import java.util.List;
 public class ProductServiceImplementation implements ProductService{
     public int createProductService(Product product) throws SQLException, ApplicationErrorException {
         ProductDAO productcreateDAO=new ProductDAOImplementation();
-        UnitDAO unitCheckDAO=new UnitDAOImplementation();
-        if(unitCheckDAO.isAvailable(product.getunitcode())) {
             Product productResult = productcreateDAO.create(product);
             if (productResult != null) {
-                return 1;
-            } else {
-                return -1;
+                if(!(productResult.getName()==null))
+                {
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }
             }
-        }
-        else{
-            return 0;
-        }
+            else
+            {
+                return 0;
+            }
     }
     public int countProductService() throws ApplicationErrorException {
         ProductDAO productCountDAO=new ProductDAOImplementation();
         return productCountDAO.count();
     }
-    public void listProductService(HashMap<String,String> listattributes) throws ApplicationErrorException {
+    public List<Product> listProductService(HashMap<String,String> listattributes) throws ApplicationErrorException {
         List<Product> productList;
         ProductDAO listProductDAO=new ProductDAOImplementation();
         if(Collections.frequency(listattributes.values(),null)==listattributes.size())
         {
             productList=listProductDAO.list();
-            for(Product product: productList)
-            {
-                System.out.println(">> id: "+product.getId()+", code: "+product.getCode()+", name: "+product.getName()+", type: "+product.getType()+", unitcode: "+product.getunitcode()+", quantity: "+product.getAvailableQuantity()+", price: "+product.getPrice()+", costprice: "+product.getCostPrice());
-            }
+            return productList;
         }
         else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-1&&listattributes.get("Pagelength")!=null)
         {
             productList=listProductDAO.list(Integer.parseInt(listattributes.get("Pagelength")));
-            for(Product product: productList)
-            {
-                System.out.println(">> id: "+product.getId()+", code: "+product.getCode()+", name: "+product.getName()+", type: "+product.getType()+", unitcode: "+product.getunitcode()+", quantity: "+product.getAvailableQuantity()+", price: "+product.getPrice()+", costprice: "+product.getCostPrice());
-            }
+            return productList;
         }
         else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-2&&listattributes.get("Pagelength")!=null&&listattributes.get("Pagenumber")!=null)
         {
             productList=listProductDAO.list(Integer.parseInt(listattributes.get("Pagelength")),Integer.parseInt(listattributes.get("Pagenumber")));
-            for(Product product: productList)
-            {
-                System.out.println(">> id: "+product.getId()+", code: "+product.getCode()+", name: "+product.getName()+", type: "+product.getType()+", unitcode: "+product.getunitcode()+", quantity: "+product.getAvailableQuantity()+", price: "+product.getPrice()+", costprice: "+product.getCostPrice());
-            }
+            return productList;
         }
         else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-2 && listattributes.get("Attribute")!=null &&listattributes.get("Searchtext")!=null)
         {
             productList=listProductDAO.list(listattributes.get("Attribute"),listattributes.get("Searchtext"));
-            for(Product product: productList)
-            {
-                System.out.println(">> id: "+product.getId()+", code: "+product.getCode()+", name: "+product.getName()+", type: "+product.getType()+", unitcode: "+product.getunitcode()+", quantity: "+product.getAvailableQuantity()+", price: "+product.getPrice()+", costprice: "+product.getCostPrice());
-            }
+            return productList;
         }
         else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-3&&listattributes.get("Pagenumber")==null)
         {
             productList=listProductDAO.list(listattributes.get("Attribute"),listattributes.get("Searchtext"));
-            for(Product product: productList)
-            {
-                System.out.println(">> id: "+product.getId()+", code: "+product.getCode()+", name: "+product.getName()+", type: "+product.getType()+", unitcode: "+product.getunitcode()+", quantity: "+product.getAvailableQuantity()+", price: "+product.getPrice()+", costprice: "+product.getCostPrice());
-            }
+            return productList;
         }
 
         else if(Collections.frequency(listattributes.values(),null)==0)
@@ -76,12 +64,10 @@ public class ProductServiceImplementation implements ProductService{
             int pageNumber=Integer.parseInt(listattributes.get("Pagenumber"));
             int offset=(pageLength*pageNumber)-pageLength;
             productList=listProductDAO.list(listattributes.get("Attribute"),listattributes.get("Searchtext"),pageLength,offset);
-            for(Product product: productList)
-            {
-                System.out.println(">> id: "+product.getId()+", code: "+product.getCode()+", name: "+product.getName()+", type: "+product.getType()+", unitcode: "+product.getunitcode()+", quantity: "+product.getAvailableQuantity()+", price: "+product.getPrice()+", costprice: "+product.getCostPrice());
-            }
+            return productList;
         }
 
+        return null;
     }
     public int editProductService(HashMap<String,String> attributeMap) throws SQLException, ApplicationErrorException {
         ProductDAO productEditDAO=new ProductDAOImplementation();

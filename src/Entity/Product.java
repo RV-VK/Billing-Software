@@ -14,6 +14,7 @@ public class Product {
     private double price;
     private double costPrice;
 
+    public Product(){}
     public Product(int id,String code, String name, String unitcode, String type, float availableQuantity, double price, double costPrice) {
         this.id=id;
         this.code = code;

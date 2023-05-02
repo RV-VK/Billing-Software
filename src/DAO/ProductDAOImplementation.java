@@ -18,7 +18,7 @@ public class ProductDAOImplementation implements ProductDAO{
             ResultSet codeResultSet=codeRepeatCheckStatement.executeQuery(codeQuery);
             if(codeResultSet.next())
             {
-                return null;
+                return new Product();
             }
             else {
                 PreparedStatement productCreateStatement=productCreateConnection.prepareStatement("INSERT INTO PRODUCT(CODE,NAME,unitcode,TYPE,PRICE,STOCK) VALUES (?,?,?,?,?,?) RETURNING *");
@@ -36,9 +36,15 @@ public class ProductDAOImplementation implements ProductDAO{
                 return createdProduct;
             }
         }
-        catch(Exception e){
-            productCreateConnection.rollback();
+        catch(SQLException e){
+            if(e.getSQLState().equals("23503"))
+            {
+                return null;
+            }
+            else {
+                productCreateConnection.rollback();
                 throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+            }
         }
 
     }
@@ -87,7 +93,7 @@ public class ProductDAOImplementation implements ProductDAO{
         List<Product> productList=new ArrayList<>();
         try{
             Statement listStatement=listConnection.createStatement();
-            ResultSet listresultSet=listStatement.executeQuery("SELECT * FROM PRODUCT ORDER BY ID");
+            ResultSet listresultSet=listStatement.executeQuery("SELECT * FROM PRODUCT ORDER BY ID LIMIT "+pageLength);
             while(listresultSet.next()) {
                 Product listedProduct=new Product(listresultSet.getInt(1),listresultSet.getString(2),listresultSet.getString(3),listresultSet.getString(4),listresultSet.getString(5),listresultSet.getFloat(6),listresultSet.getDouble(7),listresultSet.getDouble(8));
                 productList.add(listedProduct);
