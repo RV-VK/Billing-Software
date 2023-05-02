@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ProductDAOImplementation implements ProductDAO{
     @Override
-    public Product create(Product product) throws ApplicationErrorException, SQLException {
+    public Product create(Product product) throws ApplicationErrorException, SQLException, UniqueNameException {
         Connection productCreateConnection = DBHelper.getConnection();
         try {
             productCreateConnection.setAutoCommit(false);
@@ -40,11 +40,17 @@ public class ProductDAOImplementation implements ProductDAO{
         catch(SQLException e){
             if(e.getSQLState().equals("23503"))
             {
+                productCreateConnection.rollback();
                 return null;
+            }
+            else if(e.getSQLState().equals("23505"))
+            {
+                productCreateConnection.rollback();
+                throw new UniqueNameException(">>Name must be unique!!!\n>>The Name you have entered already exists!!!");
             }
             else {
                 productCreateConnection.rollback();
-                throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+                throw new ApplicationErrorException(">>Application has went into an Error!!!\n>>Please Try again");
             }
         }
 
@@ -111,24 +117,52 @@ public class ProductDAOImplementation implements ProductDAO{
 
     public List<Product> list(String searchText) throws ApplicationErrorException{
         Connection listConnection=DBHelper.getConnection();
+        String codeRegex="^[a-zA-Z\\s]{0,50}$";
+        String numberRegex="^[0-9]*$";
+
         List<Product> productList=new ArrayList<>();
         try{
-            Statement listStatement=listConnection.createStatement();
-            String listQuery="SELECT * FROM PRODUCT WHERE NAME ILIKE "+searchText+" OR CODE ILIKE '"+searchText+"' OR ID ILIKE '"+searchText+"' OR UNITCODE ILIKE '"+searchText+"' OR TYPE ILIKE '"+searchText+"' OR AVAILABLEQUANTITY ILIKE '"+searchText+"' OR PRICE ILIKE '"+searchText+"' OR COSTPRICE ILIKE '"+searchText;
-            ResultSet listresultSet=listStatement.executeQuery(listQuery);
-            while (listresultSet.next()){
-                Product listedProduct=new Product(listresultSet.getInt(1),listresultSet.getString(2),listresultSet.getString(3),listresultSet.getString(4),listresultSet.getString(5),listresultSet.getFloat(6),listresultSet.getDouble(7),listresultSet.getDouble(8));
-                productList.add(listedProduct);
+            if(searchText.matches(codeRegex)) {
+                Statement listStatement = listConnection.createStatement();
+                String listQuery = "SELECT * FROM PRODUCT WHERE NAME ILIKE '" + searchText + "' OR CODE ILIKE '" + searchText  + "' OR UNITCODE ILIKE '" + searchText + "' OR TYPE ILIKE '" + searchText + "'";
+                ResultSet listresultSet = listStatement.executeQuery(listQuery);
+                while (listresultSet.next()) {
+                    Product listedProduct = new Product(listresultSet.getInt(1), listresultSet.getString(2), listresultSet.getString(3), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getFloat(6), listresultSet.getDouble(7), listresultSet.getDouble(8));
+                    productList.add(listedProduct);
+                }
+                return productList;
             }
-            return productList;
+            else if(searchText.matches(numberRegex)){
+                Statement listStatement=listConnection.createStatement();
+                String listQuery="SELECT * FROM PRODUCT WHERE CAST(ID AS TEXT) ILIKE '" + searchText +"' OR CAST(PRICE AS TEXT) ILIKE '"+searchText+"' OR CAST(STOCK AS TEXT) ILIKE '"+searchText+"' OR CAST(COSTPRICE AS TEXT) ILIKE '"+searchText+"'";
+                ResultSet listresultSet=listStatement.executeQuery(listQuery);
+                while (listresultSet.next()){
+                    Product listedProduct = new Product(listresultSet.getInt(1), listresultSet.getString(2), listresultSet.getString(3), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getFloat(6), listresultSet.getDouble(7), listresultSet.getDouble(8));
+                    productList.add(listedProduct);
+                }
+                return  productList;
+            }
+            else{
+                Statement listStatement = listConnection.createStatement();
+                String listQuery = "SELECT * FROM PRODUCT WHERE CODE ILIKE '" + searchText+"'";
+                ResultSet listresultSet = listStatement.executeQuery(listQuery);
+                while (listresultSet.next()) {
+                    Product listedProduct = new Product(listresultSet.getInt(1), listresultSet.getString(2), listresultSet.getString(3), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getFloat(6), listresultSet.getDouble(7), listresultSet.getDouble(8));
+                    productList.add(listedProduct);
+                }
+                return productList;
+
+            }
+
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
 
     }
 
     @Override
-    public List<Product> list(int pageLength, int pageNumber) throws ApplicationErrorException {
+    public List<Product> list(int pageLength, int pageNumber) throws ApplicationErrorException, PageCountOutOfBoundsException {
         Connection listConnection= DBHelper.getConnection();
         List<Product> productList=new ArrayList<>();
         int count=0;
@@ -145,9 +179,7 @@ public class ProductDAOImplementation implements ProductDAO{
         }
         if(count<=((pageLength*pageNumber)-pageLength))
         {
-            System.out.println(">> Requested page doesnt exist !!!");
-            System.out.println(">> Existing page count with given pagination "+(count/pageLength)+1);
-            return null;
+            throw new PageCountOutOfBoundsException(">> Requested page doesnt exist !!!\n>> Existing page count with given pagination "+(count/pageLength)+1);
         }
         else
         {
@@ -190,7 +222,6 @@ public class ProductDAOImplementation implements ProductDAO{
                 return productList;
             }
             else {
-                System.out.println(">> SearchText not Found ! Please try with an existing attribute value");
                 return null;
             }
         }
@@ -222,13 +253,17 @@ public class ProductDAOImplementation implements ProductDAO{
                 System.out.println(">> SearchText not Found ! Please try with an existing attribute value");
                 return null;
             }
-        } catch (Exception e) {
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+        } catch (SQLException e) {
+
+
+                throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+
+
         }
     }
 
     @Override
-    public boolean edit(int id, String attribute, String value) throws SQLException, ApplicationErrorException {
+    public boolean edit(int id, String attribute, String value) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueCodeException, UnitCodeViolationException {
         Connection editConnection= DBHelper.getConnection();
         try{
             editConnection.setAutoCommit(false);
@@ -250,11 +285,35 @@ public class ProductDAOImplementation implements ProductDAO{
                 return false;
             }
         }
-        catch(Exception e)
+        catch(SQLException e)
         {
-            editConnection.rollback();
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-        }
+            if(e.getSQLState().equals("23505"))
+            {
+                editConnection.rollback();
+                if(e.getMessage().contains("product_code"))
+                {
+                    throw new UniqueCodeException(">>Code must be unique!!!\n>>The code you have entered already exists!!!");
+                }
+                else if(e.getMessage().contains("product_name"))
+                {
+                    throw new UniqueNameException("Name must be unique!!!\n>>The Name you have entered already exists!!!");
+                }
+                else{
+                    throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+                }
+            }
+            else if(e.getSQLState().equals("23503"))
+            {
+                editConnection.rollback();
+                throw new UnitCodeViolationException(">>The unitcode you have entered doesnt exist!!!");
+            }
+            else {
+                editConnection.rollback();
+                e.printStackTrace();
+                throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+            }
+            }
+
     }
     @Override
     public int delete(String parameter) throws ApplicationErrorException {

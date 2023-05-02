@@ -1,16 +1,13 @@
 package CLIController;
-
 import DAO.ApplicationErrorException;
+import DAO.PageCountOutOfBoundsException;
 import Entity.Product;
 import Service.ProductService;
 import Service.ProductServiceImplementation;
-
-import java.sql.SQLException;
 import java.util.*;
-
 public class StoreMain{
     static Scanner scanner;
-    public static void main(String[] args) throws SQLException, ApplicationErrorException {
+    public static void main(String[] args) throws ApplicationErrorException, PageCountOutOfBoundsException {
         scanner=new Scanner(System.in);
         System.out.println("___________________WELCOME TO THE BILLING SOFTWARE_____________________");
         do{
@@ -38,7 +35,7 @@ public class StoreMain{
                     switch(operationString)
                     {
                         case "create":
-                            String nameRegex="^[a-zA-Z]{3,30}$";
+                            String nameRegex="^[a-zA-Z\\s]{3,30}$";
                             String codeRegex="^[a-zA-Z0-9]{2,6}$";
                             if(arguments.length==1&&arguments[0].equals("product create help"))
                             {
@@ -75,10 +72,10 @@ public class StoreMain{
                                     System.out.println(">>Try \"product create help\" for proper syntax");
                                     break;
                                 }
-                                String code=productAttributes[0];
-                                String name=productAttributes[1];
-                                String unitcode=productAttributes[2];
-                                String type=productAttributes[3];
+                                String code=productAttributes[0].trim();
+                                String name=productAttributes[1].trim();
+                                String unitcode=productAttributes[2].trim();
+                                String type=productAttributes[3].trim();
                                 double price=0;
                                 if(!code.matches(codeRegex))
                                 {
@@ -91,7 +88,7 @@ public class StoreMain{
                                     System.out.println(">> Try \"product create help\" for proper syntax");
                                 }
                                 try {
-                                    price = Double.parseDouble(productAttributes[4]);
+                                    price = Double.parseDouble(productAttributes[4].trim());
                                 }
                                 catch(Exception e)
                                 {
@@ -103,7 +100,7 @@ public class StoreMain{
                                 if(productAttributes.length==6)
                                 {
                                     try {
-                                        stock = Float.parseFloat(arguments[5]);
+                                        stock = Float.parseFloat(arguments[5].trim());
                                     }
                                     catch(Exception e){
                                         System.out.println(">>Invalid format for 5th argument \"stock\"");
@@ -113,7 +110,15 @@ public class StoreMain{
                                 }
                                 Product product=new Product(code,name,unitcode,type,stock,price);
                                 ProductService productService=new ProductServiceImplementation();
-                                int resultCode=productService.createProductService(product);
+                                int resultCode=1;
+                                try{
+                                     resultCode=productService.createProductService(product);
+                                }
+                                catch (Exception e)
+                                {
+                                    System.out.println(e.getMessage());
+                                    break;
+                                }
                                 if(resultCode==1)
                                 {
                                     System.out.println(">> Product Created Successfully!");
@@ -122,6 +127,11 @@ public class StoreMain{
                                 {
                                     System.out.println(">> Product Creation failed!!!");
                                     System.out.println(">> The Product code you have entered already exists!!!");
+                                }
+                                else if(resultCode==0)
+                                {
+                                    System.out.println(">> Product Creation failed!!!");
+                                    System.out.println(">> The unit code you have entered does not exists!!!");
                                 }
                                 break;
 
@@ -138,13 +148,13 @@ public class StoreMain{
                                 System.out.println(">>Too many Arguments for command "+commandString+" "+operationString);
                                 break;
                             }
-                            String code=commandlet[2];
-                            String name=arguments[1];
-                            String unitcode=arguments[2];
-                            String type=arguments[3];
+                            String code=commandlet[2].trim();
+                            String name=arguments[1].trim();
+                            String unitcode=arguments[2].trim();
+                            String type=arguments[3].trim();
                             double price=0;
                             try {
-                                 price = Double.parseDouble(arguments[4]);
+                                 price = Double.parseDouble(arguments[4].trim());
                             }
                             catch(Exception e)
                             {
@@ -156,7 +166,7 @@ public class StoreMain{
                             if(arguments.length==6)
                             {
                                 try {
-                                    stock = Float.parseFloat(arguments[5]);
+                                    stock = Float.parseFloat(arguments[5].trim());
                                 }
                                 catch(Exception e){
                                     System.out.println(">>Invalid format for 5th argument \"stock\"");
@@ -166,7 +176,15 @@ public class StoreMain{
                             }
                             Product product=new Product(code,name,unitcode,type,stock,price);
                             ProductService productService=new ProductServiceImplementation();
-                            int resultCode=productService.createProductService(product);
+                            int resultCode=1;
+                            try {
+                                resultCode = productService.createProductService(product);
+                            }
+                            catch(Exception e)
+                            {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
                             if(resultCode==1)
                             {
                                 System.out.println(">> Product Created Successfully!");
@@ -174,6 +192,7 @@ public class StoreMain{
                             else if(resultCode==-1)
                             {
                                 System.out.println(">> Product Creation failed");
+                                System.out.println(">> The code you have entered Already exists!!!");
                             }
                             else if(resultCode==0)
                             {
@@ -188,6 +207,7 @@ public class StoreMain{
                             break;
                         case "list":
                             ProductService listService=new ProductServiceImplementation();
+                            List<Product> resultList;
                             if(commandlet.length==3&&commandlet[2].equals("help"))
                             {
                                 System.out.println(">> List product with the following options\n" +
@@ -200,7 +220,11 @@ public class StoreMain{
                             }
                             else if(commandlet.length==2)
                             {
-                                 listService.listProductService(listAttributesMap);
+                                 resultList=listService.listProductService(listAttributesMap);
+                                 for(Product resultProduct:resultList)
+                                 {
+                                     System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                                 }
                                  break;
                             }
                             else if(commandlet.length==4)
@@ -216,11 +240,25 @@ public class StoreMain{
                                     System.out.println(">> Try \"product list help\" for proper syntax");
                                 }
                                     listAttributesMap.put("Pagelength", String.valueOf(pageLength));
-                                    listService.listProductService(listAttributesMap);
+                                    resultList=listService.listProductService(listAttributesMap);
+                                    for(Product resultProduct:resultList)
+                                    {
+                                        System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                                    }
                                 }
                                else if(commandlet[2].equals("-s"))
                                 {
-
+                                    String searchText=commandlet[3].trim();
+                                    listAttributesMap.put("Searchtext",searchText);
+                                    resultList=listService.listProductService(listAttributesMap);
+                                    if(resultList.size()==0)
+                                    {
+                                        System.out.println(">> Given SearchText does not exist!!!");
+                                    }
+                                    for(Product resultProduct:resultList)
+                                    {
+                                        System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                                    }
                                 }
                                else
                                 {
@@ -245,7 +283,18 @@ public class StoreMain{
                                     }
                                     listAttributesMap.put("Pagelength", String.valueOf(pageLength));
                                     listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
-                                    listService.listProductService(listAttributesMap);
+                                    try{
+                                        resultList=listService.listProductService(listAttributesMap);
+                                    }
+                                    catch(Exception e)
+                                    {
+                                        System.out.println(e.getMessage());
+                                        break;
+                                    }
+                                    for(Product resultProduct:resultList)
+                                    {
+                                        System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                                    }
                                 }
                                 else if(commandlet[2].equals("-s"))
                                 {
@@ -257,7 +306,16 @@ public class StoreMain{
                                     {
                                            listAttributesMap.put("Attribute",attribute);
                                            listAttributesMap.put("Searchtext",searchText);
-                                           listService.listProductService(listAttributesMap);
+                                           resultList=listService.listProductService(listAttributesMap);
+                                           if(resultList==null)
+                                           {
+                                               System.out.println(">>Given SearchText does not exist!!!");
+                                               break;
+                                           }
+                                        for(Product resultProduct:resultList)
+                                        {
+                                            System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                                        }
                                     }
                                     else
                                     {
@@ -297,7 +355,16 @@ public class StoreMain{
                                             break;
                                         }
                                         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
-                                        listService.listProductService(attributeMap);
+                                        resultList=listService.listProductService(attributeMap);
+                                        if(resultList==null)
+                                        {
+                                            System.out.println(">>Given SearchText does not exists");
+                                            break;
+                                        }
+                                        for(Product resultProduct:resultList)
+                                        {
+                                            System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                                        }
                                     }
                                     else
                                     {
@@ -346,7 +413,16 @@ public class StoreMain{
                                             }
                                             listAttributesMap.put("Pagelength", String.valueOf(pageLength));
                                             listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
-                                            listService.listProductService(listAttributesMap);
+                                            resultList= listService.listProductService(listAttributesMap);
+                                            if(resultList==null)
+                                            {
+                                                System.out.println(">>Given SearchText does not exist!!!");
+                                                break;
+                                            }
+                                            for(Product resultProduct:resultList)
+                                            {
+                                                System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                                            }
                                         }
                                         else
                                         {
@@ -407,26 +483,26 @@ public class StoreMain{
                                     for (String attribute : productAttributes) {
                                         if (attribute.contains("id")) {
                                             String[] keyValues = attribute.split("\\:");
-                                            attributeMap.put("id", keyValues[1]);
+                                            attributeMap.put("id", keyValues[1].trim());
                                         }
                                         else if (attribute.contains("name")) {
                                             String[] keyValues = attribute.split("\\:");
-                                            attributeMap.put("name", keyValues[1]);
+                                            attributeMap.put("name", keyValues[1].trim());
                                         }
                                         else if (attribute.contains("unitcode")) {
                                             String[] keyValues = attribute.split("\\:");
-                                            attributeMap.put("unitcode", keyValues[1]);
+                                            attributeMap.put("unitcode", keyValues[1].trim());
                                         }
                                         else if (attribute.contains("code")&&!attribute.contains("unitcode")) {
                                                 String[] keyValues = attribute.split("\\:");
-                                                attributeMap.put("code", keyValues[1]);
+                                                attributeMap.put("code", keyValues[1].trim());
                                         }
                                         else if (attribute.contains("type")) {
                                             String[] keyValues = attribute.split("\\:");
-                                            attributeMap.put("type", keyValues[1]);
+                                            attributeMap.put("type", keyValues[1].trim());
                                         } else if (attribute.contains(("price"))) {
                                             String[] keyValues = attribute.split("\\:");
-                                            attributeMap.put("price", keyValues[1]);
+                                            attributeMap.put("price", keyValues[1].trim());
                                         } else {
                                             System.out.println(">> Invalid attribute given!!! : "+attribute);
                                             System.out.println(">> Try \" product edit help\" for proper syntax");
@@ -447,7 +523,13 @@ public class StoreMain{
                                     {
                                         System.out.println(">> Id must be a number");
                                     }
-                                    int statusCode=productEdit.editProductService(attributeMap);
+                                    int statusCode= 0;
+                                    try {
+                                        statusCode = productEdit.editProductService(attributeMap);
+                                    } catch (Exception e) {
+                                        System.out.println(e.getMessage());
+                                        break;
+                                    }
                                     if(statusCode==1)
                                     {
                                         System.out.println(">> Product Edited Succesfully");
@@ -503,27 +585,27 @@ public class StoreMain{
                                     if(arguments[index].contains("name"))
                                     {
                                         String[] keyValues =arguments[index].split("\\:");
-                                        attributeMap.put("name",keyValues[1]);
+                                        attributeMap.put("name",keyValues[1].trim());
                                     }
                                     else if(arguments[index].contains("code")&&!arguments[index].contains("unitcode"))
                                     {
                                         String[] keyValues =arguments[index].split("\\:");
-                                        attributeMap.put("code",keyValues[1]);
+                                        attributeMap.put("code",keyValues[1].trim());
                                     }
                                     else if(arguments[index].contains("unitcode"))
                                     {
                                         String[] keyValues =arguments[index].split("\\:");
-                                        attributeMap.put("unitcode",keyValues[1]);
+                                        attributeMap.put("unitcode",keyValues[1].trim());
                                     }
                                     else if(arguments[index].contains("type"))
                                     {
                                         String[] keyValues =arguments[index].split("\\:");
-                                        attributeMap.put("type",keyValues[1]);
+                                        attributeMap.put("type",keyValues[1].trim());
                                     }
                                     else if(arguments[index].contains("price"))
                                     {
                                         String[] keyValues =arguments[index].split("\\:");
-                                        attributeMap.put("price",keyValues[1]);
+                                        attributeMap.put("price",keyValues[1].trim());
                                     }
                                     else {
                                         System.out.println(">> Invalid attribute given!!! : "+arguments[index]);
@@ -531,7 +613,13 @@ public class StoreMain{
                                     }
                                 }
 
-                                int statusCode=productEdit.editProductService(attributeMap);
+                                int statusCode= 0;
+                                try {
+                                    statusCode = productEdit.editProductService(attributeMap);
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                    break;
+                                }
                                 if(statusCode==1)
                                 {
                                     System.out.println(">> Product Edited Succesfully");
@@ -659,7 +747,5 @@ public class StoreMain{
                     System.out.println("Invalid Command! Not Found!");
             }
         }while(true);
-
-
     }
 }

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ProductServiceImplementation implements ProductService{
-    public int createProductService(Product product) throws SQLException, ApplicationErrorException {
+    public int createProductService(Product product) throws SQLException, ApplicationErrorException, UniqueNameException {
         ProductDAO productcreateDAO=new ProductDAOImplementation();
             Product productResult = productcreateDAO.create(product);
             if (productResult != null) {
@@ -29,7 +29,7 @@ public class ProductServiceImplementation implements ProductService{
         ProductDAO productCountDAO=new ProductDAOImplementation();
         return productCountDAO.count();
     }
-    public List<Product> listProductService(HashMap<String,String> listattributes) throws ApplicationErrorException {
+    public List<Product> listProductService(HashMap<String,String> listattributes) throws ApplicationErrorException, PageCountOutOfBoundsException {
         List<Product> productList;
         ProductDAO listProductDAO=new ProductDAOImplementation();
         if(Collections.frequency(listattributes.values(),null)==listattributes.size())
@@ -69,11 +69,12 @@ public class ProductServiceImplementation implements ProductService{
         else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-1&&listattributes.get("Searchtext")!=null)
         {
             productList=listProductDAO.list(listattributes.get("Searchtext"));
+            return productList;
         }
 
         return null;
     }
-    public int editProductService(HashMap<String,String> attributeMap) throws SQLException, ApplicationErrorException {
+    public int editProductService(HashMap<String,String> attributeMap) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueCodeException, UnitCodeViolationException {
         ProductDAO productEditDAO=new ProductDAOImplementation();
         String numberRegex="^[0-9]*$";
         String procodeRegex="^[a-zA-Z0-9]{2,6}$";
@@ -86,23 +87,22 @@ public class ProductServiceImplementation implements ProductService{
         {
             return 0;
         }
-        if(!attributeMap.get("name").matches(nameRegex))
+        if(attributeMap.get("name")!=null&&!attributeMap.get("name").matches(nameRegex))
         {
             return 0;
         }
-        if(!attributeMap.get("code").matches(procodeRegex))
+        if(attributeMap.get("code")!=null&&!attributeMap.get("code").matches(procodeRegex))
         {
             return 0;
         }
-        if(!attributeMap.get("type").matches(nameRegex))
+        if(attributeMap.get("type")!=null&&!attributeMap.get("type").matches(nameRegex))
         {
             return 0;
         }
-        if(!attributeMap.get("price").matches(numberRegex))
+        if(attributeMap.get("price")!=null&&!attributeMap.get("price").matches(numberRegex))
         {
             return 0;
         }
-
         boolean status;
         if(attributeMap.get("name") != null)
         {
