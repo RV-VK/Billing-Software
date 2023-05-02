@@ -2,6 +2,7 @@ package DAO;
 
 import DBConnection.DBHelper;
 import Entity.Product;
+import org.checkerframework.checker.units.qual.A;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -105,6 +106,24 @@ public class ProductDAOImplementation implements ProductDAO{
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
 
+
+    }
+
+    public List<Product> list(String searchText) throws ApplicationErrorException{
+        Connection listConnection=DBHelper.getConnection();
+        List<Product> productList=new ArrayList<>();
+        try{
+            Statement listStatement=listConnection.createStatement();
+            String listQuery="SELECT * FROM PRODUCT WHERE NAME ILIKE "+searchText+" OR CODE ILIKE '"+searchText+"' OR ID ILIKE '"+searchText+"' OR UNITCODE ILIKE '"+searchText+"' OR TYPE ILIKE '"+searchText+"' OR AVAILABLEQUANTITY ILIKE '"+searchText+"' OR PRICE ILIKE '"+searchText+"' OR COSTPRICE ILIKE '"+searchText;
+            ResultSet listresultSet=listStatement.executeQuery(listQuery);
+            while (listresultSet.next()){
+                Product listedProduct=new Product(listresultSet.getInt(1),listresultSet.getString(2),listresultSet.getString(3),listresultSet.getString(4),listresultSet.getString(5),listresultSet.getFloat(6),listresultSet.getDouble(7),listresultSet.getDouble(8));
+                productList.add(listedProduct);
+            }
+            return productList;
+        } catch (SQLException e) {
+            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+        }
 
     }
 

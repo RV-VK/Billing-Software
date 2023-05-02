@@ -66,6 +66,10 @@ public class ProductServiceImplementation implements ProductService{
             productList=listProductDAO.list(listattributes.get("Attribute"),listattributes.get("Searchtext"),pageLength,offset);
             return productList;
         }
+        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-1&&listattributes.get("Searchtext")!=null)
+        {
+            productList=listProductDAO.list(listattributes.get("Searchtext"));
+        }
 
         return null;
     }
