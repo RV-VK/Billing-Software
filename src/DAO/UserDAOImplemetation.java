@@ -59,59 +59,6 @@ public class UserDAOImplemetation implements UserDAO{
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
     }
-    @Override
-    public List list(int pageLength) throws ApplicationErrorException {
-        Connection listConnection= DBHelper.getConnection();
-        List<User> userList=new ArrayList<>();
-        try{
-            Statement listStatement=listConnection.createStatement();
-            ResultSet listresultSet=listStatement.executeQuery("SELECT * FROM USERS ORDER BY ID");
-            while(listresultSet.next()) {
-                User listedUser=new User(listresultSet.getInt(1),listresultSet.getString(3),listresultSet.getString(2),listresultSet.getString(4),listresultSet.getString(5),listresultSet.getString(6),listresultSet.getLong(7));
-                userList.add(listedUser);
-            }
-            return userList;
-        }
-        catch(Exception e)
-        {
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-        }
-
-    }
-
-    public List<User> list(String searchText) throws ApplicationErrorException{
-        Connection listConnection=DBHelper.getConnection();
-        String nameRegex="^[a-zA-Z\\s]{0,50}$";
-        String numberRegex="^[0-9]*$";
-        List<User> userList=new ArrayList<>();
-        try{
-            if(searchText.matches(nameRegex)) {
-                Statement listStatement = listConnection.createStatement();
-                String listQuery = "SELECT * FROM USERS WHERE USERTYPE ILIKE '" +searchText + "' OR USERNAME ILIKE '" + searchText + "' OR FIRSTNAME ILIKE '" + searchText + "' OR LASTNAME ILIKE '" + searchText + "'";
-                ResultSet listresultSet = listStatement.executeQuery(listQuery);
-                while (listresultSet.next()) {
-                    User listedUser = new User(listresultSet.getInt(1), listresultSet.getString(3), listresultSet.getString(2), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getString(6), listresultSet.getLong(7));
-                    userList.add(listedUser);
-                }
-                return userList;
-            }
-            else
-            {
-                Statement listStatement=listConnection.createStatement();
-                String listQuery="SELECT * FROM USERS WHERE CAST(ID AS TEXT) ILIKE '"+searchText+"' OR CAST(PHONENUMBER AS TEXT) ILIKE '"+searchText+"'";
-                ResultSet listresultSet=listStatement.executeQuery(listQuery);
-                while (listresultSet.next()) {
-                    User listedUser = new User(listresultSet.getInt(1), listresultSet.getString(3), listresultSet.getString(2), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getString(6), listresultSet.getLong(7));
-                    userList.add(listedUser);
-                }
-                return userList;
-
-            }
-        } catch (SQLException e) {
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-        }
-    }
-    @Override
     public List list(int pageLength, int pageNumber) throws ApplicationErrorException, PageCountOutOfBoundsException {
         Connection listConnection= DBHelper.getConnection();
         List<User> userList=new ArrayList<>();
@@ -156,36 +103,39 @@ public class UserDAOImplemetation implements UserDAO{
 
 
     }
-
     @Override
-    public List list(String attribute, String searchText) throws ApplicationErrorException {
-        Connection listConnection= DBHelper.getConnection();
+    public List<User> list(String searchText) throws ApplicationErrorException{
+        Connection listConnection=DBHelper.getConnection();
+        String nameRegex="^[a-zA-Z\\s]{0,50}$";
+        String numberRegex="^[0-9]*$";
         List<User> userList=new ArrayList<>();
         try{
-            Statement listStatement=listConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-            String listQuery="SELECT * FROM USERS WHERE "+attribute+" = '"+searchText+"'"+" ORDER BY ID";
-            ResultSet listResultSet=listStatement.executeQuery(listQuery);
-            if(listResultSet.next()) {
-                listResultSet.beforeFirst();
-                while (listResultSet.next()) {
-                    User listedUser=new User(listResultSet.getInt(1),listResultSet.getString(3),listResultSet.getString(2),listResultSet.getString(4),listResultSet.getString(5),listResultSet.getString(6),listResultSet.getLong(7));
+            if(searchText.matches(nameRegex)) {
+                Statement listStatement = listConnection.createStatement();
+                String listQuery = "SELECT * FROM USERS WHERE USERTYPE ILIKE '" +searchText + "' OR USERNAME ILIKE '" + searchText + "' OR FIRSTNAME ILIKE '" + searchText + "' OR LASTNAME ILIKE '" + searchText + "'";
+                ResultSet listresultSet = listStatement.executeQuery(listQuery);
+                while (listresultSet.next()) {
+                    User listedUser = new User(listresultSet.getInt(1), listresultSet.getString(3), listresultSet.getString(2), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getString(6), listresultSet.getLong(7));
                     userList.add(listedUser);
                 }
                 return userList;
             }
-            else {
-                System.out.println(">> SearchText not Found ! Please try with an existing attribute value");
-                return null;
+            else
+            {
+                Statement listStatement=listConnection.createStatement();
+                String listQuery="SELECT * FROM USERS WHERE CAST(ID AS TEXT) ILIKE '"+searchText+"' OR CAST(PHONENUMBER AS TEXT) ILIKE '"+searchText+"'";
+                ResultSet listresultSet=listStatement.executeQuery(listQuery);
+                while (listresultSet.next()) {
+                    User listedUser = new User(listresultSet.getInt(1), listresultSet.getString(3), listresultSet.getString(2), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getString(6), listresultSet.getLong(7));
+                    userList.add(listedUser);
+                }
+                return userList;
+
             }
-        }
-        catch(Exception e)
-        {
+        } catch (SQLException e) {
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-
         }
-
     }
-
     @Override
     public List list(String attribute, String searchText, int pageLength, int offset) throws ApplicationErrorException {
         Connection listConnection= DBHelper.getConnection();
@@ -210,9 +160,7 @@ public class UserDAOImplemetation implements UserDAO{
         } catch (Exception e) {
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
-
     }
-
     @Override
     public boolean edit(int id, String attribute, String value) throws SQLException, ApplicationErrorException, UniqueConstraintException {
         Connection editConnection= DBHelper.getConnection();
@@ -243,9 +191,7 @@ public class UserDAOImplemetation implements UserDAO{
             editConnection.rollback();
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
-
     }
-
     @Override
     public int delete(String username) throws ApplicationErrorException {
         Connection deleteConnection=DBHelper.getConnection();

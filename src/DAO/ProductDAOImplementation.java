@@ -54,7 +54,6 @@ public class ProductDAOImplementation implements ProductDAO{
         }
 
     }
-
     @Override
     public int count() throws ApplicationErrorException {
         Connection getCountConnection= DBHelper.getConnection();
@@ -70,27 +69,44 @@ public class ProductDAOImplementation implements ProductDAO{
         catch(Exception e) {
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
-
     }
-
-    @Override
-    public List<Product> list(int pageLength) throws ApplicationErrorException {
+    public List<Product> list(int pageLength, int pageNumber) throws ApplicationErrorException, PageCountOutOfBoundsException {
         Connection listConnection= DBHelper.getConnection();
         List<Product> productList=new ArrayList<>();
-        try{
-            Statement listStatement=listConnection.createStatement();
-            ResultSet listresultSet=listStatement.executeQuery("SELECT * FROM PRODUCT ORDER BY ID LIMIT "+pageLength);
-            while(listresultSet.next()) {
-                Product listedProduct=new Product(listresultSet.getInt(1),listresultSet.getString(2),listresultSet.getString(3),listresultSet.getString(4),listresultSet.getString(5),listresultSet.getFloat(6),listresultSet.getDouble(7),listresultSet.getDouble(8));
-                productList.add(listedProduct);
+        int count=0;
+        try {
+            Statement countStatement = listConnection.createStatement();
+            ResultSet countResultSet=countStatement.executeQuery("SELECT COUNT(ID) FROM PRODUCT");
+            while(countResultSet.next()) {
+                count = countResultSet.getInt(1);
             }
-            return productList;
         }
-        catch(Exception e)
-        {
+        catch(Exception e) {
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
+        if(count<=((pageLength*pageNumber)-pageLength))
+        {
+            throw new PageCountOutOfBoundsException(">> Requested page doesnt exist !!!\n>> Existing page count with given pagination "+((count/pageLength)+1));
+        }
+        else
+        {
+            try {
+                int begin=(pageLength*pageNumber)-pageLength;
+                PreparedStatement listStatement = listConnection.prepareStatement("SELECT * FROM PRODUCT ORDER BY ID LIMIT "+pageLength+" OFFSET "+begin);
+                ResultSet listResultSet=listStatement.executeQuery();
+                while(listResultSet.next())
+                {
+                    Product listedProduct=new Product(listResultSet.getInt(1),listResultSet.getString(2),listResultSet.getString(3),listResultSet.getString(4),listResultSet.getString(5),listResultSet.getFloat(6),listResultSet.getDouble(7),listResultSet.getDouble(8));
+                    productList.add(listedProduct);
+                }
+                return productList;
+            }
 
+            catch(Exception e) {
+                e.printStackTrace();
+                throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+            }
+        }
 
     }
     public List<Product> list(String searchText) throws ApplicationErrorException{
@@ -129,86 +145,11 @@ public class ProductDAOImplementation implements ProductDAO{
                     productList.add(listedProduct);
                 }
                 return productList;
-
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
-
-    }
-
-    @Override
-    public List<Product> list(int pageLength, int pageNumber) throws ApplicationErrorException, PageCountOutOfBoundsException {
-        Connection listConnection= DBHelper.getConnection();
-        List<Product> productList=new ArrayList<>();
-        int count=0;
-        try {
-            Statement countStatement = listConnection.createStatement();
-            ResultSet countResultSet=countStatement.executeQuery("SELECT COUNT(ID) FROM PRODUCT");
-            count=0;
-            while(countResultSet.next()) {
-                count = countResultSet.getInt(1);
-            }
-        }
-        catch(Exception e) {
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-        }
-        if(count<=((pageLength*pageNumber)-pageLength))
-        {
-            throw new PageCountOutOfBoundsException(">> Requested page doesnt exist !!!\n>> Existing page count with given pagination "+(count/pageLength)+1);
-        }
-        else
-        {
-            try {
-                int begin=(pageLength*pageNumber)-pageLength;
-                int end=(pageLength*pageNumber);
-                PreparedStatement listStatement = listConnection.prepareStatement("SELECT * FROM PRODUCT WHERE ID BETWEEN ? AND ?");
-                listStatement.setInt(1,begin);
-                listStatement.setInt(2,end);
-                ResultSet listResultSet=listStatement.executeQuery();
-                while(listResultSet.next())
-                {
-                    Product listedProduct=new Product(listResultSet.getInt(1),listResultSet.getString(2),listResultSet.getString(3),listResultSet.getString(4),listResultSet.getString(5),listResultSet.getFloat(6),listResultSet.getDouble(7),listResultSet.getDouble(8));
-                    productList.add(listedProduct);
-                }
-                return productList;
-            }
-
-            catch(Exception e) {
-                throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-            }
-        }
-
-    }
-
-    @Override
-    public List<Product> list(String attribute, String searchText) throws ApplicationErrorException {
-        Connection listConnection= DBHelper.getConnection();
-        List<Product> productList=new ArrayList<>();
-        try{
-            Statement listStatement=listConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-            String listQuery="SELECT * FROM PRODUCT WHERE "+attribute+" = '"+searchText+"'"+" ORDER BY ID";
-            ResultSet listResultSet=listStatement.executeQuery(listQuery);
-            if(listResultSet.next()) {
-                listResultSet.beforeFirst();
-                while (listResultSet.next()) {
-                    Product listedProduct=new Product(listResultSet.getInt(1),listResultSet.getString(2),listResultSet.getString(3),listResultSet.getString(4),listResultSet.getString(5),listResultSet.getFloat(6),listResultSet.getDouble(7),listResultSet.getDouble(8));
-                    productList.add(listedProduct);
-                }
-                return productList;
-            }
-            else {
-                return null;
-            }
-        }
-        catch(Exception e)
-        {
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-
-        }
-
     }
     @Override
     public List<Product> list(String attribute, String searchText, int pageLength, int offset) throws ApplicationErrorException {
@@ -232,11 +173,7 @@ public class ProductDAOImplementation implements ProductDAO{
                 return null;
             }
         } catch (SQLException e) {
-
-
                 throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-
-
         }
     }
     @Override
@@ -290,7 +227,6 @@ public class ProductDAOImplementation implements ProductDAO{
                 throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
             }
             }
-
     }
     @Override
     public int delete(String parameter) throws ApplicationErrorException {
@@ -315,11 +251,10 @@ public class ProductDAOImplementation implements ProductDAO{
                     {
                         return 1;
                     }
-
                 }
                 }
             else if(parameter.matches(procodeRegex)) {
-                ResultSet stockResultSet=countStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='"+parameter+"'");
+                ResultSet stockResultSet=countStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE CODE='"+parameter+"'");
                 if(!stockResultSet.next())
                 {
                     return -1;
@@ -332,8 +267,6 @@ public class ProductDAOImplementation implements ProductDAO{
                 else {
                     if (countStatement.execute("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE CODE='" + parameter + "'")) {
                         return 1;
-                    } else {
-                        return -1;
                     }
                 }
             }
@@ -341,6 +274,6 @@ public class ProductDAOImplementation implements ProductDAO{
         catch(Exception e) {
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
-        return -1;
+        return 1;
     }
 }

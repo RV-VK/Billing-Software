@@ -32,29 +32,15 @@ public class ProductServiceImplementation implements ProductService{
     public List<Product> listProductService(HashMap<String,String> listattributes) throws ApplicationErrorException, PageCountOutOfBoundsException {
         List<Product> productList;
         ProductDAO listProductDAO=new ProductDAOImplementation();
-         if(Collections.frequency(listattributes.values(),null)==listattributes.size()-1&&listattributes.get("Pagelength")!=null)
-        {
-            productList=listProductDAO.list(Integer.parseInt(listattributes.get("Pagelength")));
-            return productList;
-        }
-        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-2&&listattributes.get("Pagelength")!=null&&listattributes.get("Pagenumber")!=null)
+
+        if(Collections.frequency(listattributes.values(),null)==listattributes.size()-2&&listattributes.get("Pagelength")!=null&&listattributes.get("Pagenumber")!=null)
         {
             productList=listProductDAO.list(Integer.parseInt(listattributes.get("Pagelength")),Integer.parseInt(listattributes.get("Pagenumber")));
             return productList;
         }
-        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-2 && listattributes.get("Attribute")!=null &&listattributes.get("Searchtext")!=null)
-        {
-            productList=listProductDAO.list(listattributes.get("Attribute"),listattributes.get("Searchtext"));
-            return productList;
-        }
-        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-3&&listattributes.get("Pagenumber")==null)
-        {
-            productList=listProductDAO.list(listattributes.get("Attribute"),listattributes.get("Searchtext"));
-            return productList;
-        }
-
         else if(Collections.frequency(listattributes.values(),null)==0)
         {
+            System.out.println(listattributes.get("Pagelength"));
             int pageLength=Integer.parseInt(listattributes.get("Pagelength"));
             int pageNumber=Integer.parseInt(listattributes.get("Pagenumber"));
             int offset=(pageLength*pageNumber)-pageLength;
@@ -66,7 +52,6 @@ public class ProductServiceImplementation implements ProductService{
             productList=listProductDAO.list(listattributes.get("Searchtext"));
             return productList;
         }
-
         return null;
     }
     public int editProductService(HashMap<String,String> attributeMap) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException, UnitCodeViolationException {
