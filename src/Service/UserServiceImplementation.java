@@ -30,27 +30,12 @@ public class UserServiceImplementation implements UserService{
     public List listUserService(HashMap<String, String> listattributes) throws ApplicationErrorException, PageCountOutOfBoundsException {
         List<User> userList;
         UserDAO listUserDAO=new UserDAOImplemetation();
-        if(Collections.frequency(listattributes.values(),null)==listattributes.size()-1&&listattributes.get("Pagelength")!=null)
-        {
-            userList=listUserDAO.list(Integer.parseInt(listattributes.get("Pagelength")));
-            return userList;
-        }
-        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-2&&listattributes.get("Pagelength")!=null&&listattributes.get("Pagenumber")!=null)
+
+         if(Collections.frequency(listattributes.values(),null)==listattributes.size()-2&&listattributes.get("Pagelength")!=null&&listattributes.get("Pagenumber")!=null)
         {
             userList=listUserDAO.list(Integer.parseInt(listattributes.get("Pagelength")),Integer.parseInt(listattributes.get("Pagenumber")));
             return userList;
         }
-        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-2 && listattributes.get("Attribute")!=null &&listattributes.get("Searchtext")!=null)
-        {
-            userList=listUserDAO.list(listattributes.get("Attribute"),listattributes.get("Searchtext"));
-            return userList;
-        }
-        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-3&&listattributes.get("Pagenumber")==null)
-        {
-            userList=listUserDAO.list(listattributes.get("Attribute"),listattributes.get("Searchtext"));
-            return userList;
-        }
-
         else if(Collections.frequency(listattributes.values(),null)==0)
         {
             int pageLength=Integer.parseInt(listattributes.get("Pagelength"));

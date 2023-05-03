@@ -127,6 +127,7 @@ public class ProductCLI {
         else if(arguments.length>8)
         {
             System.out.println(">>Too many Arguments for command \"product create\"");
+            System.out.println(">>Try \"product create help\" for Proper Syntax");
             return;
         }
         String code=arguments[2].trim();
@@ -180,7 +181,6 @@ public class ProductCLI {
             System.out.println(">> Product Creation Failed!!!");
             System.out.println(">> The Unit you have entered does not exist!!!");
         }
-
 
     }
     public void productListCLI(String[] arguments) throws PageCountOutOfBoundsException, ApplicationErrorException {
@@ -415,8 +415,8 @@ public class ProductCLI {
                     }
                     else
                     {
-                        System.out.println("Given attribute is not a searchable attribute!!");
-                        System.out.println("Try \"product list help\" for proper syntax");
+                        System.out.println("Invalid Extension Given!!!");
+                        System.out.println("Try \"user list help\" for proper syntax");
                     }
                 }
                 else
@@ -433,11 +433,6 @@ public class ProductCLI {
             }
 
         }
-        for(Map.Entry<String,String> entry:listAttributesMap.entrySet())
-        {
-            entry.setValue(null);
-        }
-
     }
     public void productCountCLI(String[] arguments) throws ApplicationErrorException {
         ProductService countProduct=new ProductServiceImplementation();
@@ -647,7 +642,7 @@ public class ProductCLI {
         if(arguments.length==3)
         {
             if(arguments[2].equals("help"))
-            {
+               {
                 System.out.println("> product delete help \n" +
                         ">> delete product using the following template\n" +
                         "\t\n" +

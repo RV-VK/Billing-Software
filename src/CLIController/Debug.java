@@ -13,7 +13,7 @@ public class Debug {
     public static void main(String[] args) throws SQLException, ApplicationErrorException {
 
         String createcommand="product create hp11, hamam, pcs, soap, 25, 0";
-        String editcommand = "product edit id: 1, code: hp11, name: hamam, unitcode: pcs, type: soap, price: 30";
+        String editcommand = "product edit id: 1, usertype: admin, username: mani, password: mara1205, firstname: RV, lastname: Mani, phonenumber: 6383874789";
         String listcommand="product list -s type: soap -p 10 5";
         String[] parts = editcommand.split("\\s+");
         for(int index=0;index< parts.length;index++)
