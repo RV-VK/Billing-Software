@@ -65,7 +65,7 @@ public class UnitDAOImplementation implements UnitDAO{
     }
 
     @Override
-    public int edit(int id, String atrribute, String value) throws ApplicationErrorException, SQLException {
+    public int edit(int id, String atrribute, String value) throws ApplicationErrorException, SQLException, UniqueConstraintException {
         Connection editConnection=DBHelper.getConnection();
         try{
             editConnection.setAutoCommit(false);
@@ -85,11 +85,17 @@ public class UnitDAOImplementation implements UnitDAO{
                 return -1;
             }
         }
-        catch(Exception e)
+        catch(SQLException e)
         {
-            editConnection.rollback();
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-        }
+            if(e.getSQLState().equals("23505")){
+                editConnection.rollback();
+                throw new UniqueConstraintException(">>Unit Code must be unique!!!\n The unit code you have entered already exists!!!");
+            }
+            else {
+                editConnection.rollback();
+                throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
+            }
+            }
     }
 
     @Override

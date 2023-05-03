@@ -36,6 +36,7 @@ public class StoreDAOImplementation implements StoreDAO{
     @Override
     public int edit(String attribute, String value) throws SQLException, ApplicationErrorException {
         Connection editConnection=DBHelper.getConnection();
+        editConnection.setAutoCommit(false);
         try{
                 String editQuery="UPDATE STORE SET "+attribute.toUpperCase()+"="+"'"+value+"'";
                 Statement editStatement=editConnection.createStatement();

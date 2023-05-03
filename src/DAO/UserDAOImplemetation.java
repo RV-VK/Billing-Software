@@ -59,26 +59,6 @@ public class UserDAOImplemetation implements UserDAO{
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
     }
-
-    @Override
-    public List list() throws ApplicationErrorException {
-        Connection listConnection= DBHelper.getConnection();
-        List<User> userList=new ArrayList<>();
-        try{
-            Statement listStatement=listConnection.createStatement();
-            ResultSet listresultSet=listStatement.executeQuery("SELECT * FROM USERS ORDER BY ID LIMIT 20 ");
-            while(listresultSet.next()) {
-                User listedUser=new User(listresultSet.getInt(1),listresultSet.getString(3),listresultSet.getString(2),listresultSet.getString(4),listresultSet.getString(5),listresultSet.getString(6),listresultSet.getLong(7));
-                userList.add(listedUser);
-            }
-            return userList;
-        }
-        catch(Exception e)
-        {
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-        }
-    }
-
     @Override
     public List list(int pageLength) throws ApplicationErrorException {
         Connection listConnection= DBHelper.getConnection();
@@ -101,25 +81,38 @@ public class UserDAOImplemetation implements UserDAO{
 
     public List<User> list(String searchText) throws ApplicationErrorException{
         Connection listConnection=DBHelper.getConnection();
+        String nameRegex="^[a-zA-Z\\s]{0,50}$";
+        String numberRegex="^[0-9]*$";
         List<User> userList=new ArrayList<>();
         try{
-            Statement listStatement=listConnection.createStatement();
-            String listQuery="SELECT * FROM USERS WHERE ID ILIKE "+searchText+" OR USERTYPE ILIKE '"+searchText+"' OR USERNAME ILIKE '"+searchText+"' OR FIRSTNAME ILIKE '"+searchText+"' OR LASTNAME ILIKE '"+searchText+"' OR PHONENUMBER ILIKE '"+searchText+"'";
-            ResultSet listresultSet=listStatement.executeQuery(listQuery);
-            while (listresultSet.next()){
-                User listedUser=new User(listresultSet.getInt(1),listresultSet.getString(3),listresultSet.getString(2),listresultSet.getString(4),listresultSet.getString(5),listresultSet.getString(6),listresultSet.getLong(7));
-                userList.add(listedUser);
+            if(searchText.matches(nameRegex)) {
+                Statement listStatement = listConnection.createStatement();
+                String listQuery = "SELECT * FROM USERS WHERE USERTYPE ILIKE '" +searchText + "' OR USERNAME ILIKE '" + searchText + "' OR FIRSTNAME ILIKE '" + searchText + "' OR LASTNAME ILIKE '" + searchText + "'";
+                ResultSet listresultSet = listStatement.executeQuery(listQuery);
+                while (listresultSet.next()) {
+                    User listedUser = new User(listresultSet.getInt(1), listresultSet.getString(3), listresultSet.getString(2), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getString(6), listresultSet.getLong(7));
+                    userList.add(listedUser);
+                }
+                return userList;
             }
-            return userList;
+            else
+            {
+                Statement listStatement=listConnection.createStatement();
+                String listQuery="SELECT * FROM USERS WHERE CAST(ID AS TEXT) ILIKE '"+searchText+"' OR CAST(PHONENUMBER AS TEXT) ILIKE '"+searchText+"'";
+                ResultSet listresultSet=listStatement.executeQuery(listQuery);
+                while (listresultSet.next()) {
+                    User listedUser = new User(listresultSet.getInt(1), listresultSet.getString(3), listresultSet.getString(2), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getString(6), listresultSet.getLong(7));
+                    userList.add(listedUser);
+                }
+                return userList;
+
+            }
         } catch (SQLException e) {
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
-
     }
-
-
     @Override
-    public List list(int pageLength, int pageNumber) throws ApplicationErrorException {
+    public List list(int pageLength, int pageNumber) throws ApplicationErrorException, PageCountOutOfBoundsException {
         Connection listConnection= DBHelper.getConnection();
         List<User> userList=new ArrayList<>();
         int count=0;
@@ -136,9 +129,8 @@ public class UserDAOImplemetation implements UserDAO{
         }
         if(count<=((pageLength*pageNumber)-pageLength))
         {
-            System.out.println(">> Requested page doesnt exist !!!");
-            System.out.println(">> Existing page count with given pagination "+(count/pageLength)+1);
-            return null;
+
+            throw new PageCountOutOfBoundsException(">> Requested page doesnt exist !!!\nExisting page count with given pagination "+(count/pageLength)+1);
         }
         else
         {
@@ -222,7 +214,7 @@ public class UserDAOImplemetation implements UserDAO{
     }
 
     @Override
-    public boolean edit(int id, String attribute, String value) throws SQLException, ApplicationErrorException {
+    public boolean edit(int id, String attribute, String value) throws SQLException, ApplicationErrorException, UniqueConstraintException {
         Connection editConnection= DBHelper.getConnection();
         try{
             editConnection.setAutoCommit(false);
@@ -239,13 +231,15 @@ public class UserDAOImplemetation implements UserDAO{
                 return true;
             }
             else {
-                System.out.println(">> The id you have entered does not exist");
-                System.out.println(">> Please try with an existing id");
                 return false;
             }
         }
-        catch(Exception e)
+        catch(SQLException e)
         {
+            if(e.getSQLState().equals("23505"))
+            {
+                throw new UniqueConstraintException(">> Username must be unique!!!\n>>The username you have entered already exists!!!");
+            }
             editConnection.rollback();
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }

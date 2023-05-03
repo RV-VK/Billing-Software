@@ -2,7 +2,6 @@ package DAO;
 
 import DBConnection.DBHelper;
 import Entity.Product;
-import org.checkerframework.checker.units.qual.A;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -75,26 +74,6 @@ public class ProductDAOImplementation implements ProductDAO{
     }
 
     @Override
-    public List<Product> list() throws ApplicationErrorException {
-        Connection listConnection= DBHelper.getConnection();
-        List<Product> productList=new ArrayList<>();
-        try{
-            Statement listStatement=listConnection.createStatement();
-            ResultSet listresultSet=listStatement.executeQuery("SELECT * FROM PRODUCT ORDER BY ID LIMIT 20 ");
-            while(listresultSet.next()) {
-                Product listedProduct=new Product(listresultSet.getInt(1),listresultSet.getString(2),listresultSet.getString(3),listresultSet.getString(4),listresultSet.getString(5),listresultSet.getFloat(6),listresultSet.getDouble(7),listresultSet.getDouble(8));
-                productList.add(listedProduct);
-            }
-            return productList;
-        }
-        catch(Exception e)
-        {
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
-        }
-
-    }
-
-    @Override
     public List<Product> list(int pageLength) throws ApplicationErrorException {
         Connection listConnection= DBHelper.getConnection();
         List<Product> productList=new ArrayList<>();
@@ -114,7 +93,6 @@ public class ProductDAOImplementation implements ProductDAO{
 
 
     }
-
     public List<Product> list(String searchText) throws ApplicationErrorException{
         Connection listConnection=DBHelper.getConnection();
         String codeRegex="^[a-zA-Z\\s]{0,50}$";
@@ -261,9 +239,8 @@ public class ProductDAOImplementation implements ProductDAO{
 
         }
     }
-
     @Override
-    public boolean edit(int id, String attribute, String value) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueCodeException, UnitCodeViolationException {
+    public boolean edit(int id, String attribute, String value) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException, UnitCodeViolationException {
         Connection editConnection= DBHelper.getConnection();
         try{
             editConnection.setAutoCommit(false);
@@ -292,7 +269,7 @@ public class ProductDAOImplementation implements ProductDAO{
                 editConnection.rollback();
                 if(e.getMessage().contains("product_code"))
                 {
-                    throw new UniqueCodeException(">>Code must be unique!!!\n>>The code you have entered already exists!!!");
+                    throw new UniqueConstraintException(">>Code must be unique!!!\n>>The code you have entered already exists!!!");
                 }
                 else if(e.getMessage().contains("product_name"))
                 {

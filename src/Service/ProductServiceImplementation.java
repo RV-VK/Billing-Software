@@ -32,12 +32,7 @@ public class ProductServiceImplementation implements ProductService{
     public List<Product> listProductService(HashMap<String,String> listattributes) throws ApplicationErrorException, PageCountOutOfBoundsException {
         List<Product> productList;
         ProductDAO listProductDAO=new ProductDAOImplementation();
-        if(Collections.frequency(listattributes.values(),null)==listattributes.size())
-        {
-            productList=listProductDAO.list();
-            return productList;
-        }
-        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-1&&listattributes.get("Pagelength")!=null)
+         if(Collections.frequency(listattributes.values(),null)==listattributes.size()-1&&listattributes.get("Pagelength")!=null)
         {
             productList=listProductDAO.list(Integer.parseInt(listattributes.get("Pagelength")));
             return productList;
@@ -74,7 +69,7 @@ public class ProductServiceImplementation implements ProductService{
 
         return null;
     }
-    public int editProductService(HashMap<String,String> attributeMap) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueCodeException, UnitCodeViolationException {
+    public int editProductService(HashMap<String,String> attributeMap) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException, UnitCodeViolationException {
         ProductDAO productEditDAO=new ProductDAOImplementation();
         String numberRegex="^[0-9]*$";
         String procodeRegex="^[a-zA-Z0-9]{2,6}$";
@@ -87,20 +82,7 @@ public class ProductServiceImplementation implements ProductService{
         {
             return 0;
         }
-        if(attributeMap.get("name")!=null&&!attributeMap.get("name").matches(nameRegex))
-        {
-            return 0;
-        }
-        if(attributeMap.get("code")!=null&&!attributeMap.get("code").matches(procodeRegex))
-        {
-            return 0;
-        }
-        if(attributeMap.get("type")!=null&&!attributeMap.get("type").matches(nameRegex))
-        {
-            return 0;
-        }
-        if(attributeMap.get("price")!=null&&!attributeMap.get("price").matches(numberRegex))
-        {
+        if (attributeMap.get("name") != null && !attributeMap.get("name").matches(nameRegex) || attributeMap.get("code") != null && !attributeMap.get("code").matches(procodeRegex) || attributeMap.get("type") != null && !attributeMap.get("type").matches(nameRegex) || attributeMap.get("price") != null && !attributeMap.get("price").matches(numberRegex)) {
             return 0;
         }
         boolean status;

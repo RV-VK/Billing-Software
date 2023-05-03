@@ -220,6 +220,7 @@ public class StoreMain{
                             }
                             else if(commandlet.length==2)
                             {
+                                listAttributesMap.put("Pagelength","20");
                                  resultList=listService.listProductService(listAttributesMap);
                                  for(Product resultProduct:resultList)
                                  {
