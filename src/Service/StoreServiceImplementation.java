@@ -6,6 +6,7 @@ import DAO.StoreDAOImplementation;
 import Entity.Store;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class StoreServiceImplementation implements StoreService{
@@ -31,7 +32,7 @@ public class StoreServiceImplementation implements StoreService{
         if (attributeMap.get("name") != null && !attributeMap.get("name").matches(nameRegex) || attributeMap.get("phonenumber") != null && !attributeMap.get("phonenumber").matches(numberRegex) ||  attributeMap.get("gstnumber") != null && !attributeMap.get("gstnumber").matches(numberRegex) || attributeMap.get("address") != null && !attributeMap.get("address").matches(nameRegex)) {
             return 0;
         }
-        int status;
+        int status=0;
         if(attributeMap.get("name")!=null)
         {
             status=storeEditDAO.edit("name",attributeMap.get("name"));
@@ -42,17 +43,23 @@ public class StoreServiceImplementation implements StoreService{
         }
         if(attributeMap.get("address") != null)
         {
-            storeEditDAO.edit("address",attributeMap.get("address"));
+            status+=storeEditDAO.edit("address",attributeMap.get("address"));
         }
         if(attributeMap.get("phonenumber") != null)
         {
-            storeEditDAO.edit("phonenumber",attributeMap.get("phonenumber"));
+            status+=storeEditDAO.edit("phonenumber",attributeMap.get("phonenumber"));
         }
         if(attributeMap.get("gstnumber") != null)
         {
-            storeEditDAO.edit("gstnumber",attributeMap.get("gstnumber"));
+            status+=storeEditDAO.edit("gstnumber",attributeMap.get("gstnumber"));
         }
-        return 1;
+        if(status==(attributeMap.size()- Collections.frequency(attributeMap.values(),null)))
+        {
+            return 1;
+        }
+        else{
+            return -1;
+        }
     }
 
     @Override

@@ -10,5 +10,4 @@ public interface UnitDAO {
     List<Unit> list() throws ApplicationErrorException;
     int edit(int id,String atrribute, String value) throws ApplicationErrorException, SQLException, UniqueConstraintException;
     int delete(String code) throws ApplicationErrorException;
-    boolean isAvailable(String unitcode) throws ApplicationErrorException;
 }

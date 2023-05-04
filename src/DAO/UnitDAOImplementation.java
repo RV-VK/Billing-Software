@@ -24,13 +24,21 @@ public class UnitDAOImplementation implements UnitDAO{
             }
             else {
                 PreparedStatement unitCreateStatement=unitCreateConnection.prepareStatement("INSERT INTO UNIT(NAME,CODE,DESCRIPTION,ISDIVIDABLE) VALUES (?,?,?,?) RETURNING *");
-                unitCreateStatement.setString(1,unit.getCode());
-                unitCreateStatement.setString(2,unit.getName());
+                unitCreateStatement.setString(1,unit.getName());
+                unitCreateStatement.setString(2,unit.getCode());
                 unitCreateStatement.setString(3,unit.getDescription());
                 unitCreateStatement.setBoolean(4,unit.getIsDividable());
                 ResultSet unitCreateResultSet=unitCreateStatement.executeQuery();
                 unitCreateResultSet.next();
-                Unit createdUnit=new Unit(unitCreateResultSet.getString(1),unitCreateResultSet.getString(2),unitCreateResultSet.getString(3),unitCreateResultSet.getBoolean(4));
+                boolean isDividable;
+                if(unitCreateResultSet.getString(4).equals("t"))
+                {
+                    isDividable=true;
+                }
+                else {
+                    isDividable=false;
+                }
+                Unit createdUnit=new Unit(unitCreateResultSet.getString(1),unitCreateResultSet.getString(2),unitCreateResultSet.getString(3),isDividable);
                 unitCreateConnection.commit();
                 unitCreateConnection.setAutoCommit(true);
                 return createdUnit;
@@ -53,13 +61,26 @@ public class UnitDAOImplementation implements UnitDAO{
             ResultSet listResultSet=listStatement.executeQuery("SELECT * FROM UNIT ORDER BY CODE");
             while(listResultSet.next())
             {
-                Unit listedUnit=new Unit(listResultSet.getString(1),listResultSet.getString(2),listResultSet.getString(3),listResultSet.getBoolean(4));
+                int id=listResultSet.getInt(1);
+                String name=listResultSet.getString(2);
+                String code=listResultSet.getString(3);
+                String description=listResultSet.getString(4);
+                boolean isdividable;
+                if(listResultSet.getString(5).equals("t"))
+                {
+                    isdividable=true;
+                }
+                else{
+                    isdividable=false;
+                }
+                Unit listedUnit=new Unit(id,name,code,description,isdividable);
                 unitList.add(listedUnit);
             }
             return unitList;
         }
         catch(Exception e)
         {
+            e.printStackTrace();
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
     }
@@ -93,6 +114,7 @@ public class UnitDAOImplementation implements UnitDAO{
             }
             else {
                 editConnection.rollback();
+                e.printStackTrace();
                 throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
             }
             }
@@ -103,13 +125,13 @@ public class UnitDAOImplementation implements UnitDAO{
         Connection deleteConnection=DBHelper.getConnection();
         try{
             Statement deleteStatement=deleteConnection.createStatement();
-            if(deleteStatement.execute("DELETE FROM UNIT WHERE CODE='"+code+"'"))
+            if(!(deleteStatement.executeUpdate("DELETE FROM UNIT WHERE CODE='"+code+"'")>0))
             {
-                return 1;
-            }
-            else {
                 return -1;
             }
+            else {
+                return 1;
+            }
         }
         catch(Exception e)
         {
@@ -118,23 +140,5 @@ public class UnitDAOImplementation implements UnitDAO{
 
     }
 
-    public boolean isAvailable(String unitcode) throws ApplicationErrorException {
-        Connection checkCodeConnection=DBHelper.getConnection();
-        try{
-            Statement checkCodeStatment=checkCodeConnection.createStatement();
-            String checkCodeQuery="SELECT * FROM UNIT WHERE CODE='"+unitcode+"'";
-            if(checkCodeStatment.execute(checkCodeQuery))
-            {
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-        catch(Exception e)
-        {
-            throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
 
-        }
-    }
 }

@@ -5,6 +5,7 @@ import DAO.UnitDAO;
 import DAO.UnitDAOImplementation;
 import Entity.Unit;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 public class UnitServiceImplementation implements UnitService{
@@ -42,6 +43,11 @@ public class UnitServiceImplementation implements UnitService{
         if (attributeMap.get("name") != null && !attributeMap.get("name").matches(nameRegex) || attributeMap.get("unitcode") != null && !attributeMap.get("unitcode").matches(unitCodeRegex)) {
             return 0;
         }
+        if(attributeMap.get("isdividable")!=null&&!attributeMap.get("isdividable").equals("true")&&!attributeMap.get("isdividable").equals("false"))
+        {
+            return 0;
+        }
+        int updateCount=0;
         if(attributeMap.get("name") != null)
         {
             int status=unitEditDAO.edit(id, "name",attributeMap.get("name"));
@@ -49,20 +55,29 @@ public class UnitServiceImplementation implements UnitService{
             {
                 return -1;
             }
+            else{
+                updateCount++;
+            }
         }
         if(attributeMap.get("unitcode") != null)
         {
-            unitEditDAO.edit(id,"unitcode",attributeMap.get("unitcode"));
+            updateCount+=unitEditDAO.edit(id,"code",attributeMap.get("unitcode"));
         }
         if(attributeMap.get("description") != null)
         {
-            unitEditDAO.edit(id,"description",attributeMap.get("description"));
+            updateCount+=unitEditDAO.edit(id,"description",attributeMap.get("description"));
         }
         if(attributeMap.get("isdividable") != null)
         {
-            unitEditDAO.edit(id,"isdividable",attributeMap.get("isdividable"));
+           updateCount+= unitEditDAO.edit(id,"isdividable",attributeMap.get("isdividable"));
         }
-        return 0;
+        if(updateCount==(attributeMap.size()- Collections.frequency(attributeMap.values(),null)-1))
+        {
+            return 1;
+        }
+        else{
+            return -1;
+        }
     }
     @Override
     public int deleteUnitService(String code) throws ApplicationErrorException {

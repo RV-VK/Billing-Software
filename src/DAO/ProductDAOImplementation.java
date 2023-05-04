@@ -188,10 +188,12 @@ public class ProductDAOImplementation implements ProductDAO{
             {
                 String editQuery="UPDATE PRODUCT SET "+attribute.toUpperCase()+"="+"'"+value+"'"+" WHERE ID="+id;
                 Statement editStatement=editConnection.createStatement();
-                editStatement.executeUpdate(editQuery);
-                editConnection.commit();
-                editConnection.setAutoCommit(true);
-                return true;
+                if(editStatement.executeUpdate(editQuery)>0);
+                {
+                    editConnection.commit();
+                    editConnection.setAutoCommit(true);
+                    return true;
+                }
             }
             else {
                 System.out.println(">> The id you have entered does not exist");

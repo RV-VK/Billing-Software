@@ -23,6 +23,13 @@ public class Unit {
         this.description = description;
         this.isDividable = isDividable;
     }
+    public Unit(int id,String name, String code, String description, boolean isDividable) {
+        this.id=id;
+        this.name = name;
+        this.code = code;
+        this.description = description;
+        this.isDividable = isDividable;
+    }
 
     public String getName() {
         return name;

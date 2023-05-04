@@ -1,6 +1,8 @@
 package Service;
 import DAO.*;
 import Entity.Product;
+import org.checkerframework.checker.units.qual.C;
+
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,6 +73,8 @@ public class ProductServiceImplementation implements ProductService{
             return 0;
         }
         boolean status;
+        int updateCount=0;
+
         if(attributeMap.get("name") != null)
         {
             status=productEditDAO.edit(id, "name",attributeMap.get("name"));
@@ -78,24 +82,45 @@ public class ProductServiceImplementation implements ProductService{
             {
                 return -1;
             }
+            else{
+                updateCount++;
+            }
         }
         if(attributeMap.get("code") != null)
         {
-            productEditDAO.edit(id,"code",attributeMap.get("code"));
+            if(productEditDAO.edit(id,"code",attributeMap.get("code")))
+            {
+                updateCount++;
+            }
         }
         if(attributeMap.get("unitcode") != null)
         {
-            productEditDAO.edit(id,"unitcode",attributeMap.get("unitcode"));
+            if(productEditDAO.edit(id,"unitcode",attributeMap.get("unitcode")))
+            {
+                updateCount++;
+            }
         }
         if(attributeMap.get("type") != null)
         {
-            productEditDAO.edit(id,"type",attributeMap.get("type"));
+            if(productEditDAO.edit(id,"type",attributeMap.get("type")))
+            {
+                updateCount++;
+            }
         }
         if(attributeMap.get("price") != null)
         {
-            productEditDAO.edit(id,"price",attributeMap.get("price"));
+            if(productEditDAO.edit(id,"price",attributeMap.get("price")))
+            {
+                updateCount++;
+            }
         }
-        return 1;
+        if(updateCount==(attributeMap.size()-Collections.frequency(attributeMap.values(),null)-1))
+        {
+            return 1;
+        }
+        else{
+            return -1;
+        }
     }
     public int deleteProductService(String parameter) throws ApplicationErrorException {
         ProductDAO deleteProductDAO=new ProductDAOImplementation();

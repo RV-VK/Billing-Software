@@ -40,10 +40,16 @@ public class StoreDAOImplementation implements StoreDAO{
         try{
                 String editQuery="UPDATE STORE SET "+attribute.toUpperCase()+"="+"'"+value+"'";
                 Statement editStatement=editConnection.createStatement();
-                editStatement.executeUpdate(editQuery);
-                editConnection.commit();
-                editConnection.setAutoCommit(true);
-                return 1;
+                if(editStatement.executeUpdate(editQuery)>0)
+                {
+                    editConnection.commit();
+                    editConnection.setAutoCommit(true);
+                    return 1;
+                }
+                else{
+                    return -1;
+                }
+
            }
         catch(Exception e)
         {
@@ -56,21 +62,33 @@ public class StoreDAOImplementation implements StoreDAO{
     public int delete(String adminPassword) throws ApplicationErrorException {
         Connection deleteConnection=DBHelper.getConnection();
         try{
-            Statement passwordCheckStatement=deleteConnection.createStatement();
-            ResultSet adminPasswordResultSet=passwordCheckStatement.executeQuery("SELECT PASSWORD FROM USER WHERE USERTYPE='ADMIN'");
-            adminPasswordResultSet.next();
-            if(adminPasswordResultSet.getString(1).equals(adminPassword)) {
-                Statement deleteStatement = deleteConnection.createStatement();
-                deleteStatement.execute("DELETE FROM STORE");
-                return 1;
+            Statement storeExistenceCheckStatement=deleteConnection.createStatement();
+            ResultSet storeResultSet=storeExistenceCheckStatement.executeQuery("SELECT * FROM STORE");
+            if(storeResultSet.next()) {
+                Statement passwordCheckStatement = deleteConnection.createStatement();
+                ResultSet adminPasswordResultSet = passwordCheckStatement.executeQuery("SELECT PASSWORD FROM USERS WHERE USERTYPE='Admin'");
+                if(adminPasswordResultSet.next()) {
+                    String originalPassword = adminPasswordResultSet.getString(1);
+                    if (originalPassword.equals(adminPassword)) {
+                        Statement deleteStatement = deleteConnection.createStatement();
+                        deleteStatement.execute("DELETE FROM STORE");
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+                else{
+                    return -1;
+                }
             }
-            else {
-                return -1;
+            else{
+                return 0;
             }
 
         }
         catch(Exception e)
         {
+            e.printStackTrace();
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
 

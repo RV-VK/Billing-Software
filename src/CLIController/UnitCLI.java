@@ -179,11 +179,23 @@ public class UnitCLI {
             System.out.print("> ");
             String parameters=scanner.nextLine();
             String[] unitAttributes=parameters.split("\\,");
+            if(unitAttributes.length<4)
+            {
+                System.out.println(">> Insufficient arguments for edit Operation");
+                System.out.println(">> Try \"unit edit help\" for proper syntax");
+                return;
+            }
+            if(unitAttributes.length>10)
+            {
+                System.out.println(">> Too manu arguments for edit Operation!!");
+                System.out.println(">> Try \"unit edit help\" for proper syntax!!!");
+                return;
+            }
             if(unitAttributes[0].contains("id"))
             {
                 for(String attribute: unitAttributes)
                 {
-                    if(attribute.contains("id")){
+                    if(attribute.contains("id")&&!(attribute.equals("isdividable"))){
                         String[] keyValues=attribute.split("\\:");
                         attributeMap.put("id",keyValues[1].trim());
                     }
@@ -217,10 +229,11 @@ public class UnitCLI {
                 }
                 int id=0;
                 try{
-                    id=Integer.parseInt(attributeMap.get("id"));
+                    id=Integer.parseInt(attributeMap.get("id").trim());
                 }
                 catch(Exception e)
                 {
+                    System.out.println(attributeMap.get("id"));
                     System.out.println(">> Id must be a number");
                     return;
                 }
@@ -230,6 +243,7 @@ public class UnitCLI {
                 }
                 catch (Exception e)
                 {
+                    e.printStackTrace();
                     System.out.println(e.getMessage());
                     return;
                 }
@@ -258,7 +272,7 @@ public class UnitCLI {
             System.out.println(">> Too many Arguments for command \"unit edit\"");
             System.out.println(">> Try \"unit edit help\" for proper syntax");
         }
-        else if(arguments.length<12)
+        else if(arguments.length<6)
         {
             System.out.println(">> Insufficient arguments for command \"unit edit\"");
             System.out.println(">> Try \"unit edit help\" for proper syntax");
@@ -278,7 +292,7 @@ public class UnitCLI {
             }
             int id=0;
             try{
-                id=Integer.parseInt(attributeMap.get("id"));
+                id=Integer.parseInt(attributeMap.get("id").trim());
             }
             catch (Exception e)
             {
@@ -341,13 +355,13 @@ public class UnitCLI {
             }
             else if(arguments[2].matches(codeRegex))
             {
-                System.out.println(">> Are you Sure you want to delete the Unit");
+                System.out.print(">> Are you Sure you want to delete the Unit y/n :");
                 String prompt=scanner.nextLine();
                 if(prompt.equals("y"))
                 {
                     if(unitDeleteService.deleteUnitService(arguments[2])==1)
                     {
-                        System.out.println("Unit deleted Successfully!!!");
+                        System.out.println(">> Unit deleted Successfully!!!");
                     }
                     else if(unitDeleteService.deleteUnitService(arguments[2])==-1)
                     {
@@ -368,6 +382,8 @@ public class UnitCLI {
                 System.out.println(">> Invalid format for unitCode!!!");
                 System.out.println("Try \"unit delete help\" for proper syntax");
             }
+
         }
+
     }
 }

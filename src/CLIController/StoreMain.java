@@ -1,13 +1,13 @@
 package CLIController;
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
-import DAO.UserDAO;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Scanner;
 public class StoreMain{
     static Scanner scanner;
-    public static void main(String[] args) throws ApplicationErrorException, PageCountOutOfBoundsException {
+    public static void main(String[] args) throws ApplicationErrorException, PageCountOutOfBoundsException, SQLException {
         scanner=new Scanner(System.in);
         System.out.println("___________________WELCOME TO THE BILLING SOFTWARE_____________________");
         do{
@@ -19,14 +19,6 @@ public class StoreMain{
                 arguments[index]=arguments[index].replace(",","");
             }
             String commandString=arguments[0];
-            HashMap<String,String> attributeMap=new HashMap<>();
-            attributeMap.put("id",null);
-            attributeMap.put("code",null);
-            attributeMap.put("name",null);
-            attributeMap.put("unitcode",null);
-            attributeMap.put("type",null);
-            attributeMap.put("price",null);
-
             switch(commandString) {
                 case "product":
                     ProductCLI productCLI = new ProductCLI();
@@ -74,16 +66,33 @@ public class StoreMain{
                             userCLI.userDeleteCLI(arguments);
                             break;
                         default:
-                            System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
-                            System.out.println("Try \"help\" for proper syntax");
+                            System.out.println(">> Invalid operation for command " + "\"" + commandString + "\"");
+                            System.out.println(">> Try \"help\" for proper syntax");
                     }
                     break;
                 case "store":
+                    StoreCLI storeCLI=new StoreCLI();
+                    String operationString3=arguments[1];
+                    switch (operationString3)
+                    {
+                        case "create":
+                            storeCLI.storeCreateCLI(arguments);
+                            break;
+                        case "edit":
+                            storeCLI.storeEditCLI(arguments);
+                            break;
+                        case "delete":
+                            storeCLI.storeDeleteCLI(arguments);
+                            break;
+                        default:
+                            System.out.println(">> Invalid operation for command " + "\"" + commandString + "\"");
+                            System.out.println(">> Try \"help\" for proper syntax");
+                    }
                     break;
                 case "unit":
                     UnitCLI unitCLI=new UnitCLI();
-                    String operationString3=arguments[1];
-                    switch(operationString3)
+                    String operationString4=arguments[1];
+                    switch(operationString4)
                     {
                         case "create":
                             unitCLI.unitCreateCLI(arguments);

@@ -72,6 +72,7 @@ public class UserServiceImplementation implements UserService{
             return 0;
         }
         boolean status;
+        int updateCount=0;
         if(attributeMap.get("username") != null)
         {
             status=editUserDAO.edit(id, "username",attributeMap.get("username"));
@@ -79,28 +80,52 @@ public class UserServiceImplementation implements UserService{
             {
                 return -1;
             }
+            else{
+                updateCount++;
+            }
         }
         if(attributeMap.get("password") != null)
         {
-            editUserDAO.edit(id,"password",attributeMap.get("password"));
+            if(editUserDAO.edit(id,"password",attributeMap.get("password")))
+            {
+                updateCount++;
+            }
         }
         if(attributeMap.get("usertype") != null)
         {
-            editUserDAO.edit(id,"usertype",attributeMap.get("usertype"));
+            if(editUserDAO.edit(id,"usertype",attributeMap.get("usertype")))
+            {
+                updateCount++;
+            }
         }
         if(attributeMap.get("firstname") != null)
         {
-            editUserDAO.edit(id,"firstname",attributeMap.get("firstname"));
+            if(editUserDAO.edit(id,"firstname",attributeMap.get("firstname")))
+            {
+                updateCount++;
+            }
         }
         if(attributeMap.get("lastname") != null)
         {
-            editUserDAO.edit(id,"lastname",attributeMap.get("lastname"));
+            if(editUserDAO.edit(id,"lastname",attributeMap.get("lastname")))
+            {
+                updateCount++;
+            }
         }
         if(attributeMap.get("phonenumber") != null)
         {
-            editUserDAO.edit(id,"phonenumber",attributeMap.get("phonenumber"));
+            if(editUserDAO.edit(id,"phonenumber",attributeMap.get("phonenumber")))
+            {
+                updateCount++;
+            }
         }
-        return 1;
+        if(updateCount==(attributeMap.size()-Collections.frequency(attributeMap.values(),null)-1))
+        {
+            return 1;
+        }
+        else{
+            return -1;
+        }
     }
 
     @Override
