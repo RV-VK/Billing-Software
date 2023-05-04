@@ -580,7 +580,7 @@ public class ProductCLI {
                 System.out.println(">> Id must be a Number!");
                 System.out.println(">> Please Try \"product edit help\" for proper Syntax");
             }
-            for(int index=1;index<arguments.length;index++)
+            for(int index=4;index<arguments.length;index=index+2)
             {
                 if(arguments[index].contains("name"))
                 {

@@ -77,16 +77,13 @@ public class UserDAOImplemetation implements UserDAO{
         if(count<=((pageLength*pageNumber)-pageLength))
         {
 
-            throw new PageCountOutOfBoundsException(">> Requested page doesnt exist !!!\nExisting page count with given pagination "+(count/pageLength)+1);
+            throw new PageCountOutOfBoundsException(">> Requested page doesnt exist !!!\nExisting page count with given pagination "+((count/pageLength)));
         }
         else
         {
             try {
                 int begin=(pageLength*pageNumber)-pageLength;
-                int end=(pageLength*pageNumber);
-                PreparedStatement listStatement = listConnection.prepareStatement("SELECT * FROM USERS WHERE ID BETWEEN ? AND ?");
-                listStatement.setInt(1,begin);
-                listStatement.setInt(2,end);
+                PreparedStatement listStatement = listConnection.prepareStatement("SELECT * FROM USERS ORDER BY ID LIMIT "+pageLength+" OFFSET "+begin);
                 ResultSet listResultSet=listStatement.executeQuery();
                 while(listResultSet.next())
                 {
@@ -152,9 +149,7 @@ public class UserDAOImplemetation implements UserDAO{
                 }
                 return userList;
             }
-
             else {
-                System.out.println(">> SearchText not Found ! Please try with an existing attribute value");
                 return null;
             }
         } catch (Exception e) {
@@ -197,16 +192,15 @@ public class UserDAOImplemetation implements UserDAO{
         Connection deleteConnection=DBHelper.getConnection();
         try{
             Statement deleteStatement=deleteConnection.createStatement();
-            if(deleteStatement.execute("DELETE FROM USERS WHERE CODE='"+username+"'"))
-            {
+            if (deleteStatement.executeUpdate("DELETE FROM USERS WHERE USERNAME='" + username + "'")>0) {
                 return 1;
-            }
-            else {
+            } else {
                 return -1;
             }
         }
         catch(Exception e)
         {
+            e.printStackTrace();
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
     }

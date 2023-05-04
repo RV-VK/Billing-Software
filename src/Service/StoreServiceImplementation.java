@@ -28,14 +28,6 @@ public class StoreServiceImplementation implements StoreService{
         StoreDAO storeEditDAO=new StoreDAOImplementation();
         String numberRegex="^[0-9]*$";
         String nameRegex="^[a-zA-Z]{3,30}$";
-        int id;
-        try {
-            id = Integer.parseInt(attributeMap.get("id").trim());
-        }
-        catch (NumberFormatException e)
-        {
-            return 0;
-        }
         if (attributeMap.get("name") != null && !attributeMap.get("name").matches(nameRegex) || attributeMap.get("phonenumber") != null && !attributeMap.get("phonenumber").matches(numberRegex) ||  attributeMap.get("gstnumber") != null && !attributeMap.get("gstnumber").matches(numberRegex) || attributeMap.get("address") != null && !attributeMap.get("address").matches(nameRegex)) {
             return 0;
         }

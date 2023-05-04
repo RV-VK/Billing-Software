@@ -92,6 +92,10 @@ public class UserServiceImplementation implements UserService{
         {
             editUserDAO.edit(id,"firstname",attributeMap.get("firstname"));
         }
+        if(attributeMap.get("lastname") != null)
+        {
+            editUserDAO.edit(id,"lastname",attributeMap.get("lastname"));
+        }
         if(attributeMap.get("phonenumber") != null)
         {
             editUserDAO.edit(id,"phonenumber",attributeMap.get("phonenumber"));

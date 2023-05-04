@@ -18,7 +18,7 @@ public class UserCLI {
         String nameRegex="^[a-zA-Z\\s]{3,30}$";
         String codeRegex="^[a-zA-Z0-9]{2,6}$";
         List<String> userTypeList=new ArrayList<>(Arrays.asList("Admin","Purchase","Sales"));
-        if(arguments.length==3&&arguments[2].equals("help"))
+            if(arguments.length==3&&arguments[2].equals("help"))
         {
             System.out.println(">> create user using following template\n" +
                     ">>  usertype, username,  password, first name, last name, phone number\n" +
@@ -139,7 +139,6 @@ public class UserCLI {
             System.out.println(">> User Creation failed");
             System.out.println("The username you have entered already exists!!!");
         }
-
     }
     public void userCountCLI(String[] arguments) throws ApplicationErrorException {
         UserService countUserService=new UserServiceImplementation();
@@ -168,7 +167,7 @@ public class UserCLI {
             userList = listUserService.listUserService(listAttributesMap);
             //DO PRINTINGS
             for (User user : userList) {
-                System.out.println("");
+                System.out.println(">> id: "+user.getId()+", usertype: "+user.getUserType()+", username: "+user.getUserName()+", password: "+user.getPassWord()+", firstname: "+user.getFirstName()+", lastname: "+user.getLastName()+", phonenumber: "+user.getPhoneNumber());
             }
             return;
         } else if (arguments.length == 4) {
@@ -184,7 +183,7 @@ public class UserCLI {
                 listAttributesMap.put("Pagenumber", "1");
                 userList = listUserService.listUserService(listAttributesMap);
                 for (User user : userList) {
-                    System.out.println("");
+                    System.out.println(">> id: "+user.getId()+", usertype: "+user.getUserType()+", username: "+user.getUserName()+", password: "+user.getPassWord()+", firstname: "+user.getFirstName()+", lastname: "+user.getLastName()+", phonenumber: "+user.getPhoneNumber());
                 }
             } else if (arguments[2].equals("-s")) {
                 String searchText = arguments[3].trim();
@@ -194,7 +193,7 @@ public class UserCLI {
                     System.out.println(">> Given SearchText does not Exists!!!");
                 }
                 for (User user : userList) {
-                    System.out.println("");
+                    System.out.println(">> id: "+user.getId()+", usertype: "+user.getUserType()+", username: "+user.getUserName()+", password: "+user.getPassWord()+", firstname: "+user.getFirstName()+", lastname: "+user.getLastName()+", phonenumber: "+user.getPhoneNumber());
                 }
             } else {
                 System.out.println(">> Invalid Extension given");
@@ -222,7 +221,7 @@ public class UserCLI {
                 }
                 for(User user:userList)
                 {
-                    System.out.println("");
+                    System.out.println(">> id: "+user.getId()+", usertype: "+user.getUserType()+", username: "+user.getUserName()+", password: "+user.getPassWord()+", firstname: "+user.getFirstName()+", lastname: "+user.getLastName()+", phonenumber: "+user.getPhoneNumber());
                 }
             }
             else if(arguments[2].equals("-s"))
@@ -245,7 +244,7 @@ public class UserCLI {
                     }
                     for(User user:userList)
                     {
-                        System.out.println("");
+                        System.out.println(">> id: "+user.getId()+", usertype: "+user.getUserType()+", username: "+user.getUserName()+", password: "+user.getPassWord()+", firstname: "+user.getFirstName()+", lastname: "+user.getLastName()+", phonenumber: "+user.getPhoneNumber());
                     }
                 }
                 else {
@@ -284,7 +283,6 @@ public class UserCLI {
                             return;
                         }
                         listAttributesMap.put("Pagelength",String.valueOf(pageLength));
-                        System.out.println(listAttributesMap.get("Pagelength"));
                         listAttributesMap.put("Pagenumber","1");
                         userList=listUserService.listUserService(listAttributesMap);
                         if(userList==null)
@@ -294,14 +292,13 @@ public class UserCLI {
                         }
                         for(User user:userList)
                         {
-                            System.out.println("");
+                            System.out.println(">> id: "+user.getId()+", usertype: "+user.getUserType()+", username: "+user.getUserName()+", password: "+user.getPassWord()+", firstname: "+user.getFirstName()+", lastname: "+user.getLastName()+", phonenumber: "+user.getPhoneNumber());
                         }
                 }
                     else
                     {
                         System.out.println(">> Invalid Command Extension format !!!");
                         System.out.println("Try \"user list help\" for proper syntax");
-                        return;
                     }
                 }
                 else
@@ -351,7 +348,7 @@ public class UserCLI {
                         }
                         for(User user:userList)
                         {
-                            System.out.println("");
+                            System.out.println(">> id: "+user.getId()+", usertype: "+user.getUserType()+", username: "+user.getUserName()+", password: "+user.getPassWord()+", firstname: "+user.getFirstName()+", lastname: "+user.getLastName()+", phonenumber: "+user.getPhoneNumber());
                         }
                     }
                     else {
@@ -402,7 +399,7 @@ public class UserCLI {
         }
         else if(arguments.length==2)
         {
-            System.out.println("> ");
+            System.out.print("> ");
             String parameters=scanner.nextLine();
             String[] userAttributes=parameters.split("\\,");
             if(userAttributes[0].contains("id"))
@@ -413,28 +410,28 @@ public class UserCLI {
                         attributeMap.put("id",keyValues[1].trim());
                     }
                     else if(attribute.contains("username")){
-                        String[] keyValues=attribute.split("\\,");
-                        attributeMap.put("username",keyValues[1]);
+                        String[] keyValues=attribute.split("\\:");
+                        attributeMap.put("username",keyValues[1].trim());
                     }
                     else if(attribute.contains("usertype")){
-                        String[] keyValues=attribute.split("\\,");
-                        attributeMap.put("usertype",keyValues[1]);
+                        String[] keyValues=attribute.split("\\:");
+                        attributeMap.put("usertype",keyValues[1].trim());
                     }
                     else if(attribute.contains("password")){
-                        String[] keyValues=attribute.split("\\,");
-                        attributeMap.put("password",keyValues[1]);
+                        String[] keyValues=attribute.split("\\:");
+                        attributeMap.put("password",keyValues[1].trim());
                     }
                     else if(attribute.contains("firstname")){
-                        String[] keyValues=attribute.split("\\,");
-                        attributeMap.put("firstname",keyValues[1]);
+                        String[] keyValues=attribute.split("\\:");
+                        attributeMap.put("firstname",keyValues[1].trim());
                     }
                     else if(attribute.contains("lastname")){
-                        String[] keyValues=attribute.split("\\,");
-                        attributeMap.put("lastname",keyValues[1]);
+                        String[] keyValues=attribute.split("\\:");
+                        attributeMap.put("lastname",keyValues[1].trim());
                     }
                     else if(attribute.contains("phonenumber")){
-                        String[] keyValues=attribute.split("\\,");
-                        attributeMap.put("phonenumber",keyValues[1]);
+                        String[] keyValues=attribute.split("\\:");
+                        attributeMap.put("phonenumber",keyValues[1].trim());
                     }
                     else{
                         System.out.println(">> Invalid attribute given!!! : "+attribute);
@@ -455,8 +452,9 @@ public class UserCLI {
                 catch(Exception e)
                 {
                     System.out.println(">> Id must be a number");
+                    return;
                 }
-                int statusCode=0;
+                int statusCode;
                 try{
                     statusCode=userEditService.editUserService(attributeMap);
                 }
@@ -514,7 +512,7 @@ public class UserCLI {
                 System.out.println(">> Id must be a Number!");
                 System.out.println(">> Please Try \"user edit help\" for proper Syntax");
             }
-            for(int index=1;index<arguments.length;index++)
+            for(int index=4;index<arguments.length;index=index+2)
             {
                 if(arguments[index].contains("username"))
                 {
@@ -544,12 +542,12 @@ public class UserCLI {
                 }
                 else {
                     System.out.println(">> Invalid attribute given!!! : "+arguments[index]);
-                    System.out.println(">> Try \"product edit help\" for proper syntax");
+                    System.out.println(">> Try \"user edit help\" for proper syntax");
                     break;
                 }
             }
 
-            int statusCode= 0;
+            int statusCode;
             try {
                 statusCode = userEditService.editUserService(attributeMap);
             } catch (Exception e) {
@@ -588,7 +586,7 @@ public class UserCLI {
             }
             else if(arguments[2].matches(nameregex))
             {
-                System.out.println(">> Are you sure want to delete the product y/n ? : ");
+                System.out.println(">> Are you sure want to delete the User y/n ? : ");
                 String prompt=scanner.nextLine();
                 if(prompt.equals("y")) {
                     if(userDeleteSerivice.deleteUserService(arguments[2])==1)
@@ -598,7 +596,7 @@ public class UserCLI {
                     else if(userDeleteSerivice.deleteUserService(arguments[2])==-1)
                     {
                         System.out.println(">> User Deletion Failed!!!");
-                        System.out.println(">> Please check the Id  you have entered!!!");
+                        System.out.println(">> Please check the username you have entered!!!");
                         System.out.println("Try \"user delete help\" for proper syntax");
                     }
 
@@ -616,5 +614,5 @@ public class UserCLI {
             }
         }
     }
-    }
+}
 

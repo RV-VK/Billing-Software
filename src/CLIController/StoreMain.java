@@ -81,6 +81,26 @@ public class StoreMain{
                 case "store":
                     break;
                 case "unit":
+                    UnitCLI unitCLI=new UnitCLI();
+                    String operationString3=arguments[1];
+                    switch(operationString3)
+                    {
+                        case "create":
+                            unitCLI.unitCreateCLI(arguments);
+                            break;
+                        case "list":
+                            unitCLI.unitListCLI(arguments);
+                            break;
+                        case "edit":
+                            unitCLI.unitEditCLI(arguments);
+                            break;
+                        case "delete":
+                            unitCLI.unitDeleteCLI(arguments);
+                            break;
+                        default:
+                            System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
+                            System.out.println("Try \"help\" for proper syntax");
+                    }
                     break;
                 case "help":
                     String help="product\n" +
