@@ -42,7 +42,6 @@ public class ProductServiceImplementation implements ProductService{
         }
         else if(Collections.frequency(listattributes.values(),null)==0)
         {
-            System.out.println(listattributes.get("Pagelength"));
             int pageLength=Integer.parseInt(listattributes.get("Pagelength"));
             int pageNumber=Integer.parseInt(listattributes.get("Pagenumber"));
             int offset=(pageLength*pageNumber)-pageLength;

@@ -210,6 +210,7 @@ public class UserCLI {
                 } catch (Exception e) {
                     System.out.println(">> Invalid page Size (or) page Number input");
                     System.out.println(">> Try \"product list help\" for proper syntax");
+                    return;
                 }
                 listAttributesMap.put("Pagelength", String.valueOf(pageLength));
                 listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
@@ -232,7 +233,8 @@ public class UserCLI {
                 String searchText=arguments[4];
                 if(userAttributes.contains(attribute))
                 {
-                    listAttributesMap.put("Attribute",attribute);
+                    listAttributesMap.put
+                            ("Attribute",attribute);
                     listAttributesMap.put("Searchtext",searchText);
                     listAttributesMap.put("Pagelength","20");
                     listAttributesMap.put("Pagenumber","1");
@@ -337,6 +339,7 @@ public class UserCLI {
                         {
                             System.out.println(">> Invalid page Size (or) page Number input");
                             System.out.println(">> Try \"user list help\" for proper syntax");
+                            return;
                         }
                         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
                         listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
@@ -365,6 +368,15 @@ public class UserCLI {
                 System.out.println(">> Invalid Extension given");
                 System.out.println(">> Try \"product list help\" for proper syntax");
             }
+        }
+        else if(arguments.length==3)
+        {
+            System.out.println("Invalid command format!!!");
+            System.out.println(">> Try \"user list help\" for proper syntax");
+        }
+        else {
+            System.out.println("Invalid command formart!!!");
+            System.out.println(">> Try \"user list help\" for proper syntax!!!");
         }
     }
     public void userEditCLI(String[] arguments){

@@ -77,7 +77,7 @@ public class UserDAOImplemetation implements UserDAO{
         if(count<=((pageLength*pageNumber)-pageLength))
         {
 
-            throw new PageCountOutOfBoundsException(">> Requested page doesnt exist !!!\nExisting page count with given pagination "+((count/pageLength)));
+            throw new PageCountOutOfBoundsException(">> Requested page doesnt exist !!!\nExisting page count with given pagination "+((count/pageLength)+1));
         }
         else
         {

@@ -5,6 +5,7 @@ import DAO.PageCountOutOfBoundsException;
 import Entity.Product;
 import Service.ProductService;
 import Service.ProductServiceImplementation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -37,7 +38,7 @@ public class ProductCLI {
         {
             System.out.print("> ");
             String paramaters=scanner.nextLine();
-            String[] productAttributes=paramaters.split("\\,");
+            String[] productAttributes=paramaters.split(",");
             if(productAttributes.length<5)
             {
                 System.out.println(">>Insufficient Arguments for command \""+arguments[0]+"\"");
@@ -54,7 +55,7 @@ public class ProductCLI {
             String name=productAttributes[1].trim();
             String unitcode=productAttributes[2].trim();
             String type=productAttributes[3].trim();
-            double price=0;
+            double price;
             if(!code.matches(codeRegex))
             {
                 System.out.println(">> Invalid format for 1st argument \"code\"");
@@ -91,7 +92,7 @@ public class ProductCLI {
             }
             Product product=new Product(code,name,unitcode,type,stock,price);
             ProductService productService=new ProductServiceImplementation();
-            int resultCode=1;
+            int resultCode;
             try{
                 resultCode=productService.createProductService(product);
             }
@@ -134,7 +135,7 @@ public class ProductCLI {
         String name=arguments[3].trim();
         String unitcode=arguments[4].trim();
         String type=arguments[5].trim();
-        double price=0;
+        double price;
         try {
             price = Double.parseDouble(arguments[6].trim());
         }
@@ -158,7 +159,7 @@ public class ProductCLI {
         }
         Product product=new Product(code,name,unitcode,type,stock,price);
         ProductService productService=new ProductServiceImplementation();
-        int resultCode=1;
+        int resultCode;
         try {
             resultCode = productService.createProductService(product);
         }
@@ -183,7 +184,7 @@ public class ProductCLI {
         }
 
     }
-    public void productListCLI(String[] arguments) throws PageCountOutOfBoundsException, ApplicationErrorException {
+    public void productListCLI(String @NotNull [] arguments) throws PageCountOutOfBoundsException, ApplicationErrorException {
         listAttributesMap.put("Pagelength",null);
         listAttributesMap.put("Pagenumber",null);
         listAttributesMap.put("Attribute",null);
@@ -199,17 +200,16 @@ public class ProductCLI {
                     ">> product list -s searchtext - search the product with the given search text in all the searchable attributes\n" +
                     ">> product list -s <attr>: searchtext - search the product with the given search text in all the given attribute\n" +
                     ">> product list -s <attr>: searchtext -p 10 6 - pagable list shows 10 products in 6th page with the given search text in the given attribute\n");
-            return;
         }
         else if(arguments.length==2)
         {
             listAttributesMap.put("Pagelength","20");
+            listAttributesMap.put("Pagenumber","1");
             resultList=listService.listProductService(listAttributesMap);
             for(Product resultProduct:resultList)
             {
-                System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", stock: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
             }
-            return;
         }
         else if(arguments.length==4)
         {
@@ -228,7 +228,7 @@ public class ProductCLI {
                 resultList=listService.listProductService(listAttributesMap);
                 for(Product resultProduct:resultList)
                 {
-                    System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                    System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", stock: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
                 }
             }
             else if(arguments[2].equals("-s"))
@@ -242,7 +242,7 @@ public class ProductCLI {
                 }
                 for(Product resultProduct:resultList)
                 {
-                    System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                    System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", stock: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
                 }
             }
             else
@@ -265,6 +265,7 @@ public class ProductCLI {
                 {
                     System.out.println(">> Invalid page Size (or) page Number input");
                     System.out.println(">> Try \"product list help\" for proper syntax");
+                    return;
                 }
                 listAttributesMap.put("Pagelength", String.valueOf(pageLength));
                 listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
@@ -278,7 +279,7 @@ public class ProductCLI {
                 }
                 for(Product resultProduct:resultList)
                 {
-                    System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                    System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", stock: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
                 }
             }
             else if(arguments[2].equals("-s"))
@@ -301,7 +302,7 @@ public class ProductCLI {
                     }
                     for(Product resultProduct:resultList)
                     {
-                        System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                        System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", stock: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
                     }
                 }
                 else
@@ -309,7 +310,6 @@ public class ProductCLI {
                     System.out.println("Given attribute is not a searchable attribute!!");
                     System.out.println("Try \"product list help\" for proper syntax");
                 }
-                return;
 
             }
             else {
@@ -329,7 +329,7 @@ public class ProductCLI {
                 listAttributesMap.put("Searchtext",searchText);
                 if(productAttributes.contains(attribute))
                 {
-                    int pageLength=0;
+                    int pageLength;
                     if(arguments[5].equals("-p"))
                     {
                         try{
@@ -342,7 +342,6 @@ public class ProductCLI {
                             return;
                         }
                         listAttributesMap.put("Pagelength",String.valueOf(pageLength));
-                        System.out.println(listAttributesMap.get("Pagelength"));
                         listAttributesMap.put("Pagenumber","1");
                         resultList=listService.listProductService(listAttributesMap);
                         if(resultList==null)
@@ -352,14 +351,13 @@ public class ProductCLI {
                         }
                         for(Product resultProduct:resultList)
                         {
-                            System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                            System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", stock: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
                         }
                     }
                     else
                     {
                         System.out.println(">> Invalid Command Extension format !!!");
                         System.out.println("Try \"product list help\" for proper syntax");
-                        return;
                     }
                 }
                 else
@@ -373,7 +371,6 @@ public class ProductCLI {
                 System.out.println(">> Invalid Extension given");
                 System.out.println(">> Try \"product list help\" for proper syntax");
             }
-
         }
         else if(arguments.length==8)
         {
@@ -399,6 +396,7 @@ public class ProductCLI {
                         {
                             System.out.println(">> Invalid page Size (or) page Number input");
                             System.out.println(">> Try \"product list help\" for proper syntax");
+                            return;
                         }
                         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
                         listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
@@ -410,13 +408,13 @@ public class ProductCLI {
                         }
                         for(Product resultProduct:resultList)
                         {
-                            System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", quantity: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
+                            System.out.println(">> id: " + resultProduct.getId() + ", code: " + resultProduct.getCode() + ", name: " + resultProduct.getName() + ", type: " + resultProduct.getType() + ", unitcode: " + resultProduct.getunitcode() + ", stock: " + resultProduct.getAvailableQuantity() + ", price: " + resultProduct.getPrice() + ", costprice: " + resultProduct.getCostPrice());
                         }
                     }
                     else
                     {
                         System.out.println("Invalid Extension Given!!!");
-                        System.out.println("Try \"user list help\" for proper syntax");
+                        System.out.println("Try \"product list help\" for proper syntax");
                     }
                 }
                 else
@@ -424,7 +422,6 @@ public class ProductCLI {
                     System.out.println("Given attribute is not a searchable attribute!!");
                     System.out.println("Try \"product list help\" for proper syntax");
                 }
-
             }
             else
             {
@@ -432,6 +429,15 @@ public class ProductCLI {
                 System.out.println(">> Try \"product list help\" for proper syntax");
             }
 
+        }
+        else if(arguments.length == 3)
+        {
+            System.out.println("Invalid command format!!!");
+            System.out.println(">> Try \"product list help\" for proper syntax");
+        }
+        else{
+            System.out.println("Invalid command format!!!");
+            System.out.println(">> Try \"product list help\" for proper syntax");
         }
     }
     public void productCountCLI(String[] arguments) throws ApplicationErrorException {
@@ -471,36 +477,35 @@ public class ProductCLI {
                     "                         or\n" +
                     "> product edit :enter\n" +
                     "> id: <id - 6>, name: <name-edited>, unitcode: <unitcode>,  type: <type>, price: <price>");
-            return;
         }
         else if(arguments.length==2)
         {
             System.out.print("> ");
             String paramaters=scanner.nextLine();
-            String[] productAttributes=paramaters.split("\\,");
+            String[] productAttributes=paramaters.split(",");
             if(productAttributes[0].contains("id")) {
                 for (String attribute : productAttributes) {
                     if (attribute.contains("id")) {
-                        String[] keyValues = attribute.split("\\:");
+                        String[] keyValues = attribute.split(":");
                         attributeMap.put("id", keyValues[1].trim());
                     }
                     else if (attribute.contains("name")) {
-                        String[] keyValues = attribute.split("\\:");
+                        String[] keyValues = attribute.split(":");
                         attributeMap.put("name", keyValues[1].trim());
                     }
                     else if (attribute.contains("unitcode")) {
-                        String[] keyValues = attribute.split("\\:");
+                        String[] keyValues = attribute.split(":");
                         attributeMap.put("unitcode", keyValues[1].trim());
                     }
                     else if (attribute.contains("code")&&!attribute.contains("unitcode")) {
-                        String[] keyValues = attribute.split("\\:");
+                        String[] keyValues = attribute.split(":");
                         attributeMap.put("code", keyValues[1].trim());
                     }
                     else if (attribute.contains("type")) {
-                        String[] keyValues = attribute.split("\\:");
+                        String[] keyValues = attribute.split(":");
                         attributeMap.put("type", keyValues[1].trim());
                     } else if (attribute.contains(("price"))) {
-                        String[] keyValues = attribute.split("\\:");
+                        String[] keyValues = attribute.split(":");
                         attributeMap.put("price", keyValues[1].trim());
                     } else {
                         System.out.println(">> Invalid attribute given!!! : "+attribute);

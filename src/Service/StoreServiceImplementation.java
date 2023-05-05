@@ -1,14 +1,11 @@
 package Service;
-
 import DAO.ApplicationErrorException;
 import DAO.StoreDAO;
 import DAO.StoreDAOImplementation;
 import Entity.Store;
-
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
-
 public class StoreServiceImplementation implements StoreService{
     @Override
     public int createStoreService(Store store) throws SQLException, ApplicationErrorException {
@@ -21,9 +18,7 @@ public class StoreServiceImplementation implements StoreService{
         else {
             return -1;
         }
-
     }
-
     @Override
     public int editStoreService(HashMap<String, String> attributeMap) throws SQLException, ApplicationErrorException {
         StoreDAO storeEditDAO=new StoreDAOImplementation();
@@ -61,7 +56,6 @@ public class StoreServiceImplementation implements StoreService{
             return -1;
         }
     }
-
     @Override
     public int deleteStoreService(String adminPassword) throws ApplicationErrorException {
         StoreDAO storeDeleteDAO=new StoreDAOImplementation();
