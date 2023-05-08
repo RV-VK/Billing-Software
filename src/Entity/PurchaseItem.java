@@ -1,7 +1,5 @@
 package Entity;
 
-import CLIController.ProductCLI;
-
 public class PurchaseItem{
     private Product product;
     private float quantity;
