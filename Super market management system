@@ -1,0 +1,873 @@
+
+Billing CLI
+__________
+
+User
+Admin  - Store / User / Product / Sales Price / Stock / Unit
+Purchase 
+Sales / Bill
+
+	
+New
+	
+	*********************************************************
+	*********************   WELCOME   ***********************
+	*********************************************************	
+	
+1
+	> Welcome to the Billing software setup. You have to create admin user to continue with the setup.
+	> Enter the Admin user name:
+ 	> Enter the password:
+	> Re-enter the password:
+
+	>> Admin created successfully !
+	>> You need to login to continute to Billing software setup
+
+2
+	> Login
+	> Enter user name:
+	> Enter password:
+	
+	Success Scenario
+	>>  Welcome <User name> !!!	
+
+
+	Failure Scenario
+	>>  Login creadentials invalid ! You should try with a valid user name and password. If you have any issues contact software administrator.
+
+	Scope:
+		No forgot password feature
+	
+
+Working
+
+2 - Repeat
+
+—————————————————————————————————————————————
+
+3
+
+	3.1 Admin
+
+		> help
+		
+		store
+			create  - name, phone number, address, gst number
+			edit - name, phone number, address, gst number
+			delete - y/n with admin password
+		user
+			create - usertype, username,  password, first name, last name, phone number
+			count 
+			list 
+			edit - usertype, username,  password, first name, last name, phone number
+			delete - y/n with username
+	 product
+	    create - productname,unit,type,costprice
+	    count
+	    list
+	    edit - productname,unit,type,costprice
+	    delete - y/n with productname or productid
+	 unit
+	 		create - name, code, description, isdividable
+	 		list -
+	 		edit - name, code, description, isdividable
+	 		delete - code
+	 stock
+	    update - code, quantity
+	 price
+	    update - code, price 		
+	 		
+	 		
+	
+	3.2 Purchase user
+	
+		purchase 
+			create - date, invoice, [name1, quantity1, costprice1], [name2, quantity2, costprice2]....
+			count
+			list
+			delete - invoice
+	
+		
+	
+
+	3.3 Sales user
+	
+		sales
+			create - date, [name1, quantity1, costprice1], [name2, quantity2, costprice2]....
+			count
+			list
+			delete - id
+		
+
+4
+
+> store create help
+
+>> Create store using the following template,
+     name, phone number, address, gst number
+ 
+	name  - text, mandatory with 3 to 30 chars	
+	phone - number, mandatory, ten digits, digit start with 9/8/7/6
+	address - text, mandatory
+	gst number - text, 15 digit, mandatory
+
+		
+
+> store create name, phone number, address, gst number
+					or
+> store create :enter
+> name, phone number, address, gst number
+
+Success Scenario
+	   
+>> Store created Successfully !!!
+>> Continue with user, product, unit, purchase and sales setup !
+
+Failure Scenario
+
+>> Unable to create store !
+>> Store template mismatch
+
+
+>> Continue with user, product, unit, purchase and sales setup !
+
+5
+
+> store edit help
+
+>> Edit store uing the following template	
+
+name, phone number, address, gst number
+ 
+	name  - text, mandatory with 3 to 30 chars	
+	phone - number, mandatory, ten digits, digit start with 9/8/7/6
+	address - text, mandatory
+	gst number - text, 15 digit, mandatory
+
+
+> store edit name, phone number, address, gst number
+					or
+> store edit :enter
+> name, phone number, address, gst number
+
+Success Scenario
+	   
+>> Store edited Successfully !!!
+
+Failure Scenario
+
+>> Unable to edit store !
+>> Invaid phone number !
+
+
+6 
+
+> store deleteproduct create hp11, hamam soap, pcs, soap, 25, 0
+> Are you sure want to delete the store. This will delete all you product/purchase/sales data  y/n ? : y
+> Enter admin password to delete the store:
+
+Success Scenario
+	   
+>> Store deleted Successfully !!! GOOD BYE !
+
+Failure Scenario 1
+
+>> Unable to delete store !
+>> Cant find a store !
+
+Failure Scenario 2
+
+>> Unable to delete store !
+>> Invalid admin password !
+	
+7
+
+> user create help
+>> create user using following template
+>>  usertype, username,  password, first name, last name, phone number
+	usertype - text, purchase/sales, mandatory
+	username - text, min 3 - 30 char, mandatory
+	password - text, alphanumeric, special char, min 8 char, mandatory
+	firstname - text, mandatory with 3 to 30 chars
+	lastname  - text, optional
+	phone - number, mandatory, ten digits, digit start with 9/8/7/6				
+
+
+
+> user create userid, usertype, username,  password, first name, last name, phone number
+								or
+> user create :enter
+usertype, username,  password, first name, last name, phone number
+
+Success Scenario:
+	>> User created successfully !
+
+Failure Scenario:
+	1
+	>> Username already exists !
+	2
+	>> Template mismatch !
+
+8
+
+
+> user count
+
+>> <number>
+
+
+9
+
+
+> user list help
+
+>> List user with the following options
+>> user list - will list all the users default to maximum upto 20 users
+>> user list -p 10 - pageable list shows 10 users as default
+>> user list -p 10 3 - pagable list shows 10 users in 3rd page, ie., user from 21 to 30
+>> user list -s searchtext - search the user with the given search text in all the searchable attributes
+>> user list -s <attr>: searchtext - search the user with the given search text in all the given attribute
+>> user list -s <attr>: searchtext -p 10 6 - pagable list shows 10 users in 6th page with the given search text in the given attribute
+
+
+> user list -s usertype: purchase -p 5 2 
+
+Success Scenario:
+	
+	>> total 7
+	>> page 2 (6 - 7)
+	>> id: <id - 6>, usertype: <usertype>, username: <username>,  password: <password>, first name: <first name>, last name: <last name>, phone number: <phone number>
+	>> id: <id - 7>, usertype: <usertype>, username: <username>,  password: <password>, first name: <first name>, last name: <last name>, phone number: <phone number>
+
+
+Failure Scenario:
+
+	1
+	>> Requested page doesn't exist !
+	>> Existing page count with given pagination -<page count> !
+
+	2
+	>> Given attribute invalid !
+
+	3 
+	>> Given search text not found !
+
+	4
+	>> Template mismatch !
+
+
+9
+
+
+> user edit help
+>> Edit user using following template. Copy the user data from the list, edit the attribute values. 
+>> id: <id - 6>, usertype: <usertype-edited>, username: <username>,  password: <password>, first name: <first name>, last name: <last name>, phone number: <phone number>
+
+>> You can also restrict the user data by editable attributes. Id attribute is mandatory for all the edit operation.
+>> id: <id - 6>, usertype: <usertype-edited>, username: <username-edited>
+
+>> You can not give empty or null values to the mandatory attributes.
+>> id: <id - 6>, usertype: , username: null
+	
+	id			 - number, mandatory	
+	usertype - text, purchase/sales, mandatory
+	username - text, min 3 - 30 char, mandatory
+	password - text, alphanumeric, special char, min 8 char, mandatory
+	firstname - text, mandatory with 3 to 30 chars
+	lastname  - text, optional
+	phone - number, mandatory, ten digits, digit start with 9/8/7/6
+
+> user edit id: <id - 6>, usertype: <usertype-edited>, username: <username>,  password: <password>, first name: <first name>, last name: <last name>, phone number: <phone number>
+
+					or
+					
+> user edit :enter
+> id: <id - 6>, usertype: <usertype-edited>, username: <username>,  password: <password>, first name: <first name>, last name: <last name>, phone number: <phone number>
+					
+					or
+					
+> id: <id - 6>, usertype: <usertype-edited>, username: <username-edited>		
+
+Success Scenario
+	   
+  >> Product edited Successfully !!!
+
+Failure Scenario
+
+	1
+	>> Unable to edit !
+	>> Product name not found !
+
+	2
+	>> Unable to edit !
+	>> Template mismatch (specific)!
+
+	3
+	>> Unable to edit !
+	>> Product name already exist !
+
+9 
+
+> user delete help 
+>> delete user using the following template
+	 username
+	 
+	  username - text, min 3 - 30 char, mandatory,existing
+
+
+> user delete <username>
+>> Are you sure want to delete the user y/n ? : y
+
+Success Scenario
+	   
+  >> User deleted Successfully !!!
+
+Failure Scenario
+
+	>> Username doesn't exist !
+	
+	
+	
+
+> unit create help
+>> Create unit using the following template,
+     name, code, description, isdividable
+     
+     name - text, mandatory with 3 to 30 chars	
+     code - text, maximum 4 char, mandatory
+     description - text
+     isdividable - boolean, mandatory
+    
+> unit create name, code, description, isdividable
+							or
+	unit create :enter
+	name, code, description, isdividable
+	
+	
+Success Scenario
+	   
+>> Unit created Successfully !!!
+
+Failure Scenario
+	1
+	>> Unit template mismatch
+	>> Unable to create unit !
+	2
+	>> Unit template mismatch
+	>> Unit already exist
+
+
+
+> unit list help
+
+>> List unit with the following options
+>> unit list - will list all the units
+
+
+> unit edit help
+>> Edit unit using the following template
+id: <id - 6>, name: <name-edited>, code: <code>,  description: <description>, isdividable: <isdividable>
+
+>> You can also restrict the user data by editable attributes. Id attribute is mandatory for all the edit operation.
+>> id: <id - 6>, name: <name>, code: <code>
+
+>> You can not give empty or null values to the mandatory attributes.
+>> id: <id - 6>, name: , code: null
+
+		 name - text, mandatory with 3 to 30 chars	
+     code - text, maximum 4 char, mandatory
+     description - text
+     isdividable - boolean, mandatory
+     
+> unit edit id: <id - 6>, name: <name-edited>, code: <code>,  description: <description>, isdividable: <isdividable>
+
+												or
+												
+> user edit :enter
+> id: <id - 6>, name: <name-edited>, code: <usernamcodee>,  description: <description>, isdividable: <isdividable>
+
+													or
+> id: <id - 6>, name: <name-edited>, code: <code-edited>	
+
+
+Success Scenario
+	   
+  >> Unit edited Successfully !!!
+
+Failure Scenario
+
+	1
+	>> Unable to edit !
+	>> Unit code not found !
+
+	2
+	>> Unable to edit !
+	>> Template mismatch (specific)!
+
+	3
+	>> Unable to edit !
+	>> Unit code already exist !
+
+
+> unit delete help 
+>> delete unit using the following template
+	 	code
+	 
+	  code - text, min 3 - 30 char, mandatory,existing
+
+
+> unit delete <code>
+>> Are you sure want to delete the unit y/n ? : y
+
+Success Scenario
+	   
+  >> Unit deleted Successfully !!!
+
+Failure Scenario
+
+	>> Unit doesn't exist !
+ 
+
+
+10
+> product create help
+>> create product using the following template
+>> code, name, unit, type, price, stock
+	
+	code - text, min - 2 - 6, mandatory
+	name - text, min 3 - 30 char, mandatory
+	unitcode - text, kg/l/piece/combo, mandatory
+	type - text, between enumerated values, mandatory 
+	price - number, mandatory
+	stock - number, default 0
+	
+>	product create code, productname, unitcode, type, costprice
+                         or
+> product create :enter
+code, name, unitcode, type, costprice
+
+Success Scenario
+	   
+  >> Product added successfully !!!
+
+Failure Scenario
+
+	>> Template mismatch !(specific)
+11
+
+> product count
+
+>> <number>
+
+
+12
+
+
+> product list help
+
+>> List product with the following options
+>> product list - will list all the products default to maximum upto 20 products
+>> product list -p 10 - pageable list shows 10 products as default
+>> product list -p 10 3 - pagable list shows 10 products in 3rd page, ie., product from 21 to 30
+>> product list -s searchtext - search the product with the given search text in all the searchable attributes
+>> product list -s <attr>: searchtext - search the product with the given search text in all the given attribute
+>> product list -s <attr>: searchtext -p 10 6 - pagable list shows 10 products in 6th page with the given search text in the given attribute
+
+
+> product list -s type: chocolate -p 5 2 
+
+Success Scenario:
+
+	>> page 2 (6 - 7)
+	>> id: <id - 6>,  productname: <productname>, type: <type>, unitcode: <unitcode>, quantity: <quantity>, costprice: <costprice>, sellingprice: <sellingprice>
+	>> id: <id - 7>,  productname: <productname>, type: <type>, unitcode: <unitcode>, quantity: <quantity>, costprice: <costprice>, sellingprice: <sellingprice>
+
+
+Failure Scenario:
+
+	1
+	>> Requested page doesn't exist !
+	>> Existing page count with given pagination -<page count> !
+
+	2
+	>> Given attribute invalid !
+
+	3 
+	>> Given search text not found !
+
+	4
+	>> Template mismatch !
+
+13
+   
+> product edit help   
+
+>> Edit product using following template. Copy the product data from the list, edit the attribute values. 
+>> id: <id - 6>, name: <name-edited>, unitcode: <unitcode>,  type: <type>, price: <price>
+
+>> You can also restrict the product data by editable attributes. Id attribute is mandatory for all the edit operation.
+>> id: <id - 6>, name: <name-edited>, unitcode: <unitcode-edited>
+
+>> You can not give empty or null values to the mandatory attributes.
+>> id: <id - 6>, name: , unitcode: null
+>>
+ 
+ 	id	 - number, mandatory	
+	name - text, min 3 - 30 char, mandatory
+	unitcode - text, kg/l/piece/combo, mandatory
+	type - text, between enumerated values, mandatory 
+	costprice - numeric, mandatory
+
+>	product edit id:<id - 6>, code: <code-edited>,name: <name-edited>, unitcode: <unitcode>,  type: <type>, price: <price>
+                         or
+> product edit :enter
+> id: <id - 6>,code: <code-edited>, name: <name-edited>, unitcode: <unitcode>,  type: <type>, price: <price>
+					
+					or
+					
+> id: <id - 6>, name: <name-edited>, unitcode: <unitcode-edited>		
+
+
+Success Scenario
+	   
+  >> Product edited successfully !!!
+
+Failure Scenario
+  1
+  >> Template mismatch !(specific)
+  2
+  >> Product not found!
+  
+14
+
+> product delete help 
+>> delete product using the following template
+	
+		productid - numeric, existing
+>> product delete -c <code>
+	 
+
+> product delete <id>
+>> Are you sure want to delete the product y/n ? : y
+
+Success Scenario
+	   
+  >> product deleted Successfully !!!
+
+Failure Scenario
+
+	>> product doesn't exist  
+	
+	
+
+19
+
+> purchase help
+>> purchase products using following command
+delete
+purchase date, invoice, [code1, quantity1, costprice1], [code2, quantity2, costprice2]....
+
+	  date - format( DD-MM-YYYY ), mandatory
+		invoice - numbers, mandatory
+		
+		The following purchase items should be given as array of items
+		code - text, min 2 - 6 char, mandatory
+		quantity - numbers, mandatory
+		costprice - numbers, mandatory
+		
+		
+		
+		
+	
+Success Scenario  
+>> Purchase successfull !! Your purchase invoice:
+**********************************************************************************
+<DATE>		PURCHASE BILL <purchase id>    INVOICE NO <invoice no>
+**********************************************************************************
+SNO				PRODUCT NAME				QTY			PRICE				TOTAL
+----------------------------------------------------------------------------------
+<num>			<productname>				<qty>		<price>				<total>
+<num>			<productname>				<qty>		<price>				<total>
+<num>			<productname>				<qty>		<price>				<total>
+<num>			<productname>				<qty>		<price>				<total>
+----------------------------------------------------------------------------------
+GRAND TOTAL																		<grand total>
+-----------------------------------------------------------------------------------
+
+>> Are you sure want to proceed purchase y/n ? : y
+>> Purchase Successfully
+
+Failure Scenario
+  1
+	>> Purchase item <number> <code> not found !  
+	2
+	>> Template mismatch !
+	3 (no)
+	>> Purchase cancelled !
+			
+	
+20
+
+> purchase count -d <date>
+
+>> count : <number>
+
+> purchase count
+
+>> count : <number>
+
+> purchase count -c <category>
+
+>> count : <number>
+
+21
+
+> purchase list help
+
+>> List purchase with the following options
+>> purchase list - will list all the purchases default to maximum upto 20 purchases
+>> purchase list -p 10 - pageable list shows 10 purchases as default
+>> purchase list -p 10 3 - pagable list shows 10 purchases in 3rd page, ie., purchase from 21 to 30
+
+>> Use only the following attributes: id, date, invoice
+>> purchase list -s <attr>: searchtext - search the purchase with the given search text in all the given attribute
+>> purchase list -s <attr>: searchtext -p 10 6 - pagable list shows 10 purchases in 6th page with the given search text in the given attribute
+
+> purchase list -s <date> : <23-03-2023> -p 5 2 
+> purchase list -s <invoice> : <785263>
+
+Success Scenario:
+
+	>> page 2 (6 - 10)
+	>> id: <id - 6>,  date: <date>, invoice: <invoice>, [[name: <name>, quantity: <quantity>, price: <price>], 
+																											 [name: <name>, quantity: <quantity>, price: <price>],
+  																										 [name: <name>, quantity: <quantity>, price: <price>],
+ 																											 [name: <name>, quantity: <quantity>, price: <price>],
+ 																											 [name: <name>, quantity: <quantity>, price: <price>]]
+ 
+ >> id: <id - 7>,  date: <date>, invoice: <invoice>, [[name: <name>, quantity: <quantity>, price: <price>], 
+																											 [name: <name>, quantity: <quantity>, price: <price>],
+  																										 [name: <name>, quantity: <quantity>, price: <price>],
+ 																											 [name: <name>, quantity: <quantity>, price: <price>],
+ 																											 [name: <name>, quantity: <quantity>, price: <price>]]
+ 																											 
+        
+Failure Scenario
+	1
+	>> Template mismatch !
+	2
+	>> Attribute<specific> not found !
+	3
+	>> Search text not found !
+	4
+	>> Requested page doesn't exist !
+	>> Existing page count with given pagination -<page count> !
+
+22
+> purchase delete help
+>> Delete purchase using following command 
+
+>> purchase delete <invoice>
+		invoice - numeric, mandatory
+		
+> purchase delete <6>
+>> Are you sure want to delete the purchase y/n ? : y
+
+Success Scenario
+	   
+>> Purchase deleted successfully !!!
+
+Failure Scenario
+
+>> Invoice number not found !
+
+23
+> stock update help
+>> update stock using following template
+		code, quantity
+		
+		code - text, mandatory
+		quantity - number, mandatory
+
+> stock update <code> <quantity>
+
+Success scenario :
+ 		>> Stock updated successfully !
+ 		
+Failure scenario :
+		1
+		>> Template mismatch !
+		2
+		>> Product not found !
+		
+		 		
+24
+
+> price update help
+
+>> Update sales price per unit using the following template
+		code, price
+		
+		code - text, mandatory
+		price - number, mandatory
+		
+> price update <code> <price>	
+
+Success scenario :
+ 		>> Price updated successfully !
+ 		
+Failure scenario :
+		1
+		>> Template mismatch !
+		2
+		>> Product not found !
+	
+       
+25
+
+> sales help
+>> sell products using following command
+
+sales date, [code1, quantity1], [code2, quantity2]....
+
+		code - text, min 3 - 30 char, mandatory
+		quantity - numbers, mandatory
+		
+		
+	
+Success Scenario  
+>> Sales successfull !!  Your sales invoice:
+**********************************************************************************
+<DATE>		SALES BILL <sales id>
+**********************************************************************************
+SNO				PRODUCT NAME				QTY			PRICE				TOTAL
+----------------------------------------------------------------------------------
+<num>			<productname>				<qty>		<price>				<total>
+<num>			<productname>				<qty>		<price>				<total>
+<num>			<productname>				<qty>		<price>				<total>
+<num>			<productname>				<qty>		<price>				<total>
+----------------------------------------------------------------------------------
+GRAND TOTAL																		<grand total>
+-----------------------------------------------------------------------------------
+
+>> Are you sure want to generate the bill y/n ? : y
+
+>> Generated Successfully !
+>> Thank You !!
+
+Failure Scenario
+  1
+	>> Sales item <number> <code> not found !  
+	2
+	>> Template mismatch !
+	3 (no)
+	>> Sales cancelled
+	
+20
+
+> sales count -d <date>
+
+>> count : <number>
+
+> sales count
+
+>> count : <number>
+
+> sales count -c <category>
+
+>> count : <number>
+
+21
+
+> sales list help
+
+>> List sales with the following options
+>> sales list - will list all the sales default to maximum upto 20 sales
+>> sales list -p 10 - pageable list shows 10 sales as default
+>> sales list -p 10 3 - pagable list shows 10 sales in 3rd page, ie., sale from 21 to 30
+
+>> Use only the following attributes: id, date
+>> sales list -s <attr>: searchtext - search the sale with the given search text in all the given attribute
+>> sales list -s <attr>: searchtext -p 10 6 - pagable list shows 10 sales in 6th page with the given search text in the given attribute
+
+> sales list -s <date> : <23/03/2023> -p 5 2 
+> sales list -s <id> : <10>
+
+Success Scenario:
+
+	>> page 2 (6 - 10)
+	>> id: <id - 6>,  date: <date>, [[name: <name>, quantity: <quantity>, price: <price>], 
+																	 [name: <name>, quantity: <quantity>, price: <price>],
+  																 [name: <name>, quantity: <quantity>, price: <price>],
+ 																	 [name: <name>, quantity: <quantity>, price: <price>],
+ 																	 [name: <name>, quantity: <quantity>, price: <price>]]	
+ 
+ >> id: <id - 7>,  date: <date>, [[name: <name>, quantity: <quantity>, price: <price>], 
+																	[name: <name>, quantity: <quantity>, price: <price>],
+  																[name: <name>, quantity: <quantity>, price: <price>],
+ 																	[name: <name>, quantity: <quantity>, price: <price>],
+ 																	[name: <name>, quantity: <quantity>, price: <price>]]
+ 									
+        
+Failure Scenario
+	1
+	>> Template mismatch !
+	2
+	>> Attribute<specific> not found !
+	3
+	>> Search text not found !
+	4
+	>> Requested page doesn't exist !
+	>> Existing page count with given pagination -<page count> !
+
+22
+> sales delete help
+>> Delete sales using following command 
+
+>> sales delete <id>
+		id - numeric, mandatory
+		
+> sales delete <6>
+>> Are you sure want to delete the sales y/n ? : y
+
+Success Scenario
+	   
+>> Sales deleted successfully !!!
+
+Failure Scenario
+
+>> Id not found !
+
+
+	
+
+                   
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+
+
