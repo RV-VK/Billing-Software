@@ -59,7 +59,7 @@ public class ProductServiceImplementation implements ProductService{
         ProductDAO productEditDAO=new ProductDAOImplementation();
         String numberRegex="^[0-9]*$";
         String procodeRegex="^[a-zA-Z0-9]{2,6}$";
-        String nameRegex="^[a-zA-Z]{3,30}$";
+        String nameRegex="^[a-zA-Z\\s]{3,30}$";
         int id;
         try {
              id = Integer.parseInt(attributeMap.get("id").trim());

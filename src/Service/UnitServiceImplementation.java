@@ -31,7 +31,7 @@ public class UnitServiceImplementation implements UnitService{
     public int editUnitService(HashMap<String, String> attributeMap) throws SQLException, ApplicationErrorException, UniqueConstraintException {
         UnitDAO unitEditDAO=new UnitDAOImplementation();
         String unitCodeRegex="^[a-zA-Z]{1,4}$";
-        String nameRegex="^[a-zA-Z]{3,30}$";
+        String nameRegex="^[a-zA-Z\\s]{3,30}$";
         int id;
         try {
             id = Integer.parseInt(attributeMap.get("id").trim());

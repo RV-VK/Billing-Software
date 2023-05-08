@@ -179,13 +179,13 @@ public class UnitCLI {
             System.out.print("> ");
             String parameters=scanner.nextLine();
             String[] unitAttributes=parameters.split("\\,");
-            if(unitAttributes.length<4)
+            if(unitAttributes.length<2)
             {
                 System.out.println(">> Insufficient arguments for edit Operation");
                 System.out.println(">> Try \"unit edit help\" for proper syntax");
                 return;
             }
-            if(unitAttributes.length>10)
+            if(unitAttributes.length>5)
             {
                 System.out.println(">> Too manu arguments for edit Operation!!");
                 System.out.println(">> Try \"unit edit help\" for proper syntax!!!");
@@ -195,7 +195,7 @@ public class UnitCLI {
             {
                 for(String attribute: unitAttributes)
                 {
-                    if(attribute.contains("id")&&!(attribute.equals("isdividable"))){
+                    if(attribute.contains("id")&&!attribute.equals("isdividable")){
                         String[] keyValues=attribute.split("\\:");
                         attributeMap.put("id",keyValues[1].trim());
                     }

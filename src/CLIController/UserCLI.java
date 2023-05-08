@@ -585,7 +585,7 @@ public class UserCLI {
     public void userDeleteCLI(String[] arguments) throws ApplicationErrorException {
         Scanner scanner=new Scanner(System.in);
         UserService userDeleteSerivice=new UserServiceImplementation();
-        String nameregex="^[a-zA-Z]{3,30}$";
+        String nameregex="^[a-zA-Z0-9]{3,30}$";
         if(arguments.length==3)
         {
             if(arguments[2].equals("help"))

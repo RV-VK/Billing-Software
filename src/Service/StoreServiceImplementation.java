@@ -23,7 +23,7 @@ public class StoreServiceImplementation implements StoreService{
     public int editStoreService(HashMap<String, String> attributeMap) throws SQLException, ApplicationErrorException {
         StoreDAO storeEditDAO=new StoreDAOImplementation();
         String numberRegex="^[0-9]*$";
-        String nameRegex="^[a-zA-Z]{3,30}$";
+        String nameRegex="^[a-zA-Z\\s]{3,30}$";
         if (attributeMap.get("name") != null && !attributeMap.get("name").matches(nameRegex) || attributeMap.get("phonenumber") != null && !attributeMap.get("phonenumber").matches(numberRegex) ||  attributeMap.get("gstnumber") != null && !attributeMap.get("gstnumber").matches(numberRegex) || attributeMap.get("address") != null && !attributeMap.get("address").matches(nameRegex)) {
             return 0;
         }

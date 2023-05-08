@@ -1,10 +1,11 @@
 package CLIController;
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
+import org.checkerframework.checker.units.qual.A;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
+
 public class StoreMain{
     static Scanner scanner;
     public static void main(String[] args) throws ApplicationErrorException, PageCountOutOfBoundsException, SQLException {
@@ -13,10 +14,31 @@ public class StoreMain{
         do{
             System.out.print("> ");
             String command=scanner.nextLine();
-            String[] arguments=command.split("\\s+");
+            String parts[];
+            String commandlet[];
+            if(command.contains(","))
+            {
+                parts=command.split("[,:]");
+                commandlet=parts[0].split(" ");
+            }
+            else {
+                parts=command.split(",");
+                commandlet= command.split(" ");
+            }
+            ArrayList<String> commandlist=new ArrayList<>();
+            if(parts.length==1)
+            {
+                Collections.addAll(commandlist,commandlet);
+            }
+            else{
+                Collections.addAll(commandlist,commandlet);
+                commandlist.addAll(Arrays.asList(parts).subList(1,parts.length));
+            }
+            String[] arguments= commandlist.toArray(new String[0]);
+//            String[] arguments=command.split("\\s+");
             for(int index=0;index< arguments.length;index++)
             {
-                arguments[index]=arguments[index].replace(",","");
+                arguments[index]=arguments[index].trim();
             }
             String commandString=arguments[0];
             switch(commandString) {
@@ -105,6 +127,28 @@ public class StoreMain{
                             break;
                         case "delete":
                             unitCLI.unitDeleteCLI(arguments);
+                            break;
+                        default:
+                            System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
+                            System.out.println("Try \"help\" for proper syntax");
+                    }
+                    break;
+                case "purchase":
+                    PurchaseCLI purchaseCLI=new PurchaseCLI();
+                    String operationString5=arguments[1];
+                    switch(operationString5)
+                    {
+                        case "create":
+                            purchaseCLI.purchaseCreateCLI(arguments);
+                            break;
+                        case "count":
+                            purchaseCLI.purchaseCountCLI(arguments);
+                            break;
+                        case "list":
+                            purchaseCLI.purchaseListCLI(arguments);
+                            break;
+                        case "delete":
+                            purchaseCLI.purchaseDeleteCLI(arguments);
                             break;
                         default:
                             System.out.println("Invalid operation for command " + "\"" + commandString + "\"");

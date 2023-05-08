@@ -57,7 +57,7 @@ public class UserServiceImplementation implements UserService{
     public int editUserService(HashMap<String, String> attributeMap) throws SQLException, ApplicationErrorException, UniqueConstraintException {
         UserDAO editUserDAO=new UserDAOImplemetation();
         String numberRegex="^[0-9]*$";
-        String nameRegex="^[a-zA-Z]{3,30}$";
+        String nameRegex="^[a-zA-Z\\s]{1,30}$";
         String passwordRegex="^[a-zA-Z0-9]{8,50}$";
         List<String> userTypeList=new ArrayList<>(Arrays.asList("Admin","Purchase","Sales"));
         int id;
