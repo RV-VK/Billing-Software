@@ -22,6 +22,7 @@ public class PurchaseItem{
         return quantity;
     }
 
+
     public void setQuantity(float quantity) {
         this.quantity = quantity;
     }
@@ -33,4 +34,14 @@ public class PurchaseItem{
     public void setUnitPurchasePrice(double unitPurchasePrice) {
         this.unitPurchasePrice = unitPurchasePrice;
     }
+    @Override
+    public String toString() {
+        return "PurchaseItem{" +
+                "product=" + product +
+                ", quantity=" + quantity +
+                ", unitPurchasePrice=" + unitPurchasePrice +
+                '}';
+    }
+
 }
+

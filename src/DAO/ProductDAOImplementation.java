@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ProductDAOImplementation implements ProductDAO{
     @Override
-    public Product create(Product product) throws ApplicationErrorException, SQLException, UniqueNameException {
+    public Product  create(Product product) throws ApplicationErrorException, SQLException, UniqueNameException {
         Connection productCreateConnection = DBHelper.getConnection();
         try {
             productCreateConnection.setAutoCommit(false);
@@ -169,7 +169,6 @@ public class ProductDAOImplementation implements ProductDAO{
                 }
 
             else {
-                System.out.println(">> SearchText not Found ! Please try with an existing attribute value");
                 return null;
             }
         } catch (SQLException e) {

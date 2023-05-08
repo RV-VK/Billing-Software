@@ -1,11 +1,19 @@
 package CLIController;
 import DAO.ApplicationErrorException;
+import DAO.PageCountOutOfBoundsException;
+import DAO.PurchaseDAO;
+import DAO.PurchaseDAOImplementation;
+import Entity.Purchase;
+import Entity.PurchaseItem;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+
 public class Debug {
-    public static void main(String[] args) throws SQLException, ApplicationErrorException {
+    public static void main(String[] args) throws SQLException, ApplicationErrorException, PageCountOutOfBoundsException {
 
         String createcommand="product create hp11, hamam soap, pcs, soap, 25, 0";
         String editcommand = "product edit id: 1, usertype: admin, username: mani, password: mara1205, firstname: RV, lastname: Mani, phonenumber: 6383874789";
@@ -66,6 +74,18 @@ public class Debug {
 // Print the individual words
         for (String product : cmdlist) {
             System.out.println(product);
+        }
+        PurchaseDAO purchaseDAO=new PurchaseDAOImplementation();
+        List<Purchase> Purchaselist=purchaseDAO.list("invoice","124",1,0);
+        for(Purchase purchase:Purchaselist)
+        {
+            System.out.print(purchase.getId()+" "+purchase.getDate()+" "+purchase.getInvoice()+" ");
+            for(PurchaseItem purchaseItem: purchase.getPurchaseItemList())
+            {
+                System.out.print(purchaseItem.getProduct().getCode()+" "+purchaseItem.getQuantity()+" "+purchaseItem.getUnitPurchasePrice()+" ");
+            }
+            System.out.println();
+
         }
     }
 }
