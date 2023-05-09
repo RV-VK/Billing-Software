@@ -204,6 +204,10 @@ public class StoreMain{
                             }
                     }
                     break;
+                case "price":
+                    break;
+                case "stock":
+                    break;
                 case "help":
                     String help="product\n" +
                             "\t    create - productname,unit,type,costprice\n" +
