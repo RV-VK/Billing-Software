@@ -1,6 +1,7 @@
 package DAO;
 
 import Entity.Product;
+import org.checkerframework.checker.units.qual.A;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -13,4 +14,5 @@ public interface ProductDAO {
     List list(String searchText) throws ApplicationErrorException;
     boolean edit(int id,String attribute,String value) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException, UnitCodeViolationException;
     int delete(String parameter) throws ApplicationErrorException;
+    int checkIsdividable(String code) throws ApplicationErrorException;
 }

@@ -138,9 +138,7 @@ public class StoreMain{
                     String operationString5=arguments[1];
                     switch(operationString5)
                     {
-                        case "create":
-                            purchaseCLI.purchaseCreateCLI(arguments);
-                            break;
+
                         case "count":
                             purchaseCLI.purchaseCountCLI(arguments);
                             break;
@@ -150,9 +148,26 @@ public class StoreMain{
                         case "delete":
                             purchaseCLI.purchaseDeleteCLI(arguments);
                             break;
+                        case "help":
+                            System.out.println(">> purchase products using following command\n" +
+                                    "purchase date, invoice, [code1, quantity1, costprice1], [code2, quantity2, costprice2]....\n" +
+                                    "\n" +
+                                    "\t  date - format( YYYY-MM-DD ), mandatory\n" +
+                                    "\t\tinvoice - numbers, mandatory\n" +
+                                    "\t\t\n" +
+                                    "\t\tThe following purchase items should be given as array of items\n" +
+                                    "\t\tcode - text, min 2 - 6 char, mandatory\n" +
+                                    "\t\tquantity - numbers, mandatory\n" +
+                                    "\t\tcostprice - numbers, mandatory");
                         default:
-                            System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
-                            System.out.println("Try \"help\" for proper syntax");
+                            if(operationString5.matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))"))
+                            {
+                                purchaseCLI.purchaseCreateCLI(command);
+                            }
+                            else {
+                                System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
+                                System.out.println("Try either \"help\" for proper syntax or \"purchase help\" if you are trying to start a purchase!");
+                            }
                     }
                     break;
                 case "help":

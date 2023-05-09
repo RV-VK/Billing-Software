@@ -617,7 +617,7 @@ public class UserCLI {
                     System.out.println(">> Delete operation cancelled");
                 }
                 else {
-                    System.out.println("Invalid delete prompt!!! Please select between y/n");
+                    System.out.println(">> Invalid delete prompt!!! Please select between y/n");
                 }
             }
             else {

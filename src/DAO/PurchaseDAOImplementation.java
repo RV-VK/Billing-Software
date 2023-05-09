@@ -3,15 +3,12 @@ import DBConnection.DBHelper;
 import Entity.Product;
 import Entity.Purchase;
 import Entity.PurchaseItem;
-import org.checkerframework.checker.units.qual.A;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
 public class PurchaseDAOImplementation implements PurchaseDAO{
     @Override
-    public Purchase create(Purchase purchase) throws ApplicationErrorException {
+    public Purchase create(Purchase purchase) throws ApplicationErrorException, SQLException {
         Connection purchaseCreateConnection= DBHelper.getConnection();
         try{
             purchaseCreateConnection.setAutoCommit(false);
@@ -51,9 +48,11 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
                 }
                 purchaseEntry.setPurchaseItemList(purchaseItemList);
             }
+            purchaseCreateConnection.commit();
             return purchaseEntry;
         }catch(Exception e)
         {
+            purchaseCreateConnection.rollback();
             throw new ApplicationErrorException(e.getMessage());
         }
     }
@@ -137,7 +136,6 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
             }
         }
     }
-
     @Override
     public List list(String attribute, String searchText, int pageLength, int offset) throws ApplicationErrorException {
         Connection listConnection=DBHelper.getConnection();
@@ -171,27 +169,65 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
                     purchase.setPurchaseItemList(purchaseItemList);
                 }
                 return purchaseList;
-
             }
             else{
                 return null;
             }
-
         }
         catch(Exception e)
         {
             throw new ApplicationErrorException(e.getMessage());
         }
-
     }
-
     @Override
-    public List list(String searchText) {
-        return null;
+    public List list(String searchText) throws ApplicationErrorException {
+        Connection listConnection=DBHelper.getConnection();
+        List<Purchase> purchaseList=new ArrayList<>();
+        try{
+            Statement listStatement= listConnection.createStatement();
+            String listQuery="SELECT * FROM PURCHASE WHERE CAST(ID AS TEXT) ILIKE '"+searchText+"' OR CAST(DATE AS TEXT) ILIKE '"+searchText+"' OR CAST(INVOICE AS TEXT) ILIKE '"+searchText+"'";
+            ResultSet listResultSet=listStatement.executeQuery(listQuery);
+            while(listResultSet.next())
+            {
+                Purchase listedPurchase=new Purchase();
+                listedPurchase.setId(listResultSet.getInt(1));
+                listedPurchase.setDate(String.valueOf(listResultSet.getDate(2)));
+                listedPurchase.setInvoice(listResultSet.getInt(3));
+                listedPurchase.setGrandTotal(listResultSet.getInt(4));
+                purchaseList.add(listedPurchase);
+            }
+            PreparedStatement listPurchaseItemsStatement=listConnection.prepareStatement("SELECT * FROM PURCHASEITEMS WHERE INVOICE=?");
+            List<PurchaseItem> purchaseItemList=new ArrayList<>();
+            for(Purchase purchase:purchaseList)
+            {
+                listPurchaseItemsStatement.setInt(1,purchase.getInvoice());
+                ResultSet listPurchaseResultSet=listPurchaseItemsStatement.executeQuery();
+                while(listPurchaseResultSet.next())
+                {
+                    purchaseItemList.add(new PurchaseItem(new Product(listPurchaseResultSet.getString(2)),listPurchaseResultSet.getFloat(3),listPurchaseResultSet.getDouble(4)));
+                }
+                purchase.setPurchaseItemList(purchaseItemList);
+            }
+            return purchaseList;
+        }catch(Exception e)
+        {
+            throw new ApplicationErrorException(e.getMessage());
+        }
     }
-
     @Override
-    public int delete(int invoice) {
-        return 0;
+    public int delete(int invoice) throws ApplicationErrorException {
+        Connection deleteConnection=DBHelper.getConnection();
+        try{
+            Statement deleteStatement=deleteConnection.createStatement();
+            if(deleteStatement.executeUpdate("DELETE FROM PURCHASEITEMS WHERE INVOICE='"+invoice+"'")>0&&deleteStatement.executeUpdate("DELETE FROM PURCHASE WHERE INVOICE='"+invoice+"'")>0)
+            {
+                return 1;
+            }
+            else return -1;
+        }
+        catch(Exception e)
+        {
+            throw new ApplicationErrorException(e.getMessage());
+        }
     }
 }

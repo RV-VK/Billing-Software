@@ -112,6 +112,20 @@ public class Product {
         this.costPrice = costPrice;
     }
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", unitcode='" + unitcode + '\'' +
+                ", type='" + type + '\'' +
+                ", availableQuantity=" + availableQuantity +
+                ", price=" + price +
+                ", costPrice=" + costPrice +
+                '}';
+    }
+
     public static void create(Product product) throws SQLException {
         Connection productCreateConnection = DBHelper.getConnection();
         try {

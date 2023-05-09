@@ -1,28 +1,71 @@
 package Service;
-
+import DAO.*;
 import Entity.Purchase;
-
+import Entity.PurchaseItem;
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
 public class PurchaseServiceImplementation implements PurchaseService{
     @Override
-    public int createPurchaseService(Purchase purchase) {
-        return 0;
+    public int createPurchaseService(Purchase purchase) throws ApplicationErrorException, SQLException {
+        ProductDAO unitCheckDAO=new ProductDAOImplementation();
+        int i=1;
+        for(PurchaseItem purchaseItem:purchase.getPurchaseItemList())
+        {
+            int isDividable=unitCheckDAO.checkIsdividable(purchaseItem.getProduct().getCode());
+            if(isDividable==0&&purchaseItem.getQuantity()%1!=0)
+            {
+                return i+1;
+            }
+            else if(isDividable==-1)
+            {
+                return isDividable;
+            }
+        }
+        PurchaseDAO purchaseCreateDAO=new PurchaseDAOImplementation();
+        Purchase createdPurchase= purchaseCreateDAO.create(purchase);
+        if(createdPurchase!=null)
+        {
+            return 1;
+        }
+        else{
+            return -2;
+        }
     }
-
     @Override
-    public int countPurchaseService(String parameter) {
-        return 0;
+    public int countPurchaseService(String parameter) throws ApplicationErrorException {
+        PurchaseDAO countPurchaseDAO=new PurchaseDAOImplementation();
+        return countPurchaseDAO.count(parameter);
     }
-
     @Override
-    public List<Purchase> listPurchaseService(HashMap<String, String> listattributes) {
+    public List<Purchase> listPurchaseService(HashMap<String, String> listattributes) throws PageCountOutOfBoundsException, ApplicationErrorException {
+        List<Purchase> purchaseList;
+        PurchaseDAO listPurchaseDAO=new PurchaseDAOImplementation();
+        if(Collections.frequency(listattributes.values(),null)==listattributes.size()-2&&listattributes.get("Pagelength")!=null&&listattributes.get("Pagenumber")!=null)
+        {
+            purchaseList=listPurchaseDAO.list(Integer.parseInt(listattributes.get("Pagelength")),Integer.parseInt(listattributes.get("Pagenumber")));
+            return purchaseList;
+        }
+        else if(Collections.frequency(listattributes.values(),null)==0)
+        {
+            int pageLength=Integer.parseInt(listattributes.get("Pagelength"));
+            int pageNumber=Integer.parseInt(listattributes.get("Pagenumber"));
+            int offset=(pageLength*pageNumber)-pageLength;
+            purchaseList=listPurchaseDAO.list(listattributes.get("Attribute"),listattributes.get("Searchtext"),pageLength,offset);
+            return purchaseList;
+        }
+        else if(Collections.frequency(listattributes.values(),null)==listattributes.size()-1&&listattributes.get("Searchtext")!=null)
+        {
+            purchaseList=listPurchaseDAO.list(listattributes.get("Searchtext"));
+            return purchaseList;
+        }
         return null;
     }
-
     @Override
-    public int deletePurchaseService(String invoice) {
-        return 0;
+    public int deletePurchaseService(String invoice) throws ApplicationErrorException {
+        PurchaseDAO purchaseDeletDAO=new PurchaseDAOImplementation();
+        return purchaseDeletDAO.delete(Integer.parseInt(invoice));
+
     }
 }

@@ -231,13 +231,13 @@ public class ProductDAOImplementation implements ProductDAO{
     }
     @Override
     public int delete(String parameter) throws ApplicationErrorException {
-        Connection getCountConnection= DBHelper.getConnection();
+        Connection deleteConnection= DBHelper.getConnection();
         String numberRegex="^[0-9]*$";
         String procodeRegex="^[a-zA-Z0-9]{2,6}$";
         try {
-            Statement countStatement = getCountConnection.createStatement();
+            Statement deleteStatement = deleteConnection.createStatement();
             if(parameter.matches(numberRegex)) {
-                ResultSet stockResultSet=countStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='"+parameter+"'");
+                ResultSet stockResultSet=deleteStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='"+parameter+"'");
                 if(!stockResultSet.next())
                 {
                     return -1;
@@ -248,14 +248,14 @@ public class ProductDAOImplementation implements ProductDAO{
                   return 0;
                 }
                 else {
-                    if(countStatement.execute("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE ID='" + parameter + "'"))
+                    if(deleteStatement.execute("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE ID='" + parameter + "'"))
                     {
                         return 1;
                     }
                 }
                 }
             else if(parameter.matches(procodeRegex)) {
-                ResultSet stockResultSet=countStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE CODE='"+parameter+"'");
+                ResultSet stockResultSet=deleteStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE CODE='"+parameter+"'");
                 if(!stockResultSet.next())
                 {
                     return -1;
@@ -266,7 +266,7 @@ public class ProductDAOImplementation implements ProductDAO{
                     return 0;
                 }
                 else {
-                    if (countStatement.execute("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE CODE='" + parameter + "'")) {
+                    if (deleteStatement.execute("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE CODE='" + parameter + "'")) {
                         return 1;
                     }
                 }
@@ -276,5 +276,32 @@ public class ProductDAOImplementation implements ProductDAO{
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
         return 1;
+    }
+    public int checkIsdividable(String code) throws ApplicationErrorException {
+        Connection unitCheckConnection=DBHelper.getConnection();
+        try{
+            Statement unitCheckStatement=unitCheckConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            ResultSet unitCheckResultSet=unitCheckStatement.executeQuery("SELECT U.ISDIVIDABLE FROM PRODUCT P JOIN UNIT U ON P.UNITCODE=U.CODE WHERE P.CODE='"+code+"'");
+            boolean isDividable=false;
+            if(unitCheckResultSet.next()) {
+                while (unitCheckResultSet.next()) {
+                    isDividable = unitCheckResultSet.getBoolean(1);
+                }
+                if(isDividable)
+                {
+                    return 1;
+                }
+                else{
+                    return 0;
+                }
+            }
+            else{
+                return -1;
+            }
+        }
+        catch(Exception e)
+        {
+            throw new ApplicationErrorException(e.getMessage());
+        }
     }
 }
