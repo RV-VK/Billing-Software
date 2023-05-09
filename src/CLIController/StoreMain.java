@@ -4,6 +4,7 @@ import DAO.PageCountOutOfBoundsException;
 import org.checkerframework.checker.units.qual.A;
 
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.*;
 
 public class StoreMain{
@@ -167,6 +168,39 @@ public class StoreMain{
                             else {
                                 System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
                                 System.out.println("Try either \"help\" for proper syntax or \"purchase help\" if you are trying to start a purchase!");
+                            }
+                    }
+                    break;
+                case "sales":
+                    SalesCLI salesCLI=new SalesCLI();
+                    String operationString6=arguments[1];
+                    switch(operationString6)
+                    {
+                        case "count":
+                            salesCLI.salesCountCLI(arguments);
+                            break;
+                        case "list":
+                            salesCLI.salesListCLI(arguments);
+                            break;
+                        case "delete":
+                            salesCLI.salesDeleteCLI(arguments);
+                            break;
+                        case "help":
+                            System.out.println(">> sell products using following command\n" +
+                                    "\n" +
+                                    "sales date, [code1, quantity1], [code2, quantity2]....\n" +
+                                    "\n" +
+                                    "\t\tcode - text, min 3 - 30 char, mandatory\n" +
+                                    "\t\tquantity - numbers, mandatory");
+                            break;
+                        default:
+                            if(operationString6.matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))"))
+                            {
+                                salesCLI.salesCreateCLI(command);
+                            }
+                            else {
+                                System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
+                                System.out.println("Try either \"help\" for proper syntax or \"sales help\" if you are trying to start a purchase!");
                             }
                     }
                     break;
