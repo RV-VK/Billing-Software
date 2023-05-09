@@ -1,5 +1,7 @@
 package CLIController;
 
+import DAO.ApplicationErrorException;
+import DAO.PageCountOutOfBoundsException;
 import Entity.Product;
 import Entity.Purchase;
 import Entity.PurchaseItem;
@@ -68,7 +70,7 @@ public class PurchaseCLI {
                     return;
                 }
                 purchaseItemList.add(new PurchaseItem(new Product(code),quantity,costPrice));
-                grandTotal+=costPrice;
+                grandTotal+=costPrice*quantity;
             }
             Purchase purchase=new Purchase(purchaseDate,invoice,purchaseItemList,grandTotal);
             PurchaseService purchaseCreateService=new PurchaseServiceImplementation();
@@ -81,8 +83,7 @@ public class PurchaseCLI {
             }
         }
     }
-    public void purchaseCountCLI(String[] arguments)
-    {
+    public void purchaseCountCLI(String[] arguments) throws ApplicationErrorException {
         PurchaseService countPurchaseService=new PurchaseServiceImplementation();
         if (arguments.length == 3) {
             if (arguments[2].equals("help")) {
@@ -137,8 +138,7 @@ public class PurchaseCLI {
             System.out.println(">> Try \"purchase count help\" for proper syntax");
         }
     }
-    public void purchaseListCLI(String[] arguments)
-    {
+    public void purchaseListCLI(String[] arguments) throws PageCountOutOfBoundsException, ApplicationErrorException {
         listAttributesMap.put("Pagelength",null);
         listAttributesMap.put("Pagenumber",null);
         listAttributesMap.put("Attribute",null);
@@ -168,7 +168,14 @@ public class PurchaseCLI {
             purchaseList=purchaseListService.listPurchaseService(listAttributesMap);
             for(Purchase purchase:purchaseList)
             {
-                System.out.println("");
+                System.out.print("id: "+purchase.getId()+", date: "+purchase.getDate()+", invoice: "+purchase.getInvoice()+", ");
+                System.out.print("[");
+                for(PurchaseItem purchaseItem:purchase.getPurchaseItemList())
+                {
+                    System.out.print("[name: "+purchaseItem.getProduct().getName( )+", quantity: "+purchaseItem.getQuantity()+", price: "+purchaseItem.getUnitPurchasePrice()+"], ");
+                }
+                System.out.print("]");
+                System.out.println();
             }
         }
         else if(arguments.length==4)
@@ -188,7 +195,14 @@ public class PurchaseCLI {
                 purchaseList=purchaseListService.listPurchaseService(listAttributesMap);
                 for(Purchase purchase:purchaseList)
                 {
-                    System.out.println("");
+                    System.out.print("id: "+purchase.getId()+", date: "+purchase.getDate()+", invoice: "+purchase.getInvoice()+", ");
+                    System.out.print("[");
+                    for(PurchaseItem purchaseItem:purchase.getPurchaseItemList())
+                    {
+                        System.out.print("[name: "+purchaseItem.getProduct().getName( )+", quantity: "+purchaseItem.getQuantity()+", price: "+purchaseItem.getUnitPurchasePrice()+"], ");
+                    }
+                    System.out.print("]");
+                    System.out.println();
                 }
             }
             else if(arguments[2].equals("-s"))
@@ -202,7 +216,14 @@ public class PurchaseCLI {
                 }
                 for(Purchase purchase:purchaseList)
                 {
-                    System.out.println("");
+                    System.out.print("id: "+purchase.getId()+", date: "+purchase.getDate()+", invoice: "+purchase.getInvoice()+", ");
+                    System.out.print("[");
+                    for(PurchaseItem purchaseItem:purchase.getPurchaseItemList())
+                    {
+                        System.out.print("[name: "+purchaseItem.getProduct().getName( )+", quantity: "+purchaseItem.getQuantity()+", price: "+purchaseItem.getUnitPurchasePrice()+"], ");
+                    }
+                    System.out.print("]");
+                    System.out.println();
                 }
             }
             else{
@@ -239,7 +260,14 @@ public class PurchaseCLI {
                 }
                 for(Purchase purchase:purchaseList)
                 {
-                    System.out.println("");
+                    System.out.print("id: "+purchase.getId()+", date: "+purchase.getDate()+", invoice: "+purchase.getInvoice()+", ");
+                    System.out.print("[");
+                    for(PurchaseItem purchaseItem:purchase.getPurchaseItemList())
+                    {
+                        System.out.print("[name: "+purchaseItem.getProduct().getName( )+", quantity: "+purchaseItem.getQuantity()+", price: "+purchaseItem.getUnitPurchasePrice()+"], ");
+                    }
+                    System.out.print("]");
+                    System.out.println();
                 }
             }
             else if(arguments[2].equals("-s"))
@@ -262,6 +290,13 @@ public class PurchaseCLI {
                     }
                     for(Purchase purchase:purchaseList)
                     {
+                        System.out.print("id: "+purchase.getId()+", date: "+purchase.getDate()+", invoice: "+purchase.getInvoice()+", ");
+                        System.out.print("[");
+                        for(PurchaseItem purchaseItem:purchase.getPurchaseItemList())
+                        {
+                            System.out.print("[name: "+purchaseItem.getProduct().getName( )+", quantity: "+purchaseItem.getQuantity()+", price: "+purchaseItem.getUnitPurchasePrice()+"], ");
+                        }
+                        System.out.print("]");
                         System.out.println();
                     }
                 }
@@ -311,6 +346,13 @@ public class PurchaseCLI {
                         }
                         for(Purchase purchase:purchaseList)
                         {
+                            System.out.print("id: "+purchase.getId()+", date: "+purchase.getDate()+", invoice: "+purchase.getInvoice()+", ");
+                            System.out.print("[");
+                            for(PurchaseItem purchaseItem:purchase.getPurchaseItemList())
+                            {
+                                System.out.print("[name: "+purchaseItem.getProduct().getName( )+", quantity: "+purchaseItem.getQuantity()+", price: "+purchaseItem.getUnitPurchasePrice()+"], ");
+                            }
+                            System.out.print("]");
                             System.out.println();
                         }
                     }
@@ -368,6 +410,13 @@ public class PurchaseCLI {
                         }
                         for(Purchase purchase:purchaseList)
                         {
+                            System.out.print("id: "+purchase.getId()+", date: "+purchase.getDate()+", invoice: "+purchase.getInvoice()+", ");
+                            System.out.print("[");
+                            for(PurchaseItem purchaseItem:purchase.getPurchaseItemList())
+                            {
+                                System.out.print("[name: "+purchaseItem.getProduct().getName( )+", quantity: "+purchaseItem.getQuantity()+", price: "+purchaseItem.getUnitPurchasePrice()+"], ");
+                            }
+                            System.out.print("]");
                             System.out.println();
                         }
                     }
@@ -395,8 +444,7 @@ public class PurchaseCLI {
             System.out.println(">> Try \"purchase list help\" for proper syntax");
         }
     }
-    public void purchaseDeleteCLI(String[] arguments)
-    {
+    public void purchaseDeleteCLI(String[] arguments) throws ApplicationErrorException {
         Scanner scanner=new Scanner(System.in);
         PurchaseService purchaseDeleteService=new PurchaseServiceImplementation();
         String numberRegex="^[0-9]{1,10}$";

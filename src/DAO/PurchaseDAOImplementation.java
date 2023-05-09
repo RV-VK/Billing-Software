@@ -3,6 +3,8 @@ import DBConnection.DBHelper;
 import Entity.Product;
 import Entity.Purchase;
 import Entity.PurchaseItem;
+
+import javax.imageio.plugins.jpeg.JPEGImageReadParam;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +17,10 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
             String purchaseEntryQuery="INSERT INTO PURCHASE(DATE,INVOICE,GRANDTOTAL) VALUES(?,?,?) RETURNING *";
             String purchaseItemInsertQuery="INSERT INTO PURCHASEITEMS(INVOICE,PRODUCTCODE,QUANTITY,COSTPRICE) VALUES(?,?,?,?) RETURNING *";
             String stockUpdateQuery="UPDATE PRODUCT SET STOCK=STOCK+? WHERE CODE=?";
+            String productNameQuery="SELECT NAME FROM PRODUCT WHERE CODE=?";
             PreparedStatement stockUpdateStatement=purchaseCreateConnection.prepareStatement(stockUpdateQuery);
             PreparedStatement purchaseEntryStatement=purchaseCreateConnection.prepareStatement(purchaseEntryQuery);
+            PreparedStatement productNameStatement=purchaseCreateConnection.prepareStatement(productNameQuery);
             purchaseEntryStatement.setDate(1, Date.valueOf(purchase.getDate()));
             purchaseEntryStatement.setInt(2,purchase.getInvoice());
             purchaseEntryStatement.setDouble(3,purchase.getGrandTotal());
@@ -44,7 +48,10 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
                     return null;
                 }
                 while (purchaseItemInsertResultSet.next()){
-                    purchaseItemList.add(new PurchaseItem(purchaseItem.getProduct(),purchaseItemInsertResultSet.getFloat(3),purchaseItemInsertResultSet.getDouble(4)));
+                    productNameStatement.setString(1,purchaseItemInsertResultSet.getString(2));
+                    ResultSet productNameResultSet=productNameStatement.executeQuery();
+                    productNameResultSet.next();
+                    purchaseItemList.add(new PurchaseItem(new Product(purchaseItemInsertResultSet.getString(2),productNameResultSet.getString(1)),purchaseItemInsertResultSet.getFloat(3),purchaseItemInsertResultSet.getDouble(4)));
                 }
                 purchaseEntry.setPurchaseItemList(purchaseItemList);
             }
@@ -116,7 +123,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
                     listedPurchase.setGrandTotal(listResultSet.getInt(4));
                     purchaseList.add(listedPurchase);
                 }
-                PreparedStatement listPurchaseItemsStatement=listConnection.prepareStatement("SELECT * FROM PURCHASEITEMS WHERE INVOICE=?");
+                PreparedStatement listPurchaseItemsStatement=listConnection.prepareStatement("SELECT P.NAME,PU.PRODUCTCODE,PU.QUANTITY,PU.COSTPRICE FROM PURCHASEITEMS PU INNER JOIN PRODUCT P ON P.CODE=PU.PRODUCTCODE WHERE PU.INVOICE=?");
                 List<PurchaseItem> purchaseItemList=new ArrayList<>();
                 for(Purchase purchase:purchaseList)
                 {
@@ -124,7 +131,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
                     ResultSet listPurchaseResultSet=listPurchaseItemsStatement.executeQuery();
                     while(listPurchaseResultSet.next())
                     {
-                        purchaseItemList.add(new PurchaseItem(new Product(listPurchaseResultSet.getString(2)),listPurchaseResultSet.getFloat(3),listPurchaseResultSet.getDouble(4)));
+                        purchaseItemList.add(new PurchaseItem(new Product(listPurchaseResultSet.getString(2),listPurchaseResultSet.getString(1)),listPurchaseResultSet.getFloat(3),listPurchaseResultSet.getDouble(4)));
                     }
                     purchase.setPurchaseItemList(purchaseItemList);
                 }
@@ -156,7 +163,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
                     listedPurchase.setGrandTotal(listResultSet.getInt(4));
                     purchaseList.add(listedPurchase);
                 }
-                PreparedStatement listPurchaseItemsStatement=listConnection.prepareStatement("SELECT * FROM PURCHASEITEMS WHERE INVOICE=?");
+                PreparedStatement listPurchaseItemsStatement=listConnection.prepareStatement("SELECT P.NAME,PU.PRODUCTCODE,PU.QUANTITY,PU.COSTPRICE FROM PURCHASEITEMS PU INNER JOIN PRODUCT P ON P.CODE=PU.PRODUCTCODE WHERE PU.INVOICE=?");
                 List<PurchaseItem> purchaseItemList=new ArrayList<>();
                 for(Purchase purchase:purchaseList)
                 {
@@ -164,7 +171,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
                     ResultSet listPurchaseResultSet=listPurchaseItemsStatement.executeQuery();
                     while(listPurchaseResultSet.next())
                     {
-                        purchaseItemList.add(new PurchaseItem(new Product(listPurchaseResultSet.getString(2)),listPurchaseResultSet.getFloat(3),listPurchaseResultSet.getDouble(4)));
+                        purchaseItemList.add(new PurchaseItem(new Product(listPurchaseResultSet.getString(2),listPurchaseResultSet.getString(1)),listPurchaseResultSet.getFloat(3),listPurchaseResultSet.getDouble(4)));
                     }
                     purchase.setPurchaseItemList(purchaseItemList);
                 }
@@ -196,7 +203,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
                 listedPurchase.setGrandTotal(listResultSet.getInt(4));
                 purchaseList.add(listedPurchase);
             }
-            PreparedStatement listPurchaseItemsStatement=listConnection.prepareStatement("SELECT * FROM PURCHASEITEMS WHERE INVOICE=?");
+            PreparedStatement listPurchaseItemsStatement=listConnection.prepareStatement("SELECT P.NAME,PU.PRODUCTCODE,PU.QUANTITY,PU.COSTPRICE FROM PURCHASEITEMS PU INNER JOIN PRODUCT P ON P.CODE=PU.PRODUCTCODE WHERE PU.INVOICE=?");
             List<PurchaseItem> purchaseItemList=new ArrayList<>();
             for(Purchase purchase:purchaseList)
             {
@@ -204,7 +211,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO{
                 ResultSet listPurchaseResultSet=listPurchaseItemsStatement.executeQuery();
                 while(listPurchaseResultSet.next())
                 {
-                    purchaseItemList.add(new PurchaseItem(new Product(listPurchaseResultSet.getString(2)),listPurchaseResultSet.getFloat(3),listPurchaseResultSet.getDouble(4)));
+                    purchaseItemList.add(new PurchaseItem(new Product(listPurchaseResultSet.getString(2),listPurchaseResultSet.getString(1)),listPurchaseResultSet.getFloat(3),listPurchaseResultSet.getDouble(4)));
                 }
                 purchase.setPurchaseItemList(purchaseItemList);
             }
