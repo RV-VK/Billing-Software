@@ -15,8 +15,8 @@ public class StoreMain{
         do{
             System.out.print("> ");
             String command=scanner.nextLine();
-            String parts[];
-            String commandlet[];
+            String[] parts;
+            String[] commandlet;
             if(command.contains(","))
             {
                 parts=command.split("[,:]");
@@ -52,7 +52,6 @@ public class StoreMain{
                             break;
                         case "count":
                             productCLI.productCountCLI(arguments);
-                            ;
                             break;
                         case "list":
                             productCLI.productListCLI(arguments);

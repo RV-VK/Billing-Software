@@ -1,14 +1,10 @@
 package CLIController;
-
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
 import Entity.Product;
 import Service.ProductService;
 import Service.ProductServiceImplementation;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
-
 public class ProductCLI {
     HashMap<String,String> attributeMap=new HashMap<>();
     HashMap<String,String> listAttributesMap=new HashMap<>();
@@ -184,7 +180,7 @@ public class ProductCLI {
         }
 
     }
-    public void productListCLI(String @NotNull [] arguments) throws PageCountOutOfBoundsException, ApplicationErrorException {
+    public void productListCLI(String[] arguments) throws PageCountOutOfBoundsException, ApplicationErrorException {
         listAttributesMap.put("Pagelength",null);
         listAttributesMap.put("Pagenumber",null);
         listAttributesMap.put("Attribute",null);

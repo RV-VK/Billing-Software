@@ -73,7 +73,6 @@ public class ProductServiceImplementation implements ProductService{
         }
         boolean status;
         int updateCount=0;
-
         if(attributeMap.get("name") != null)
         {
             status=productEditDAO.edit(id, "name",attributeMap.get("name"));
