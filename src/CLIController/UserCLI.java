@@ -1,13 +1,9 @@
 package CLIController;
-
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
-import Entity.Product;
 import Entity.User;
 import Service.UserService;
 import Service.UserServiceImplementation;
-
-import javax.swing.*;
 import java.util.*;
 
 public class UserCLI {

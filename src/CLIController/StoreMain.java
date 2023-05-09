@@ -1,11 +1,11 @@
 package CLIController;
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
-import org.checkerframework.checker.units.qual.A;
-
 import java.sql.SQLException;
-import java.sql.Savepoint;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Scanner;
 
 public class StoreMain{
     static Scanner scanner;
