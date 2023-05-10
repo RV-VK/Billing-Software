@@ -6,7 +6,10 @@ import Entity.Product;
 import Service.ProductService;
 import Service.ProductServiceImplementation;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 public class ProductCLI {
     HashMap<String, String> attributeMap = new HashMap<> ();

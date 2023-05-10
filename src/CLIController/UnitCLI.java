@@ -2,11 +2,9 @@ package CLIController;
 
 import DAO.ApplicationErrorException;
 import Entity.Unit;
-import Entity.User;
 import Service.UnitService;
 import Service.UnitServiceImplementation;
 
-import java.security.spec.ECField;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;

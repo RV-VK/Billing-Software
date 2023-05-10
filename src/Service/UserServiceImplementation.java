@@ -112,19 +112,15 @@ public class UserServiceImplementation implements UserService{
                 updateCount++;
             }
         }
-        if(attributeMap.get("phonenumber") != null)
-        {
-            if(editUserDAO.edit(id,"phonenumber",attributeMap.get("phonenumber")))
-            {
+        if ( attributeMap.get ("phonenumber") != null ) {
+            if ( editUserDAO.edit (id, "phonenumber", attributeMap.get ("phonenumber")) ) {
                 updateCount++;
             }
         }
-        if(updateCount==(attributeMap.size()-Collections.frequency(attributeMap.values(),null)-1))
-        {
+        if ( updateCount == ( attributeMap.size () - Collections.frequency (attributeMap.values (), null) - 1 ) ) {
             return 1;
-        }
-        else{
-            return -1;
+        } else {
+            return - 1;
         }
     }
 

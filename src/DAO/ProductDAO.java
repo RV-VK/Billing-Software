@@ -1,7 +1,6 @@
 package DAO;
 
 import Entity.Product;
-import org.checkerframework.checker.units.qual.A;
 
 import java.sql.SQLException;
 import java.util.List;

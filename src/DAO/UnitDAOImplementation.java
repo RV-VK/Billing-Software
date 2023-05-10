@@ -3,7 +3,6 @@ package DAO;
 import DBConnection.DBHelper;
 import Entity.Unit;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

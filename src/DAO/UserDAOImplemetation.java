@@ -1,7 +1,6 @@
 package DAO;
 
 import DBConnection.DBHelper;
-import Entity.Product;
 import Entity.User;
 
 import java.sql.*;

@@ -4,7 +4,6 @@ import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 
 public class Debug {
     public static void main(String[] args) throws SQLException, ApplicationErrorException, PageCountOutOfBoundsException {

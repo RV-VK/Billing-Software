@@ -5,7 +5,6 @@ import Entity.Product;
 import Entity.Purchase;
 import Entity.PurchaseItem;
 
-import javax.imageio.plugins.jpeg.JPEGImageReadParam;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
