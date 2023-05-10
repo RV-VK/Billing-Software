@@ -1,11 +1,9 @@
 package DAO;
 
-import CLIController.SalesCLI;
 import DBConnection.DBHelper;
 import Entity.Product;
 import Entity.Sales;
 import Entity.SalesItem;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;

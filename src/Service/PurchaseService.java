@@ -3,7 +3,6 @@ package Service;
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
 import Entity.Purchase;
-
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;

@@ -1,7 +1,6 @@
 package DAO;
 
 import Entity.Store;
-
 import java.sql.SQLException;
 
 public interface StoreDAO {

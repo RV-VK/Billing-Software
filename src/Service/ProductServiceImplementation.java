@@ -2,7 +2,6 @@ package Service;
 
 import DAO.*;
 import Entity.Product;
-
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;

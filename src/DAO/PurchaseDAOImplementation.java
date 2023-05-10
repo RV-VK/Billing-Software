@@ -1,10 +1,8 @@
 package DAO;
-
 import DBConnection.DBHelper;
 import Entity.Product;
 import Entity.Purchase;
 import Entity.PurchaseItem;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

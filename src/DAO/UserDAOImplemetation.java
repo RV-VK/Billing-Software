@@ -2,7 +2,6 @@ package DAO;
 
 import DBConnection.DBHelper;
 import Entity.User;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,6 @@ package CLIController;
 
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;

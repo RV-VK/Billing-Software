@@ -2,7 +2,6 @@ package DAO;
 
 import DBConnection.DBHelper;
 import Entity.Store;
-
 import java.sql.*;
 
 public class StoreDAOImplementation implements StoreDAO {

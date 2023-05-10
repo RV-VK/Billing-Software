@@ -1,7 +1,6 @@
 package Entity;
 
 import DBConnection.DBHelper;
-
 import java.sql.*;
 
 public class Product {

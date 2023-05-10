@@ -5,7 +5,6 @@ import DAO.PageCountOutOfBoundsException;
 import Entity.User;
 import Service.UserService;
 import Service.UserServiceImplementation;
-
 import java.util.*;
 
 public class UserCLI {
