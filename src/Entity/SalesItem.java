@@ -5,38 +5,38 @@ public class SalesItem {
     private double quantity;
     private double unitSalesPrice;
 
-    public SalesItem(Product product, double quantity, double unitSalesPrice) {
+    public SalesItem (Product product, double quantity, double unitSalesPrice) {
         this.product = product;
         this.quantity = quantity;
         this.unitSalesPrice = unitSalesPrice;
     }
 
-    public Product getProduct() {
+    public Product getProduct () {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct (Product product) {
         this.product = product;
     }
 
-    public double getQuantity() {
+    public double getQuantity () {
         return quantity;
     }
 
-    public void setQuantity(double quantity) {
+    public void setQuantity (double quantity) {
         this.quantity = quantity;
     }
 
-    public double getUnitSalesPrice() {
+    public double getUnitSalesPrice () {
         return unitSalesPrice;
     }
 
-    public void setUnitSalesPrice(double unitSalesPrice) {
+    public void setUnitSalesPrice (double unitSalesPrice) {
         this.unitSalesPrice = unitSalesPrice;
     }
 
     @Override
-    public String toString() {
+    public String toString () {
         return "SalesItem{" +
                 "product=" + product +
                 ", quantity=" + quantity +

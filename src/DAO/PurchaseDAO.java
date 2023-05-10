@@ -11,6 +11,7 @@ public interface PurchaseDAO {
     List list(int pageLength,int pageNumber) throws ApplicationErrorException, PageCountOutOfBoundsException;
     List list(String attribute,String searchText,int pageLength,int pageNumber) throws ApplicationErrorException;
     List list(String searchText) throws ApplicationErrorException;
-    int delete(int invoice) throws ApplicationErrorException;
+
+    int delete (int invoice) throws ApplicationErrorException;
 
 }

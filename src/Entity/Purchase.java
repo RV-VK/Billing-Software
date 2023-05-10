@@ -8,9 +8,13 @@ public class Purchase {
     private int invoice;
     private List<PurchaseItem> purchaseItemList;
     private double grandTotal;
-    public Purchase(){};
 
-    public Purchase(int id, String date, int invoice, List<PurchaseItem> purchaseItemList, double grandTotal) {
+    public Purchase () {
+    }
+
+    ;
+
+    public Purchase (int id, String date, int invoice, List<PurchaseItem> purchaseItemList, double grandTotal) {
         this.id = id;
         this.date = date;
         this.invoice = invoice;
@@ -18,54 +22,55 @@ public class Purchase {
         this.grandTotal = grandTotal;
     }
 
-    public Purchase(String date, int invoice, List<PurchaseItem> purchaseItemList, double grandTotal) {
+    public Purchase (String date, int invoice, List<PurchaseItem> purchaseItemList, double grandTotal) {
         this.date = date;
         this.invoice = invoice;
         this.purchaseItemList = purchaseItemList;
         this.grandTotal = grandTotal;
     }
 
-    public int getId() {
+    public int getId () {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId (int id) {
         this.id = id;
     }
 
-    public String getDate() {
+    public String getDate () {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate (String date) {
         this.date = date;
     }
 
-    public int getInvoice() {
+    public int getInvoice () {
         return invoice;
     }
 
-    public void setInvoice(int invoice) {
+    public void setInvoice (int invoice) {
         this.invoice = invoice;
     }
 
-    public List<PurchaseItem> getPurchaseItemList() {
+    public List<PurchaseItem> getPurchaseItemList () {
         return purchaseItemList;
     }
 
-    public void setPurchaseItemList(List<PurchaseItem> purchaseItemList) {
+    public void setPurchaseItemList (List<PurchaseItem> purchaseItemList) {
         this.purchaseItemList = purchaseItemList;
     }
 
-    public double getGrandTotal() {
+    public double getGrandTotal () {
         return grandTotal;
     }
 
-    public void setGrandTotal(double grandTotal) {
+    public void setGrandTotal (double grandTotal) {
         this.grandTotal = grandTotal;
     }
+
     @Override
-    public String toString() {
+    public String toString () {
         return "Purchase{" +
                 "id=" + id +
                 ", date='" + date + '\'' +
