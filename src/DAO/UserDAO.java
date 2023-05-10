@@ -6,18 +6,20 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface UserDAO {
-    User create (User user) throws SQLException, ApplicationErrorException;
+  User create(User user) throws SQLException, ApplicationErrorException;
 
-    int count () throws ApplicationErrorException;
+  int count() throws ApplicationErrorException;
 
-    List list (String searchText) throws ApplicationErrorException;
+  List list(String searchText) throws ApplicationErrorException;
 
-    List list (int pageLength, int pageNumber) throws ApplicationErrorException, PageCountOutOfBoundsException;
+  List list(int pageLength, int pageNumber)
+      throws ApplicationErrorException, PageCountOutOfBoundsException;
 
-    List list (String attribute, String searchText, int pageLength, int offset) throws ApplicationErrorException;
+  List list(String attribute, String searchText, int pageLength, int offset)
+      throws ApplicationErrorException;
 
-    boolean edit (int id, String attribute, String value) throws SQLException, ApplicationErrorException, UniqueConstraintException;
+  boolean edit(int id, String attribute, String value)
+      throws SQLException, ApplicationErrorException, UniqueConstraintException;
 
-    int delete (String parameter) throws ApplicationErrorException;
-
+  int delete(String parameter) throws ApplicationErrorException;
 }

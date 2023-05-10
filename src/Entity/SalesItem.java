@@ -1,46 +1,54 @@
 package Entity;
 
 public class SalesItem {
-    private Product product;
-    private float quantity;
-    private double unitSalesPrice;
+  private Product product;
+  private float quantity;
+  private double unitSalesPrice;
 
-    public SalesItem (Product product, float quantity, double unitSalesPrice) {
-        this.product = product;
-        this.quantity = quantity;
-        this.unitSalesPrice = unitSalesPrice;
-    }
+  public SalesItem(Product product, float quantity, double unitSalesPrice) {
+    this.product = product;
+    this.quantity = quantity;
+    this.unitSalesPrice = unitSalesPrice;
+  }
 
-    public Product getProduct () {
-        return product;
-    }
+  public SalesItem(Product product, float quantity) {
+    this.product = product;
+    this.quantity = quantity;
+  }
 
-    public void setProduct (Product product) {
-        this.product = product;
-    }
+  public Product getProduct() {
+    return product;
+  }
 
-    public float getQuantity () {
-        return quantity;
-    }
+  public void setProduct(Product product) {
+    this.product = product;
+  }
 
-    public void setQuantity (float quantity) {
-        this.quantity = quantity;
-    }
+  public float getQuantity() {
+    return quantity;
+  }
 
-    public double getUnitSalesPrice () {
-        return unitSalesPrice;
-    }
+  public void setQuantity(float quantity) {
+    this.quantity = quantity;
+  }
 
-    public void setUnitSalesPrice (double unitSalesPrice) {
-        this.unitSalesPrice = unitSalesPrice;
-    }
+  public double getUnitSalesPrice() {
+    return unitSalesPrice;
+  }
 
-    @Override
-    public String toString () {
-        return "SalesItem{" +
-                "product=" + product +
-                ", quantity=" + quantity +
-                ", unitSalesPrice=" + unitSalesPrice +
-                '}';
-    }
+  public void setUnitSalesPrice(double unitSalesPrice) {
+    this.unitSalesPrice = unitSalesPrice;
+  }
+
+  @Override
+  public String toString() {
+    return "SalesItem{"
+        + "product="
+        + product
+        + ", quantity="
+        + quantity
+        + ", unitSalesPrice="
+        + unitSalesPrice
+        + '}';
+  }
 }

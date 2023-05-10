@@ -3,64 +3,70 @@ package Entity;
 import java.util.List;
 
 public class Sales {
-    private int id;
-    private String date;
-    private List<SalesItem> salesItemList;
-    private double grandTotal;
+  private int id;
+  private String date;
+  private List<SalesItem> salesItemList;
+  private double grandTotal;
 
-    public Sales(){}
-    public Sales (int id, String date, List<SalesItem> salesItemList, double grandTotal) {
-        this.id = id;
-        this.date = date;
-        this.salesItemList = salesItemList;
-        this.grandTotal = grandTotal;
-    }
+  public Sales() {}
 
-    public Sales (String date, List<SalesItem> salesItemList, double grandTotal) {
-        this.date = date;
-        this.salesItemList = salesItemList;
-        this.grandTotal = grandTotal;
-    }
+  public Sales(int id, String date, List<SalesItem> salesItemList, double grandTotal) {
+    this.id = id;
+    this.date = date;
+    this.salesItemList = salesItemList;
+    this.grandTotal = grandTotal;
+  }
 
-    public int getId () {
-        return id;
-    }
+  public Sales(String date, List<SalesItem> salesItemList, double grandTotal) {
+    this.date = date;
+    this.salesItemList = salesItemList;
+    this.grandTotal = grandTotal;
+  }
 
-    public void setId (int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getDate () {
-        return date;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setDate (String date) {
-        this.date = date;
-    }
+  public String getDate() {
+    return date;
+  }
 
-    public List<SalesItem> getSalesItemList () {
-        return salesItemList;
-    }
+  public void setDate(String date) {
+    this.date = date;
+  }
 
-    public void setSalesItemList (List<SalesItem> salesItemList) {
-        this.salesItemList = salesItemList;
-    }
+  public List<SalesItem> getSalesItemList() {
+    return salesItemList;
+  }
 
-    public double getGrandTotal () {
-        return grandTotal;
-    }
+  public void setSalesItemList(List<SalesItem> salesItemList) {
+    this.salesItemList = salesItemList;
+  }
 
-    public void setGrandTotal (double grandTotal) {
-        this.grandTotal = grandTotal;
-    }
+  public double getGrandTotal() {
+    return grandTotal;
+  }
 
-    @Override
-    public String toString () {
-        return "Sales{" +
-                "id=" + id +
-                ", date='" + date + '\'' +
-                ", salesItemList=" + salesItemList +
-                ", grandTotal=" + grandTotal +
-                '}';
-    }
+  public void setGrandTotal(double grandTotal) {
+    this.grandTotal = grandTotal;
+  }
+
+  @Override
+  public String toString() {
+    return "Sales{"
+        + "id="
+        + id
+        + ", date='"
+        + date
+        + '\''
+        + ", salesItemList="
+        + salesItemList
+        + ", grandTotal="
+        + grandTotal
+        + '}';
+  }
 }

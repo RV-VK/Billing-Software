@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface SalesService {
-    Sales createSalesService (Sales sales);
+  Sales createSalesService(Sales sales);
 
-    int countSalesService (String parameter);
+  int countSalesService(String parameter);
 
-    List<Sales> listSalesService (HashMap<String, String> listAttributes);
+  List<Sales> listSalesService(HashMap<String, String> listAttributes);
 
-    int deleteSalesService (String id);
+  int deleteSalesService(String id);
 }
