@@ -5,7 +5,7 @@ import Entity.Sales;
 import java.util.List;
 
 public interface SalesDAO {
-    Sales create (Sales sales);
+    Sales create (Sales sales) throws ApplicationErrorException;
 
     int count (String parameter);
 

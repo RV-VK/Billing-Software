@@ -46,7 +46,7 @@ public class StoreMain {
                     String operationString1 = arguments[1];
                     switch (operationString1) {
                         case "create":
-                            productCLI.productCreateCLI (arguments);
+                            productCLI.CreateCLI (arguments);
                             break;
                         case "count":
                             productCLI.productCountCLI (arguments);

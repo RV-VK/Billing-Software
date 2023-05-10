@@ -15,7 +15,7 @@ public class ProductCLI {
     HashMap<String, String> attributeMap = new HashMap<> ();
     HashMap<String, String> listAttributesMap = new HashMap<> ();
 
-    public void productCreateCLI (String[] arguments) {
+    public void CreateCLI ( String[] arguments) {
         Scanner scanner = new Scanner (System.in);
         String nameRegex = "^[a-zA-Z\\s]{3,30}$";
         String codeRegex = "^[a-zA-Z0-9]{2,6}$";

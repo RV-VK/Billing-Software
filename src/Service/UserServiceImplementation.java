@@ -1,11 +1,8 @@
 package Service;
-
 import DAO.*;
 import Entity.User;
-
 import java.sql.SQLException;
 import java.util.*;
-
 public class UserServiceImplementation implements UserService{
     @Override
     public int createUserService(User user) throws SQLException, ApplicationErrorException {
@@ -19,13 +16,11 @@ public class UserServiceImplementation implements UserService{
             return -1;
         }
     }
-
     @Override
     public int countUserService() throws ApplicationErrorException {
         UserDAO countUserDAO=new UserDAOImplemetation();
         return countUserDAO.count();
     }
-
     @Override
     public List listUserService(HashMap<String, String> listattributes) throws ApplicationErrorException, PageCountOutOfBoundsException {
         List<User> userList;
@@ -52,7 +47,6 @@ public class UserServiceImplementation implements UserService{
 
      return null;
     }
-
     @Override
     public int editUserService(HashMap<String, String> attributeMap) throws SQLException, ApplicationErrorException, UniqueConstraintException {
         UserDAO editUserDAO=new UserDAOImplemetation();
@@ -123,7 +117,6 @@ public class UserServiceImplementation implements UserService{
             return - 1;
         }
     }
-
     @Override
     public int deleteUserService(String username) throws ApplicationErrorException {
         UserDAO deleteUserDAO=new UserDAOImplemetation();

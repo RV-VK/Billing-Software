@@ -53,8 +53,8 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
                     productNameResultSet.next ();
                     purchaseItemList.add (new PurchaseItem (new Product (purchaseItemInsertResultSet.getString (2), productNameResultSet.getString (1)), purchaseItemInsertResultSet.getFloat (3), purchaseItemInsertResultSet.getDouble (4)));
                 }
-                purchaseEntry.setPurchaseItemList (purchaseItemList);
             }
+            purchaseEntry.setPurchaseItemList (purchaseItemList);
             purchaseCreateConnection.commit ();
             return purchaseEntry;
         } catch (Exception e) {

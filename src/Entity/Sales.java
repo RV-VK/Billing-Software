@@ -1,5 +1,6 @@
 package Entity;
 
+import java.sql.Date;
 import java.util.List;
 
 public class Sales {
@@ -8,6 +9,7 @@ public class Sales {
     private List<SalesItem> salesItemList;
     private double grandTotal;
 
+    public Sales(){}
     public Sales (int id, String date, List<SalesItem> salesItemList, double grandTotal) {
         this.id = id;
         this.date = date;

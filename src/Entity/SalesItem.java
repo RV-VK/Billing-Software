@@ -2,10 +2,10 @@ package Entity;
 
 public class SalesItem {
     private Product product;
-    private double quantity;
+    private float quantity;
     private double unitSalesPrice;
 
-    public SalesItem (Product product, double quantity, double unitSalesPrice) {
+    public SalesItem (Product product, float quantity, double unitSalesPrice) {
         this.product = product;
         this.quantity = quantity;
         this.unitSalesPrice = unitSalesPrice;
@@ -19,11 +19,11 @@ public class SalesItem {
         this.product = product;
     }
 
-    public double getQuantity () {
+    public float getQuantity () {
         return quantity;
     }
 
-    public void setQuantity (double quantity) {
+    public void setQuantity (float quantity) {
         this.quantity = quantity;
     }
 
