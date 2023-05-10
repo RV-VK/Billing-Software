@@ -1,5 +1,4 @@
 package CLIController;
-
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
 import Entity.Product;
@@ -8,7 +7,6 @@ import Entity.PurchaseItem;
 import Service.PurchaseService;
 import Service.PurchaseServiceImplementation;
 import java.util.*;
-
 public class PurchaseCLI {
   HashMap<String, String> listAttributesMap = new HashMap<>();
 
@@ -102,7 +100,7 @@ public class PurchaseCLI {
       return;
     }
     if (arguments.length == 4) {
-      if (arguments[2].equals("-d") || arguments[2].equals("-c")) {
+      if (arguments[2].equals("-d")) {
         String parameter = arguments[3];
         int purchaseCount = countPurchaseService.countPurchaseService(parameter);
         if (purchaseCount > 0) System.out.println(">> PurchaseCount " + purchaseCount);
@@ -485,12 +483,12 @@ public class PurchaseCLI {
           } else if (resultCode == -1) {
             System.out.println(">> Purchase Deletion Failed!!!");
             System.out.println(">> Please check the invoice you have entered!!!");
-            System.out.println(">> Try \"purhase delete help\" for proper syntax");
+            System.out.println(">> Try \"purchase delete help\" for proper syntax");
           }
         } else if (prompt.equals("n")) {
           System.out.println(">> Delete operation cancelled!!!");
         } else {
-          System.out.println(">> >> Invalid delete prompt!!! Please select between y/n");
+          System.out.println(">> Invalid delete prompt!!! Please select between y/n");
         }
       } else {
         System.out.println(">> Invalid format for invoice!!");

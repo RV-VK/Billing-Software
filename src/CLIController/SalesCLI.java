@@ -1,13 +1,10 @@
 package CLIController;
-
+import DAO.ApplicationErrorException;
+import DAO.PageCountOutOfBoundsException;
 import Entity.*;
 import Service.SalesService;
 import Service.SalesServiceImplementation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
+import java.util.*;
 public class SalesCLI {
   HashMap<String, String> listAttributesMap = new HashMap<>();
 
@@ -61,7 +58,7 @@ public class SalesCLI {
     }
   }
 
-  public void salesCountCLI(String[] arguments) {
+  public void salesCountCLI(String[] arguments) throws ApplicationErrorException {
     SalesService countSalesService = new SalesServiceImplementation();
     if (arguments.length == 3) {
       if (arguments[2].equals("help")) {
@@ -90,7 +87,7 @@ public class SalesCLI {
       return;
     }
     if (arguments.length == 4) {
-      if (arguments[2].equals("-d") || arguments[2].equals("-c")) {
+      if (arguments[2].equals("-d")) {
         String parameter = arguments[3];
         int salesCount = countSalesService.countSalesService(parameter);
         if (salesCount > 0) System.out.println(">> SalesCount " + salesCount);
@@ -108,7 +105,8 @@ public class SalesCLI {
     }
   }
 
-  public void salesListCLI(String[] arguments) {
+  public void salesListCLI(String[] arguments)
+      throws PageCountOutOfBoundsException, ApplicationErrorException {
     listAttributesMap.put("Pagelength", null);
     listAttributesMap.put("Pagenumber", null);
     listAttributesMap.put("Attribute", null);
@@ -399,5 +397,39 @@ public class SalesCLI {
     }
   }
 
-  public void salesDeleteCLI(String[] arguments) {}
+  public void salesDeleteCLI(String[] arguments) throws ApplicationErrorException {
+    Scanner scanner = new Scanner(System.in);
+    SalesService salesDeleteService = new SalesServiceImplementation();
+    String numberRegex = "^[0-9]{1,10}$";
+    if (arguments.length == 3) {
+      if (arguments[2].equals("help")) {
+        System.out.println(
+            ">> >> Delete sales using following command \n"
+                + "\n"
+                + ">> sales delete <id>\n"
+                + "\t\tid - numeric, mandatory");
+        return;
+      } else if (arguments[2].matches(numberRegex)) {
+        System.out.println(">> Are you sure you want to delete the Sales Entry y/n : ");
+        String prompt = scanner.nextLine();
+        if (prompt.equals("y")) {
+          int resultCode = salesDeleteService.deleteSalesService(arguments[2]);
+          if (resultCode == 1) {
+            System.out.println(">> Sales Entry Deleted Successfully!!!");
+          } else if (resultCode == -1) {
+            System.out.println(">> Sales Entry Deletion Failed!!");
+            System.out.println(">> Please check the id you have entered!!!");
+            System.out.println(">> Try \"sales delete help\" for proper syntax");
+          }
+        } else if (prompt.equals("n")) {
+          System.out.println(">> Delete operation cancelled!!!");
+        } else {
+          System.out.println(">> Invalid delete prompt !! Please select between y/n");
+        }
+      } else {
+        System.out.println(">> Invalid format for id");
+        System.out.println(">> Try \"sales delete help\" for proper syntax");
+      }
+    }
+  }
 }

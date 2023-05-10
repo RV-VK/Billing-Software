@@ -17,6 +17,7 @@ public class SalesDAOImplementation implements SalesDAO {
           "INSERT INTO SALESITEM (ID, PRODUCTCODE, QUANTITY, SALESPRICE) VALUES (?,?,?) RETURNING *";
       String salesPriceQuery = "SELECT PRICE,STOCK FROM PRODUCT WHERE CODE=?";
       String stockUpdateQuery = "UPDATE PRODUCT SET STOCK=STOCK-? WHERE CODE=? RETURNING NAME";
+      String grandTotalUpdateQuery = "UPDATE SALES SET GRANDTOTAL=? WHERE ID=?";
       PreparedStatement salesEntryStatement =
           salesCreateConnection.prepareStatement(salesEntryQuery);
       PreparedStatement salesItemInsertStatement =
@@ -25,6 +26,8 @@ public class SalesDAOImplementation implements SalesDAO {
           salesCreateConnection.prepareStatement(salesPriceQuery);
       PreparedStatement stockUpdateStatement =
           salesCreateConnection.prepareStatement(stockUpdateQuery);
+      PreparedStatement grandTotalUpdateStatement =
+          salesCreateConnection.prepareStatement(grandTotalUpdateQuery);
       salesEntryStatement.setDate(1, Date.valueOf(sales.getDate()));
       salesEntryStatement.setDouble(2, sales.getGrandTotal());
       ResultSet salesEntryResultSet = salesEntryStatement.executeQuery();
@@ -39,17 +42,19 @@ public class SalesDAOImplementation implements SalesDAO {
       double price;
       float stock;
       String productName;
+      double grandTotal = 0.0;
       for (SalesItem salesItem : sales.getSalesItemList()) {
         salesPriceStatement.setString(1, salesItem.getProduct().getCode());
         ResultSet salesPriceResultSet = salesPriceStatement.executeQuery();
         salesPriceResultSet.next();
         price = salesPriceResultSet.getDouble(1);
         stock = salesPriceResultSet.getFloat(2);
+        grandTotal += price * salesItem.getQuantity();
         if (stock < salesItem.getQuantity()) {
           salesCreateConnection.rollback();
           return null;
         }
-        salesItemInsertStatement.setInt(1, sales.getId());
+        salesItemInsertStatement.setInt(1, salesEntry.getId());
         salesItemInsertStatement.setString(2, salesItem.getProduct().getCode());
         salesItemInsertStatement.setFloat(3, salesItem.getQuantity());
         salesItemInsertStatement.setDouble(4, price);
@@ -67,6 +72,10 @@ public class SalesDAOImplementation implements SalesDAO {
                   salesItemInsertResultSet.getDouble(4)));
         }
       }
+      grandTotalUpdateStatement.setDouble(1, grandTotal);
+      grandTotalUpdateStatement.setInt(2, salesEntry.getId());
+      grandTotalUpdateStatement.executeUpdate();
+      salesEntry.setGrandTotal(grandTotal);
       salesEntry.setSalesItemList(salesItemList);
       salesCreateConnection.commit();
       return salesEntry;
