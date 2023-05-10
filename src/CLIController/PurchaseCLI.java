@@ -94,9 +94,6 @@ public class PurchaseCLI {
                 System.out.println (">> Try \"purchase count help\" for proper syntax!!");
                 return;
             }
-        } else {
-            System.out.println (">> Invalid command given!!!");
-            System.out.println (">> Try \"purchase count help\" for proper syntax!!");
         }
         if (arguments.length == 2) {
             int purchaseCount = countPurchaseService.countPurchaseService (null);

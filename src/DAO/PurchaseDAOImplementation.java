@@ -74,7 +74,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
                 return count;
             } else {
                 Statement countStatement = getCountConnection.createStatement ();
-                ResultSet countResultSet = countStatement.executeQuery ("SELECT COUNT(*) WHERE DATE ILIKE'" + parameter + "' OR TYPE ILIKE'" + parameter + "'");
+                ResultSet countResultSet = countStatement.executeQuery ("SELECT COUNT(*) FROM PURCHASE WHERE CAST(DATE AS TEXT) ILIKE'" + parameter + "' OR TYPE ILIKE'" + parameter + "'");
                 int count;
                 countResultSet.next ();
                 count = countResultSet.getInt (1);
@@ -89,7 +89,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
     public List list (int pageLength, int pageNumber) throws ApplicationErrorException, PageCountOutOfBoundsException {
         Connection listConnection = DBHelper.getConnection ();
         List<Purchase> purchaseList = new ArrayList<> ();
-        int count = 0;
+        int count;
         try {
             Statement countStatement = listConnection.createStatement ();
             ResultSet countResultSet = countStatement.executeQuery ("SELECT COUNT(ID) FROM PRODUCT");
@@ -110,7 +110,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
                     listedPurchase.setId (listResultSet.getInt (1));
                     listedPurchase.setDate (String.valueOf (listResultSet.getDate (2)));
                     listedPurchase.setInvoice (listResultSet.getInt (3));
-                    listedPurchase.setGrandTotal (listResultSet.getInt (4));
+                    listedPurchase.setGrandTotal (listResultSet.getDouble (4));
                     purchaseList.add (listedPurchase);
                 }
                 PreparedStatement listPurchaseItemsStatement = listConnection.prepareStatement ("SELECT P.NAME,PU.PRODUCTCODE,PU.QUANTITY,PU.COSTPRICE FROM PURCHASEITEMS PU INNER JOIN PRODUCT P ON P.CODE=PU.PRODUCTCODE WHERE PU.INVOICE=?");
