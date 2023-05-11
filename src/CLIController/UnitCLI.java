@@ -133,13 +133,9 @@ public class UnitCLI {
   }
 
   public void unitEditCLI(String[] arguments) {
-    attributeMap.put("id", null);
-    attributeMap.put("name", null);
-    attributeMap.put("unitcode", null);
-    attributeMap.put("description", null);
-    attributeMap.put("isdividable", null);
     Scanner scanner = new Scanner(System.in);
     UnitService unitEditService = new UnitServiceImplementation();
+    Unit unit=new Unit ();
     if (arguments.length == 3 && arguments[2].equals("help")) {
       System.out.println(
           ">> Edit unit using the following template\n"
@@ -174,41 +170,46 @@ public class UnitCLI {
         for (String attribute : unitAttributes) {
           if (attribute.contains("id") && !attribute.equals("isdividable")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("id", keyValues[1].trim());
+            int id;
+            try{
+              id=Integer.parseInt (keyValues[1].trim ());
+            }catch ( NumberFormatException e )
+            {
+              System.out.println(">> Id must be a number!!");
+              System.out.println(">> Tru \"unit edit help\" for proper syntax");
+              return;
+            }
+            unit.setId (id);
           } else if (attribute.contains("name")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("name", keyValues[1].trim());
+            unit.setName (keyValues[1].trim ());
           } else if (attribute.contains("code")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("unitcode", keyValues[1].trim());
+            unit.setCode (keyValues[1].trim ());
           } else if (attribute.contains("description")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("description", keyValues[1].trim());
+            unit.setDescription (keyValues[1].trim ());
           } else if (attribute.contains("isdividable")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("isdividable", keyValues[1].trim());
+            boolean isDividable;
+            try{
+              isDividable=Boolean.parseBoolean (keyValues[1].trim ());
+            }catch ( Exception  e )
+            {
+              System.out.println(">> Isdividable must be either true or false!!");
+              System.out.println(">> Try \"unit edit help\" for proper syntax");
+              return;
+            }
+            unit.setIsDividable (isDividable);
           } else {
             System.out.println(">> Invalid attribute given!!!: " + attribute);
             System.out.println(">> Try \"unit edit help\" for proper syntax");
             break;
           }
         }
-        if (attributeMap.get("id").equals("")) {
-          System.out.println("Id Should not be null!!!");
-          System.out.println(">> Try \"unit edit help\" for proper syntax");
-          return;
-        }
-        int id = 0;
+        int statusCode;
         try {
-          id = Integer.parseInt(attributeMap.get("id").trim());
-        } catch (Exception e) {
-          System.out.println(attributeMap.get("id"));
-          System.out.println(">> Id must be a number");
-          return;
-        }
-        int statusCode = 0;
-        try {
-          statusCode = unitEditService.editUnitService(attributeMap);
+          statusCode = unitEditService.editUnitService(unit);
         } catch (Exception e) {
           e.printStackTrace();
           System.out.println(e.getMessage());
@@ -239,28 +240,34 @@ public class UnitCLI {
       System.out.println(">> For every Edit operation the first argument must be unit's ID");
       System.out.println(">> Try \"unit edit help\" for proper syntax");
     } else {
-      attributeMap.put("id", arguments[3].trim());
-      if (attributeMap.get("id").equals("")) {
-        System.out.println(">> Id should not be null");
-        System.out.println(">> Try \"unit edit help\" for proper Syntax");
-        return;
-      }
+
       int id = 0;
       try {
-        id = Integer.parseInt(attributeMap.get("id").trim());
+        id = Integer.parseInt(arguments[3].trim());
       } catch (Exception e) {
         System.out.println(">> Id must be a number");
         System.out.println(">> Please Try \"unit edit help\" for proper Syntax");
+        return;
       }
+      unit.setId (id);
       for (int index = 4; index < arguments.length; index = index + 2) {
         if (arguments[index].contains("name")) {
-          attributeMap.put("name", arguments[index + 1]);
+          unit.setName (arguments[index+1].trim ());
         } else if (arguments[index].contains("code")) {
-          attributeMap.put("unitcode", arguments[index + 1]);
+          unit.setCode (arguments[index+1].trim ());
         } else if (arguments[index].contains("description")) {
-          attributeMap.put("description", arguments[index + 1]);
+          unit.setDescription (arguments[index+1].trim ());
         } else if (arguments[index].contains("isdividable")) {
-          attributeMap.put("isdividable", arguments[index + 1]);
+          boolean isDividable;
+          try{
+            isDividable=Boolean.parseBoolean (arguments[index+1].trim ());
+          }catch ( Exception e )
+          {
+            System.out.println(">> Isdividable must be either true or false!!");
+            System.out.println(">> Try \"unit edit help\" for proper syntax");
+            return;
+          }
+          unit.setIsDividable (isDividable);
         } else {
           System.out.println(">> Invalid attribute given!!!: " + arguments[index]);
           System.out.println(">> Try \"unit edit help\" for proper Syntax");
@@ -269,7 +276,7 @@ public class UnitCLI {
       }
       int statusCode;
       try {
-        statusCode = unitEditService.editUnitService(attributeMap);
+        statusCode = unitEditService.editUnitService(unit);
       } catch (Exception e) {
         System.out.println(e.getMessage());
         return;

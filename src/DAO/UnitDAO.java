@@ -9,8 +9,10 @@ public interface UnitDAO {
 
   List<Unit> list() throws ApplicationErrorException;
 
-  int edit(int id, String atrribute, String value)
+  int edit(Unit unit)
       throws ApplicationErrorException, SQLException, UniqueConstraintException;
 
   int delete(String code) throws ApplicationErrorException;
+
+  Unit findByCode ( String code) throws ApplicationErrorException;
 }

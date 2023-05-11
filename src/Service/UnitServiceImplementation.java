@@ -4,6 +4,8 @@ import DAO.UniqueConstraintException;
 import DAO.UnitDAO;
 import DAO.UnitDAOImplementation;
 import Entity.Unit;
+import Entity.User;
+
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,51 +30,17 @@ public class UnitServiceImplementation implements UnitService {
   }
 
   @Override
-  public int editUnitService(HashMap<String, String> attributeMap)
+  public int editUnitService( Unit unit)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
     UnitDAO unitEditDAO = new UnitDAOImplementation();
     String unitCodeRegex = "^[a-zA-Z]{1,4}$";
     String nameRegex = "^[a-zA-Z\\s]{3,30}$";
-    int id;
-    try {
-      id = Integer.parseInt(attributeMap.get("id").trim());
-    } catch (NumberFormatException e) {
+    if (unit.getName() != null && !unit.getName().matches(nameRegex)
+        || unit.getCode() != null
+            && !unit.getCode().matches(unitCodeRegex)) {
       return 0;
     }
-    if (attributeMap.get("name") != null && !attributeMap.get("name").matches(nameRegex)
-        || attributeMap.get("unitcode") != null
-            && !attributeMap.get("unitcode").matches(unitCodeRegex)) {
-      return 0;
-    }
-    if (attributeMap.get("isdividable") != null
-        && !attributeMap.get("isdividable").equals("true")
-        && !attributeMap.get("isdividable").equals("false")) {
-      return 0;
-    }
-    int updateCount = 0;
-    if (attributeMap.get("name") != null) {
-      int status = unitEditDAO.edit(id, "name", attributeMap.get("name"));
-      if (status == -1) {
-        return -1;
-      } else {
-        updateCount++;
-      }
-    }
-    if (attributeMap.get("unitcode") != null) {
-      updateCount += unitEditDAO.edit(id, "code", attributeMap.get("unitcode"));
-    }
-    if (attributeMap.get("description") != null) {
-      updateCount += unitEditDAO.edit(id, "description", attributeMap.get("description"));
-    }
-    if (attributeMap.get("isdividable") != null) {
-      updateCount += unitEditDAO.edit(id, "isdividable", attributeMap.get("isdividable"));
-    }
-    if (updateCount
-        == (attributeMap.size() - Collections.frequency(attributeMap.values(), null) - 1)) {
-      return 1;
-    } else {
-      return -1;
-    }
+    return unitEditDAO.edit (unit);
   }
 
   @Override

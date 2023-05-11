@@ -90,8 +90,6 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
             countStatement.executeQuery(
                 "SELECT COUNT(*) FROM PURCHASE WHERE CAST(DATE AS TEXT) ILIKE'"
                     + parameter
-                    + "' OR TYPE ILIKE'"
-                    + parameter
                     + "'");
         int count;
         countResultSet.next();

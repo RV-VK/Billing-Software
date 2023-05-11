@@ -9,6 +9,8 @@ public class User {
   private String lastName;
   private long phoneNumber;
 
+  public User(){}
+
   public User(
       String userType,
       String userName,

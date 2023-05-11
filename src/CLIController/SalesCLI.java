@@ -58,6 +58,11 @@ public class SalesCLI {
     }
   }
 
+  /**
+   * To count the number of Sales Entry in the Recorded in the Sales Table.
+   * @param arguments
+   * @throws ApplicationErrorException
+   */
   public void salesCountCLI(String[] arguments) throws ApplicationErrorException {
     SalesService countSalesService = new SalesServiceImplementation();
     if (arguments.length == 3) {

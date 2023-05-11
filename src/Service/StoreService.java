@@ -8,7 +8,7 @@ import java.util.HashMap;
 public interface StoreService {
   int createStoreService(Store store) throws SQLException, ApplicationErrorException;
 
-  int editStoreService(HashMap<String, String> attributeMap)
+  int editStoreService(Store store)
       throws SQLException, ApplicationErrorException;
 
   int deleteStoreService(String adminPassword) throws ApplicationErrorException;

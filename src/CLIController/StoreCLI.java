@@ -110,12 +110,9 @@ public class StoreCLI {
   }
 
   public void storeEditCLI(String[] arguments) {
-    attributeMap.put("name", null);
-    attributeMap.put("phonenumber", null);
-    attributeMap.put("address", null);
-    attributeMap.put("gstnumber", null);
     Scanner scanner = new Scanner(System.in);
     StoreService storeEditService = new StoreServiceImplementation();
+    Store store=new Store ();
     if (arguments.length == 3 && arguments[2].equals("help")) {
       System.out.println(
           ">> Edit store uing the following template\t\n"
@@ -135,16 +132,34 @@ public class StoreCLI {
 
         if (attribute.contains("name")) {
           String[] keyValues = attribute.split("\\:");
-          attributeMap.put("name", keyValues[1].trim());
+          store.setName (keyValues[1].trim ());
         } else if (attribute.contains("phonenumber")) {
           String[] keyValues = attribute.split("\\:");
-          attributeMap.put("phonenumber", keyValues[1].trim());
+          int phoneNumber;
+          try{
+            phoneNumber=Integer.parseInt (keyValues[1].trim ());
+          }catch ( NumberFormatException e )
+          {
+            System.out.println(">> PhoneNumber must be numeric!!");
+            System.out.println(">> Try \"store edit help\" for proper syntax!!");
+            return;
+          }
+          store.setPhoneNumber (phoneNumber);
         } else if (attribute.contains("address")) {
           String[] keyValues = attribute.split("\\:");
-          attributeMap.put("address", keyValues[1].trim());
+          store.setAddress (keyValues[1].trim ());
         } else if (attribute.contains("gstnumber")) {
           String[] keyValues = attribute.split("\\:");
-          attributeMap.put("gstnumber", keyValues[1].trim());
+          int GSTNumber;
+          try{
+            GSTNumber=Integer.parseInt (keyValues[1].trim ());
+          }catch ( NumberFormatException e )
+          {
+            System.out.println(">> GSTcode must be a number!!");
+            System.out.println(">> Try \"store edit help\" for proper syntax!!");
+            return;
+          }
+          store.setGstCode (GSTNumber);
         } else {
           System.out.println(">> Invalid attribute given!!!: " + attribute);
           System.out.println(">> Try \"store edit help\" for proper syntax");
@@ -153,7 +168,7 @@ public class StoreCLI {
       }
       int statusCode;
       try {
-        statusCode = storeEditService.editStoreService(attributeMap);
+        statusCode = storeEditService.editStoreService(store);
       } catch (Exception e) {
         System.out.println(e.getMessage());
         return;
@@ -177,13 +192,31 @@ public class StoreCLI {
     } else {
       for (int index = 2; index < arguments.length; index = index + 2) {
         if (arguments[index].contains("name")) {
-          attributeMap.put("name", arguments[index + 1]);
+          store.setName (arguments[index+1].trim ());
         } else if (arguments[index].contains("phonenumber")) {
-          attributeMap.put("phonenumber", arguments[index + 1]);
+          int phoneNumber;
+          try{
+            phoneNumber=Integer.parseInt (arguments[index+1].trim ());
+          }catch ( NumberFormatException e )
+          {
+            System.out.println(">> PhoneNumber must be numeric!!");
+            System.out.println(">> Try \"store edit help\" for proper syntax!!");
+            return;
+          }
+          store.setPhoneNumber (phoneNumber);
         } else if (arguments[index].contains("address")) {
-          attributeMap.put("address", arguments[index + 1]);
+          store.setAddress (arguments[index+1].trim ());
         } else if (arguments[index].contains("gstnumber")) {
-          attributeMap.put("gstnumber", arguments[index + 1]);
+          int GSTNumber;
+          try{
+            GSTNumber=Integer.parseInt (arguments[index+1].trim ());
+          }catch ( NumberFormatException e )
+          {
+            System.out.println(">> GSTCode must be numeric!!");
+            System.out.println(">> Try \"store edit help\" for proper syntax!!");
+            return;
+          }
+          store.setGstCode (GSTNumber);
         } else {
           System.out.println(">> Invalid attribute given!!!: " + arguments[index]);
           System.out.println(">> Try \"store edit help\" for proper Syntax");
@@ -192,7 +225,7 @@ public class StoreCLI {
       }
       int statusCode;
       try {
-        statusCode = storeEditService.editStoreService(attributeMap);
+        statusCode = storeEditService.editStoreService(store);
       } catch (Exception e) {
         System.out.println(e.getMessage());
         return;

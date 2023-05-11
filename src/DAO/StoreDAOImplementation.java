@@ -38,13 +38,29 @@ public class StoreDAOImplementation implements StoreDAO {
   }
 
   @Override
-  public int edit(String attribute, String value) throws SQLException, ApplicationErrorException {
+  public int edit(Store store) throws SQLException, ApplicationErrorException {
     Connection editConnection = DBHelper.getConnection();
     editConnection.setAutoCommit(false);
     try {
-      String editQuery = "UPDATE STORE SET " + attribute.toUpperCase() + "=" + "'" + value + "'";
-      Statement editStatement = editConnection.createStatement();
-      if (editStatement.executeUpdate(editQuery) > 0) {
+      String editQuery = "UPDATE STORE SET NAME= COALESCE(?,NAME),PHONENUMBER= COALESCE(?,PHONENUMBER),ADDRESS= COALESCE(?,ADDRESS),GSTNUMBER=COALESCE(?,GSTNUMBER)";
+      PreparedStatement editStatement = editConnection.prepareStatement (editQuery);
+      editStatement.setString (1,store.getName ());
+      if (store.getPhoneNumber()==0)
+      {
+        editStatement.setNull (2,Types.BIGINT);
+      }
+      else{
+        editStatement.setLong (2,store.getPhoneNumber ());
+      }
+      editStatement.setString (3,store.getAddress ());
+      if(store.getGstCode ()==0)
+      {
+        editStatement.setNull (4,Types.INTEGER);
+      }
+      else{
+        editStatement.setInt (4,store.getGstCode ());
+      }
+        if (editStatement.executeUpdate() > 0) {
         editConnection.commit();
         editConnection.setAutoCommit(true);
         return 1;
@@ -54,6 +70,7 @@ public class StoreDAOImplementation implements StoreDAO {
 
     } catch (Exception e) {
       editConnection.rollback();
+      System.out.println(e.getMessage ());
       throw new ApplicationErrorException(
           "Application has went into an Error!!!\n Please Try again");
     }

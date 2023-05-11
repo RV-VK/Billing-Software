@@ -12,14 +12,19 @@ public class PurchaseServiceImplementation implements PurchaseService {
   @Override
   public int createPurchaseService(Purchase purchase)
       throws ApplicationErrorException, SQLException {
-    ProductDAO unitCheckDAO = new ProductDAOImplementation();
+    ProductDAO getProductByCode = new ProductDAOImplementation();
+    UnitDAO getUnitNyCode=new UnitDAOImplementation ();
+    boolean isDividable;
     int i = 1;
     for (PurchaseItem purchaseItem : purchase.getPurchaseItemList()) {
-      int isDividable = unitCheckDAO.checkIsdividable(purchaseItem.getProduct().getCode());
-      if (isDividable == 0 && purchaseItem.getQuantity() % 1 != 0) {
+      try{
+      isDividable = getUnitNyCode.findByCode ((getProductByCode.findByCode (purchaseItem.getProduct ().getCode ())).getunitcode ()).getIsDividable ();
+        }catch ( NullPointerException e )
+      {
+        return -1;
+      }
+      if (!isDividable  && purchaseItem.getQuantity() % 1 != 0) {
         return i + 1;
-      } else if (isDividable == -1) {
-        return isDividable;
       }
     }
     PurchaseDAO purchaseCreateDAO = new PurchaseDAOImplementation();
@@ -62,6 +67,12 @@ public class PurchaseServiceImplementation implements PurchaseService {
   @Override
   public int countPurchaseService(String parameter) throws ApplicationErrorException {
     PurchaseDAO countPurchaseDAO = new PurchaseDAOImplementation();
+    String dateRegex="([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))";
+    if(parameter!=null)
+    {
+      if(!parameter.matches (dateRegex))
+        return -1;
+    }
     return countPurchaseDAO.count(parameter);
   }
 

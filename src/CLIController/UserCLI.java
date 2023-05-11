@@ -429,15 +429,9 @@ public class UserCLI {
   }
 
   public void userEditCLI(String[] arguments) {
-    attributeMap.put("id", null);
-    attributeMap.put("username", null);
-    attributeMap.put("usertype", null);
-    attributeMap.put("password", null);
-    attributeMap.put("firstname", null);
-    attributeMap.put("lastname", null);
-    attributeMap.put("phonenmber", null);
     Scanner scanner = new Scanner(System.in);
     UserService userEditService = new UserServiceImplementation();
+    User user=new User ();
     if (arguments.length == 3 && arguments[2].equals("help")) {
       System.out.println(
           ">> Edit user using following template. Copy the user data from the list, edit the attribute values. \n"
@@ -465,46 +459,52 @@ public class UserCLI {
         for (String attribute : userAttributes) {
           if (attribute.contains("id")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("id", keyValues[1].trim());
+            int id;
+            try{
+              id= Integer.parseInt (keyValues[1].trim ());
+            }catch ( NumberFormatException e )
+            {
+              System.out.println(">> Id must be a number");
+              System.out.println(">> Try \"user edit help\" for proper syntax");
+              return;
+            }
+            user.setId (id);
           } else if (attribute.contains("username")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("username", keyValues[1].trim());
+            user.setUserName (keyValues[1].trim ());
           } else if (attribute.contains("usertype")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("usertype", keyValues[1].trim());
+            user.setUserType (keyValues[1].trim ());
           } else if (attribute.contains("password")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("password", keyValues[1].trim());
+            user.setPassWord (keyValues[1].trim ());
           } else if (attribute.contains("firstname")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("firstname", keyValues[1].trim());
+            user.setFirstName (keyValues[1].trim ());
           } else if (attribute.contains("lastname")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("lastname", keyValues[1].trim());
+            user.setLastName (keyValues[1].trim ());
           } else if (attribute.contains("phonenumber")) {
             String[] keyValues = attribute.split("\\:");
-            attributeMap.put("phonenumber", keyValues[1].trim());
+            long phoneNumber;
+            try{
+              phoneNumber=Long.parseLong (keyValues[1].trim ());
+            }catch ( NumberFormatException e )
+            {
+              System.out.println(" Phone number must be a number");
+              System.out.println("Try \"user edit help\" for proper syntax");
+              return;
+            }
+            user.setPhoneNumber (phoneNumber);
           } else {
             System.out.println(">> Invalid attribute given!!! : " + attribute);
             System.out.println(">> Try \"user edit help\" for proper syntax");
             break;
           }
         }
-        if (attributeMap.get("id").equals("")) {
-          System.out.println(">> Id should not be null");
-          System.out.println(">> Try \"user edit help\" for proper syntax");
-          return;
-        }
-        int id = 0;
-        try {
-          id = Integer.parseInt(attributeMap.get("id").trim());
-        } catch (Exception e) {
-          System.out.println(">> Id must be a number");
-          return;
-        }
         int statusCode;
         try {
-          statusCode = userEditService.editUserService(attributeMap);
+          statusCode = userEditService.editUserService(user);
         } catch (Exception e) {
           System.out.println(e.getMessage());
           return;
@@ -532,44 +532,46 @@ public class UserCLI {
       System.out.println(">> For every Edit operation the first argument must be user's ID");
       System.out.println(">> Try \"user edit help\" for proper syntax");
     } else {
-      attributeMap.put("id", arguments[3]);
-      if (attributeMap.get("id").equals("")) {
-        System.out.println(">> Id should not be null");
-        System.out.println(">> Try \"user edit help\" for proper Syntax");
-        return;
-      }
+
       int id = 0;
       try {
-        id = Integer.parseInt(attributeMap.get("id"));
+        id = Integer.parseInt(arguments[3].trim ());
       } catch (Exception e) {
         System.out.println(">> Id must be a Number!");
         System.out.println(">> Please Try \"user edit help\" for proper Syntax");
       }
+      user.setId (id);
       for (int index = 4; index < arguments.length; index = index + 2) {
         if (arguments[index].contains("username")) {
-          attributeMap.put("username", arguments[index + 1]);
+          user.setUserName (arguments[index+1].trim ());
         } else if (arguments[index].contains("usertype")) {
-
-          attributeMap.put("usertype", arguments[index + 1]);
+          user.setUserType (arguments[index+1].trim ());
         } else if (arguments[index].contains("password")) {
-
-          attributeMap.put("password", arguments[index + 1]);
+          user.setPassWord (arguments[index+1].trim ());
         } else if (arguments[index].contains("firstname")) {
-          attributeMap.put("firstname", arguments[index + 1]);
+          user.setFirstName (arguments[index+1].trim ());
         } else if (arguments[index].contains("lastname")) {
-          attributeMap.put("lastname", arguments[index + 1]);
+          user.setLastName (arguments[index+1].trim ());
         } else if (arguments[index].contains("phonenumber")) {
-          attributeMap.put("phonenumber", arguments[index + 1]);
+          long phoneNumber;
+          try{
+            phoneNumber = Long.parseLong (arguments[index+1].trim ());
+          }catch(NumberFormatException e)
+          {
+            System.out.println(">> Phonenumber must be numeric!!");
+            System.out.println(">> Try \"user edit help\" for proper syntax");
+            return;
+          }
+          user.setPhoneNumber (phoneNumber);
         } else {
           System.out.println(">> Invalid attribute given!!! : " + arguments[index]);
           System.out.println(">> Try \"user edit help\" for proper syntax");
           break;
         }
       }
-
       int statusCode;
       try {
-        statusCode = userEditService.editUserService(attributeMap);
+        statusCode = userEditService.editUserService(user);
       } catch (Exception e) {
         System.out.println(e.getMessage());
         return;

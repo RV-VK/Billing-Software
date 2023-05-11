@@ -2,6 +2,8 @@ package DAO;
 
 import DBConnection.DBHelper;
 import Entity.Unit;
+
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,30 +83,36 @@ public class UnitDAOImplementation implements UnitDAO {
   }
 
   @Override
-  public int edit(int id, String atrribute, String value)
+  public int edit(Unit unit)
       throws ApplicationErrorException, SQLException, UniqueConstraintException {
     Connection editConnection = DBHelper.getConnection();
     try {
       editConnection.setAutoCommit(false);
-      String idCheckQuery = "SELECT * FROM UNIT WHERE ID=" + id;
+      String idCheckQuery = "SELECT * FROM UNIT WHERE ID=" + unit.getId ();
       Statement idCheckStatement = editConnection.createStatement();
       ResultSet idCheckResultSet = idCheckStatement.executeQuery(idCheckQuery);
       if (idCheckResultSet.next()) {
-        String editQuery =
-            "UPDATE UNIT SET "
-                + atrribute.toUpperCase()
-                + "="
-                + "'"
-                + value
-                + "'"
-                + " WHERE ID="
-                + id;
-        Statement editStatement = editConnection.createStatement();
-        editStatement.executeUpdate(editQuery);
-        editConnection.commit();
-        editConnection.setAutoCommit(true);
-        return 1;
-      } else {
+        String editQuery ="UPDATE UNIT SET NAME= COALESCE(?,NAME),CODE= COALESCE(?,CODE), DESCRIPTION= COALESCE(?,DESCRIPTION),ISDIVIDABLE= COALESCE(?,ISDIVIDABLE) WHERE ID=?";
+        PreparedStatement editStatement=editConnection.prepareStatement (editQuery);
+        editStatement.setString (1,unit.getName ());
+        editStatement.setString (2,unit.getCode ());
+        editStatement.setString (3,unit.getDescription ());
+        try{
+          editStatement.setBoolean (4,unit.getIsDividable ());
+        }catch ( Exception e )
+        {
+          editStatement.setNull (4,Types.BOOLEAN);
+        }
+        editStatement.setInt(5,unit.getId ());
+        if (editStatement.executeUpdate() > 0) {
+          editConnection.commit();
+          editConnection.setAutoCommit(true);
+          return 1;
+          }
+        else
+          return -1;
+      }
+      else{
         return -1;
       }
     } catch (SQLException e) {
@@ -120,7 +128,6 @@ public class UnitDAOImplementation implements UnitDAO {
       }
     }
   }
-
   @Override
   public int delete(String code) throws ApplicationErrorException {
     Connection deleteConnection = DBHelper.getConnection();
@@ -134,6 +141,25 @@ public class UnitDAOImplementation implements UnitDAO {
     } catch (Exception e) {
       throw new ApplicationErrorException(
           "Application has went into an Error!!!\n Please Try again");
+    }
+  }
+
+  @Override
+  public Unit findByCode ( String code ) throws ApplicationErrorException {
+    Connection getUnitConnection = DBHelper.getConnection ();
+    try{
+      Statement getUnitStatement = getUnitConnection.createStatement ();
+      ResultSet getUnitResultSet= getUnitStatement.executeQuery ("SELECT * FROM UNIT WHERE CODE='"+code+"'");
+      Unit unit=null;
+      while(getUnitResultSet.next ())
+      {
+        unit=new Unit(getUnitResultSet.getInt(1),getUnitResultSet.getString (2),getUnitResultSet.getString (3),getUnitResultSet.getString (4),getUnitResultSet.getBoolean (5));
+      }
+      return unit;
+    }
+    catch(Exception e)
+    {
+      throw new ApplicationErrorException (e.getMessage ());
     }
   }
 }

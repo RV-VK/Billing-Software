@@ -12,7 +12,7 @@ public interface UnitService {
 
   List<Unit> listUnitService() throws ApplicationErrorException;
 
-  int editUnitService(HashMap<String, String> attributeMap)
+  int editUnitService(Unit unit)
       throws SQLException, ApplicationErrorException, UniqueConstraintException;
 
   int deleteUnitService(String code) throws ApplicationErrorException;

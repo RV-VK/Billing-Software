@@ -58,71 +58,30 @@ public class UserServiceImplementation implements UserService {
   }
 
   @Override
-  public int editUserService(HashMap<String, String> attributeMap)
+  public int editUserService(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
     UserDAO editUserDAO = new UserDAOImplemetation();
     String numberRegex = "^[0-9]*$";
     String nameRegex = "^[a-zA-Z\\s]{1,30}$";
     String passwordRegex = "^[a-zA-Z0-9]{8,50}$";
     List<String> userTypeList = new ArrayList<>(Arrays.asList("Admin", "Purchase", "Sales"));
-    int id;
-    try {
-      id = Integer.parseInt(attributeMap.get("id").trim());
-    } catch (NumberFormatException e) {
+    if (user.getUserName () != null && !user.getUserName ().matches(nameRegex)
+        || user.getPassWord () != null
+            && !user.getPassWord ().matches(passwordRegex)
+        || user.getUserType() != null
+            && !userTypeList.contains(user.getUserType())
+        || user.getFirstName() != null
+            && !user.getFirstName().matches(nameRegex)
+        || user.getLastName() != null
+            && !user.getLastName().matches(nameRegex)) {
       return 0;
     }
-    if (attributeMap.get("username") != null && !attributeMap.get("username").matches(nameRegex)
-        || attributeMap.get("password") != null
-            && !attributeMap.get("password").matches(passwordRegex)
-        || attributeMap.get("usertype") != null
-            && !userTypeList.contains(attributeMap.get("usertype"))
-        || attributeMap.get("phonenumber") != null
-            && !attributeMap.get("phonenumber").matches(numberRegex)
-        || attributeMap.get("firstname") != null
-            && !attributeMap.get("firstname").matches(nameRegex)
-        || attributeMap.get("lastname") != null
-            && !attributeMap.get("lastname").matches(nameRegex)) {
-      return 0;
-    }
-    boolean status;
-    int updateCount = 0;
-    if (attributeMap.get("username") != null) {
-      status = editUserDAO.edit(id, "username", attributeMap.get("username"));
-      if (!status) {
-        return -1;
-      } else {
-        updateCount++;
-      }
-    }
-    if (attributeMap.get("password") != null) {
-      if (editUserDAO.edit(id, "password", attributeMap.get("password"))) {
-        updateCount++;
-      }
-    }
-    if (attributeMap.get("usertype") != null) {
-      if (editUserDAO.edit(id, "usertype", attributeMap.get("usertype"))) {
-        updateCount++;
-      }
-    }
-    if (attributeMap.get("firstname") != null) {
-      if (editUserDAO.edit(id, "firstname", attributeMap.get("firstname"))) {
-        updateCount++;
-      }
-    }
-    if (attributeMap.get("lastname") != null) {
-      if (editUserDAO.edit(id, "lastname", attributeMap.get("lastname"))) {
-        updateCount++;
-      }
-    }
-    if (attributeMap.get("phonenumber") != null) {
-      if (editUserDAO.edit(id, "phonenumber", attributeMap.get("phonenumber"))) {
-        updateCount++;
-      }
-    }
-    if (updateCount
-        == (attributeMap.size() - Collections.frequency(attributeMap.values(), null) - 1)) {
+    boolean status=editUserDAO.edit (user);
+    if(status)
+    {
       return 1;
-    } else {
+    }
+    else {
       return -1;
     }
   }

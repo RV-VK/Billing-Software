@@ -9,13 +9,19 @@ public class SalesServiceImplementation implements SalesService {
   @Override
   public int createSalesService(Sales sales) throws ApplicationErrorException {
     ProductDAO unitCheckDAO = new ProductDAOImplementation();
+    boolean isDividable;
+    ProductDAO getProductByCode = new ProductDAOImplementation();
+    UnitDAO getUnitNyCode=new UnitDAOImplementation ();
     int i = 1;
     for (SalesItem salesItem : sales.getSalesItemList()) {
-      int isDividable = unitCheckDAO.checkIsdividable(salesItem.getProduct().getCode());
-      if (isDividable == 0 && salesItem.getQuantity() % 1 == 0) {
+      try{
+       isDividable = getUnitNyCode.findByCode ((getProductByCode.findByCode (salesItem.getProduct ().getCode ())).getunitcode ()).getIsDividable ();
+     }catch ( NullPointerException e )
+      {
+        return -1;
+      }
+      if (!isDividable && salesItem.getQuantity() % 1 == 0) {
         return i + 1;
-      } else if (isDividable == -1) {
-        return isDividable;
       }
     }
     SalesDAO salesCreateDAO = new SalesDAOImplementation();
@@ -30,6 +36,14 @@ public class SalesServiceImplementation implements SalesService {
   @Override
   public int countSalesService(String parameter) throws ApplicationErrorException {
     SalesDAO salesCountDAO = new SalesDAOImplementation();
+    String dateRegex="([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))";
+    if(parameter!=null)
+    {
+      if(!parameter.matches (dateRegex))
+      {
+        return-1;
+      }
+    }
     return salesCountDAO.count(parameter);
   }
 

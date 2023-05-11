@@ -21,40 +21,16 @@ public class StoreServiceImplementation implements StoreService {
   }
 
   @Override
-  public int editStoreService(HashMap<String, String> attributeMap)
+  public int editStoreService(Store store)
       throws SQLException, ApplicationErrorException {
     StoreDAO storeEditDAO = new StoreDAOImplementation();
-    String numberRegex = "^[0-9]*$";
     String nameRegex = "^[a-zA-Z\\s]{3,30}$";
-    if (attributeMap.get("name") != null && !attributeMap.get("name").matches(nameRegex)
-        || attributeMap.get("phonenumber") != null
-            && !attributeMap.get("phonenumber").matches(numberRegex)
-        || attributeMap.get("gstnumber") != null
-            && !attributeMap.get("gstnumber").matches(numberRegex)
-        || attributeMap.get("address") != null && !attributeMap.get("address").matches(nameRegex)) {
+    String addressRegex="^[a-zA-Z0-9\\s]{3,30}$";
+    if( (store.getName() != null && !store.getName().matches(nameRegex))
+        || (store.getAddress()) != null && !store.getAddress().matches(addressRegex)){
       return 0;
     }
-    int status = 0;
-    if (attributeMap.get("name") != null) {
-      status = storeEditDAO.edit("name", attributeMap.get("name"));
-      if (status == -1) {
-        return -1;
-      }
-    }
-    if (attributeMap.get("address") != null) {
-      status += storeEditDAO.edit("address", attributeMap.get("address"));
-    }
-    if (attributeMap.get("phonenumber") != null) {
-      status += storeEditDAO.edit("phonenumber", attributeMap.get("phonenumber"));
-    }
-    if (attributeMap.get("gstnumber") != null) {
-      status += storeEditDAO.edit("gstnumber", attributeMap.get("gstnumber"));
-    }
-    if (status == (attributeMap.size() - Collections.frequency(attributeMap.values(), null))) {
-      return 1;
-    } else {
-      return -1;
-    }
+   return storeEditDAO.edit (store);
   }
 
   @Override

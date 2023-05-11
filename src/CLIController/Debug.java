@@ -2,6 +2,8 @@ package CLIController;
 
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
+import Entity.Product;
+import Entity.Unit;
 
 import java.sql.SQLException;
 
@@ -25,5 +27,9 @@ public class Debug {
     for (String s : parts1) {
       System.out.println(s);
     }
+    Product product=new Product ();
+    System.out.println(product);
+    Unit unit=new Unit ();
+    System.out.println(unit);
   }
 }

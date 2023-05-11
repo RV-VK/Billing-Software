@@ -18,7 +18,7 @@ public interface UserDAO {
   List list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException;
 
-  boolean edit(int id, String attribute, String value)
+  boolean edit(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException;
 
   int delete(String parameter) throws ApplicationErrorException;

@@ -5,7 +5,7 @@ public class Unit {
   private String name;
   private String code;
   private String description;
-  private boolean isDividable;
+  private Boolean isDividable;
 
   public int getId() {
     return id;
@@ -15,6 +15,7 @@ public class Unit {
     this.id = id;
   }
 
+  public Unit(){}
   public Unit(String name, String code, String description, boolean isDividable) {
     this.name = name;
     this.code = code;
@@ -54,11 +55,22 @@ public class Unit {
     this.description = description;
   }
 
-  public boolean getIsDividable() {
+  public Boolean getIsDividable() {
     return isDividable;
   }
 
   public void setIsDividable(boolean isDividable) {
     this.isDividable = isDividable;
+  }
+
+  @Override
+  public String toString () {
+    return "Unit{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", code='" + code + '\'' +
+            ", description='" + description + '\'' +
+            ", isDividable=" + isDividable +
+            '}';
   }
 }

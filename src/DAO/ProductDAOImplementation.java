@@ -1,5 +1,4 @@
 package DAO;
-
 import DBConnection.DBHelper;
 import Entity.Product;
 import java.sql.*;
@@ -59,7 +58,6 @@ public class ProductDAOImplementation implements ProductDAO {
       }
     }
   }
-
   @Override
   public int count() throws ApplicationErrorException {
     Connection getCountConnection = DBHelper.getConnection();
@@ -76,55 +74,6 @@ public class ProductDAOImplementation implements ProductDAO {
           "Application has went into an Error!!!\n Please Try again");
     }
   }
-
-  public List<Product> list(int pageLength, int pageNumber)
-      throws ApplicationErrorException, PageCountOutOfBoundsException {
-    Connection listConnection = DBHelper.getConnection();
-    List<Product> productList = new ArrayList<>();
-    int count = 0;
-    try {
-      Statement countStatement = listConnection.createStatement();
-      ResultSet countResultSet = countStatement.executeQuery("SELECT COUNT(ID) FROM PRODUCT");
-      while (countResultSet.next()) {
-        count = countResultSet.getInt(1);
-      }
-    } catch (Exception e) {
-      throw new ApplicationErrorException(
-          "Application has went into an Error!!!\n Please Try again");
-    }
-    if (count <= ((pageLength * pageNumber) - pageLength)) {
-      throw new PageCountOutOfBoundsException(
-          ">> Requested page doesnt exist !!!\n>> Existing page count with given pagination "
-              + ((count / pageLength) + 1));
-    } else {
-      try {
-        int begin = (pageLength * pageNumber) - pageLength;
-        PreparedStatement listStatement =
-            listConnection.prepareStatement(
-                "SELECT * FROM PRODUCT ORDER BY ID LIMIT " + pageLength + " OFFSET " + begin);
-        ResultSet listResultSet = listStatement.executeQuery();
-        while (listResultSet.next()) {
-          Product listedProduct =
-              new Product(
-                  listResultSet.getInt(1),
-                  listResultSet.getString(2),
-                  listResultSet.getString(3),
-                  listResultSet.getString(4),
-                  listResultSet.getString(5),
-                  listResultSet.getFloat(6),
-                  listResultSet.getDouble(7),
-                  listResultSet.getDouble(8));
-          productList.add(listedProduct);
-        }
-        return productList;
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw new ApplicationErrorException(
-            "Application has went into an Error!!!\n Please Try again");
-      }
-    }
-  }
-
   public List<Product> list(String searchText) throws ApplicationErrorException {
     Connection listConnection = DBHelper.getConnection();
     String codeRegex = "^[a-zA-Z\\s]{0,50}$";
@@ -216,22 +165,24 @@ public class ProductDAOImplementation implements ProductDAO {
   public List<Product> list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException {
     Connection listConnection = DBHelper.getConnection();
+    String numberRegex = "^[0-9]*$";
     List<Product> productList = new ArrayList<>();
     try {
-      Statement listStatement =
-          listConnection.createStatement(
-              ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-      String listQuery =
-          "SELECT * FROM PRODUCT WHERE "
-              + attribute
-              + " = '"
-              + searchText
-              + "'"
-              + " ORDER BY ID LIMIT "
-              + pageLength
-              + " OFFSET "
-              + offset;
-      ResultSet listResultSet = listStatement.executeQuery(listQuery);
+      String listQuery ="SELECT * FROM PRODUCT WHERE "+attribute+"= COALESCE(?,"+attribute+")"+" ORDER BY ID LIMIT "+pageLength+"  OFFSET "+offset;
+      PreparedStatement listStatement =
+          listConnection.prepareStatement (listQuery,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+      if(attribute.equals ("id")&&searchText==null)
+      {
+        listStatement.setNull (1,Types.INTEGER);
+      }
+      else if(attribute.equals ("id")||attribute.equals ("stock")||attribute.equals ("price"))
+      {
+        listStatement.setDouble (1,Double.parseDouble (searchText));
+      }
+      else {
+        listStatement.setString (1,searchText);
+      }
+      ResultSet listResultSet = listStatement.executeQuery();
       if (listResultSet.next()) {
         listResultSet.beforeFirst();
         while (listResultSet.next()) {
@@ -252,13 +203,14 @@ public class ProductDAOImplementation implements ProductDAO {
         return null;
       }
     } catch (SQLException e) {
+      System.out.println(e.getMessage ());
       throw new ApplicationErrorException(
           "Application has went into an Error!!!\n Please Try again");
     }
   }
 
   @Override
-  public boolean edit(int id, String attribute, String value)
+  public boolean edit(Product product)
       throws SQLException,
           ApplicationErrorException,
           UniqueNameException,
@@ -267,28 +219,35 @@ public class ProductDAOImplementation implements ProductDAO {
     Connection editConnection = DBHelper.getConnection();
     try {
       editConnection.setAutoCommit(false);
-      String idCheckQuery = "SELECT * FROM PRODUCT WHERE ID=" + id;
+      String idCheckQuery = "SELECT * FROM PRODUCT WHERE ID=" + product.getId ();
       Statement idCheckStatement = editConnection.createStatement();
       ResultSet idCheckResultSet = idCheckStatement.executeQuery(idCheckQuery);
       if (idCheckResultSet.next()) {
-        String editQuery =
-            "UPDATE PRODUCT SET "
-                + attribute.toUpperCase()
-                + "="
-                + "'"
-                + value
-                + "'"
-                + " WHERE ID="
-                + id;
-        Statement editStatement = editConnection.createStatement();
-        if (editStatement.executeUpdate(editQuery) > 0)
-          ;
+        String editQuery ="UPDATE PRODUCT SET CODE= COALESCE(?,CODE),NAME= COALESCE(?,NAME),UNITCODE= COALESCE(?,UNITCODE),TYPE= COALESCE(?,TYPE),PRICE= COALESCE(?,PRICE) WHERE ID=? ";
+        PreparedStatement editStatement=editConnection.prepareStatement (editQuery);
+        editStatement.setString (1,product.getCode ());
+
+        editStatement.setString (2,product.getName ());
+
+        editStatement.setString (3,product.getunitcode ());
+
+        editStatement.setString (4,product.getType ());
+
+        if (product.getPrice() == 0) {
+          editStatement.setNull(5, Types.NUMERIC);
+        }
+        else{
+          editStatement.setDouble (5,product.getPrice ());
+        }
+        editStatement.setInt(6,product.getId ());
+        if (editStatement.executeUpdate ()>0)
         {
           editConnection.commit();
           editConnection.setAutoCommit(true);
           return true;
         }
-      } else {
+      }
+      else {
         System.out.println(">> The id you have entered does not exist");
         System.out.println(">> Please try with an existing id");
         return false;
@@ -302,9 +261,6 @@ public class ProductDAOImplementation implements ProductDAO {
         } else if (e.getMessage().contains("product_name")) {
           throw new UniqueNameException(
               "Name must be unique!!!\n>>The Name you have entered already exists!!!");
-        } else {
-          throw new ApplicationErrorException(
-              "Application has went into an Error!!!\n Please Try again");
         }
       } else if (e.getSQLState().equals("23503")) {
         editConnection.rollback();
@@ -316,8 +272,8 @@ public class ProductDAOImplementation implements ProductDAO {
             "Application has went into an Error!!!\n Please Try again");
       }
     }
+    return false;
   }
-
   @Override
   public int delete(String parameter) throws ApplicationErrorException {
     Connection deleteConnection = DBHelper.getConnection();
@@ -362,6 +318,25 @@ public class ProductDAOImplementation implements ProductDAO {
           "Application has went into an Error!!!\n Please Try again");
     }
     return 1;
+  }
+
+  @Override
+  public Product findByCode ( String code ) throws ApplicationErrorException {
+    Connection getProductConnection=DBHelper.getConnection ();
+    try{
+      Statement getProductStatement= getProductConnection.createStatement ();
+      ResultSet getProductResultSet= getProductStatement.executeQuery ("SELECT * FROM PRODUCT  WHERE CODE='"+code+"'");
+      Product product=null;
+      while(getProductResultSet.next ())
+      {
+        product=new Product (getProductResultSet.getInt(1),getProductResultSet.getString (2),getProductResultSet.getString (3),getProductResultSet.getString (4),getProductResultSet.getString (5),getProductResultSet.getFloat (6),getProductResultSet.getDouble (7),getProductResultSet.getDouble (8));
+      }
+      return product;
+    }
+    catch(Exception e)
+    {
+      throw new ApplicationErrorException (e.getMessage ());
+    }
   }
 
   public int checkIsdividable(String code) throws ApplicationErrorException {

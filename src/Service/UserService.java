@@ -16,7 +16,7 @@ public interface UserService {
   List<User> listUserService(HashMap<String, String> listattributes)
       throws ApplicationErrorException, PageCountOutOfBoundsException;
 
-  int editUserService(HashMap<String, String> attributeMap)
+  int editUserService(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException;
 
   int deleteUserService(String username) throws ApplicationErrorException;

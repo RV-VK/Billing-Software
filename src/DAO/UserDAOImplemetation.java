@@ -220,26 +220,31 @@ public class UserDAOImplemetation implements UserDAO {
   }
 
   @Override
-  public boolean edit(int id, String attribute, String value)
+  public boolean edit(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
     Connection editConnection = DBHelper.getConnection();
     try {
       editConnection.setAutoCommit(false);
-      String idCheckQuery = "SELECT * FROM USERS WHERE ID=" + id;
+      String idCheckQuery = "SELECT * FROM USERS WHERE ID=" + user.getId ();
       Statement idCheckStatement = editConnection.createStatement();
       ResultSet idCheckResultSet = idCheckStatement.executeQuery(idCheckQuery);
       if (idCheckResultSet.next()) {
-        String editQuery =
-            "UPDATE USERS SET "
-                + attribute.toUpperCase()
-                + "="
-                + "'"
-                + value
-                + "'"
-                + " WHERE ID="
-                + id;
-        Statement editStatement = editConnection.createStatement();
-        editStatement.executeUpdate(editQuery);
+        String editQuery = "UPDATE USERS SET USERNAME= COALESCE(?,USERNAME),USERTYPE= COALESCE(?,USERTYPE),PASSWORD= COALESCE(?,PASSWORD),FIRSTNAME= COALESCE(?,FIRSTNAME),LASTNAME= COALESCE(?,LASTNAME),PHONENUMBER=COALESCE(?,PHONENUMBER) WHERE ID=?";
+        PreparedStatement editStatement = editConnection.prepareStatement (editQuery);
+        editStatement.setString (1,user.getUserName ());
+        editStatement.setString (2,user.getUserType ());
+        editStatement.setString (3,user.getPassWord ());
+        editStatement.setString (4,user.getFirstName ());
+        editStatement.setString (5,user.getLastName ());
+        if(user.getPhoneNumber ()==0)
+        {
+          editStatement.setNull (6,Types.BIGINT);
+        }
+        else {
+          editStatement.setLong (6,user.getPhoneNumber ());
+        }
+        editStatement.setInt(7,user.getId ());
+        editStatement.executeUpdate ();
         editConnection.commit();
         editConnection.setAutoCommit(true);
         return true;

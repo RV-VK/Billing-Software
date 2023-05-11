@@ -15,7 +15,7 @@ public interface ProductService {
   List<Product> listProductService(HashMap<String, String> listattributes)
       throws ApplicationErrorException, PageCountOutOfBoundsException;
 
-  int editProductService(HashMap<String, String> attributeMap)
+  int editProductService(Product product)
       throws SQLException,
           ApplicationErrorException,
           UniqueNameException,

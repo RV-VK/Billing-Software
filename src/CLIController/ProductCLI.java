@@ -172,6 +172,7 @@ public class ProductCLI {
     } else if (arguments.length == 2) {
       listAttributesMap.put("Pagelength", "20");
       listAttributesMap.put("Pagenumber", "1");
+      listAttributesMap.put("Attribute","id");
       resultList = listService.listProductService(listAttributesMap);
       for (Product resultProduct : resultList) {
         System.out.println(
@@ -203,6 +204,7 @@ public class ProductCLI {
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(1));
+        listAttributesMap.put ("Attribute","id");
         resultList = listService.listProductService(listAttributesMap);
         for (Product resultProduct : resultList) {
           System.out.println(
@@ -267,6 +269,7 @@ public class ProductCLI {
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
+        listAttributesMap.put("Attribute","id");
         try {
           resultList = listService.listProductService(listAttributesMap);
         } catch (Exception e) {
@@ -470,12 +473,7 @@ public class ProductCLI {
   }
 
   public void productEditCLI(String[] arguments) {
-    attributeMap.put("id", null);
-    attributeMap.put("code", null);
-    attributeMap.put("name", null);
-    attributeMap.put("unitcode", null);
-    attributeMap.put("type", null);
-    attributeMap.put("price", null);
+    Product product=new Product ();
     Scanner scanner = new Scanner(System.in);
     ProductService productEdit = new ProductServiceImplementation();
     if (arguments.length == 3 && arguments[2].equals("help")) {
@@ -508,42 +506,52 @@ public class ProductCLI {
         for (String attribute : productAttributes) {
           if (attribute.contains("id")) {
             String[] keyValues = attribute.split(":");
-            attributeMap.put("id", keyValues[1].trim());
+            int id = 0;
+            try {
+              id = Integer.parseInt(keyValues[1].trim());
+            } catch (Exception e) {
+              System.out.println(">> Id must be a number");
+              return;
+            }
+            product.setId (id);
           } else if (attribute.contains("name")) {
             String[] keyValues = attribute.split(":");
-            attributeMap.put("name", keyValues[1].trim());
+            product.setName (keyValues[1].trim ());
           } else if (attribute.contains("unitcode")) {
             String[] keyValues = attribute.split(":");
-            attributeMap.put("unitcode", keyValues[1].trim());
+            product.setunitcode (keyValues[1].trim ());
           } else if (attribute.contains("code") && !attribute.contains("unitcode")) {
             String[] keyValues = attribute.split(":");
-            attributeMap.put("code", keyValues[1].trim());
+            product.setCode (keyValues[1].trim ());
           } else if (attribute.contains("type")) {
             String[] keyValues = attribute.split(":");
-            attributeMap.put("type", keyValues[1].trim());
+            product.setType (keyValues[1].trim ());
           } else if (attribute.contains(("price"))) {
             String[] keyValues = attribute.split(":");
-            attributeMap.put("price", keyValues[1].trim());
+            float price;
+            try{
+              price=Float.parseFloat (keyValues[1].trim ());
+            }
+            catch(Exception e)
+            {
+              System.out.println(">> Price attribute must be a number");
+              return;
+            }
+            product.setPrice (price);
           } else {
             System.out.println(">> Invalid attribute given!!! : " + attribute);
             System.out.println(">> Try \" product edit help\" for proper syntax");
             break;
           }
         }
-        if (attributeMap.get("id").equals("")) {
+        if (product.getId ()==0) {
           System.out.println(">> Id should not be null");
           System.out.println(">> Try \"product edit help\" for proper Syntax");
           return;
         }
-        int id = 0;
-        try {
-          id = Integer.parseInt(attributeMap.get("id").trim());
-        } catch (Exception e) {
-          System.out.println(">> Id must be a number");
-        }
         int statusCode = 0;
         try {
-          statusCode = productEdit.editProductService(attributeMap);
+          statusCode = productEdit.editProductService(product);
         } catch (Exception e) {
           System.out.println(e.getMessage());
           return;
@@ -571,32 +579,38 @@ public class ProductCLI {
       System.out.println(">> For every Edit operation the first argument must be product's ID");
       System.out.println(">> Try \"product edit help\" for proper syntax");
     } else {
-      attributeMap.put("id", arguments[3]);
-      if (attributeMap.get("id").equals("")) {
-        System.out.println(">> Id should not be null");
-        System.out.println(">> Try \"product edit help\" for proper Syntax");
-        return;
-      }
       int id = 0;
       try {
-        id = Integer.parseInt(attributeMap.get("id"));
+        id = Integer.parseInt(arguments[3].trim ());
       } catch (Exception e) {
         System.out.println(">> Id must be a Number!");
         System.out.println(">> Please Try \"product edit help\" for proper Syntax");
       }
+      product.setId (id);
+      if (product.getId ()==0) {
+        System.out.println(">> Id should not be null");
+        System.out.println(">> Try \"product edit help\" for proper Syntax");
+        return;
+      }
       for (int index = 4; index < arguments.length; index = index + 2) {
         if (arguments[index].contains("name")) {
-          attributeMap.put("name", arguments[index + 1]);
+          product.setName ( arguments[index + 1].trim ());
         } else if (arguments[index].contains("code") && !arguments[index].contains("unitcode")) {
-
-          attributeMap.put("code", arguments[index + 1]);
+          product.setCode (arguments[index+1].trim ());
         } else if (arguments[index].contains("unitcode")) {
-
-          attributeMap.put("unitcode", arguments[index + 1]);
+          product.setunitcode (arguments[index+1].trim ());
         } else if (arguments[index].contains("type")) {
-          attributeMap.put("type", arguments[index + 1]);
+          product.setType (arguments[index+1].trim ());
         } else if (arguments[index].contains("price")) {
-          attributeMap.put("price", arguments[index + 1]);
+          float price;
+          try{
+            price=Float.parseFloat (arguments[index+1]);
+          }catch ( Exception e )
+          {
+            System.out.println(">> Price attribute must be a number");
+            return;
+          }
+          product.setPrice (price);
         } else {
           System.out.println(">> Invalid attribute given!!! : " + arguments[index]);
           System.out.println(">> Try \"product edit help\" for proper syntax");
@@ -606,7 +620,7 @@ public class ProductCLI {
 
       int statusCode = 0;
       try {
-        statusCode = productEdit.editProductService(attributeMap);
+        statusCode = productEdit.editProductService(product);
       } catch (Exception e) {
         System.out.println(e.getMessage());
         return;
