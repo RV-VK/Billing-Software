@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface ProductService {
-  int createProductService(Product product)
-      throws SQLException, ApplicationErrorException, UniqueNameException;
+  Product createProductService(Product product)
+          throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException;
 
   int countProductService() throws ApplicationErrorException;
 

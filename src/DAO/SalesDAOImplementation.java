@@ -7,27 +7,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SalesDAOImplementation implements SalesDAO {
+  Connection salesConnection = DBHelper.getConnection();
   @Override
-  public Sales create(Sales sales) throws ApplicationErrorException {
-    Connection salesCreateConnection = DBHelper.getConnection();
+  public Sales create(Sales sales) throws ApplicationErrorException, SQLException {
     try {
-      salesCreateConnection.setAutoCommit(false);
+      salesConnection.setAutoCommit(false);
       String salesEntryQuery = "INSERT INTO SALES(DATE,GRANDTOTAL) VALUES(?,?) RETURNING *";
-      String salesItemInsertQuery =
-          "INSERT INTO SALESITEM (ID, PRODUCTCODE, QUANTITY, SALESPRICE) VALUES (?,?,?) RETURNING *";
+      String salesItemInsertQuery = "INSERT INTO SALESITEM (ID, PRODUCTCODE, QUANTITY, SALESPRICE) VALUES (?,?,?) RETURNING *";
       String salesPriceQuery = "SELECT PRICE,STOCK FROM PRODUCT WHERE CODE=?";
       String stockUpdateQuery = "UPDATE PRODUCT SET STOCK=STOCK-? WHERE CODE=? RETURNING NAME";
       String grandTotalUpdateQuery = "UPDATE SALES SET GRANDTOTAL=? WHERE ID=?";
-      PreparedStatement salesEntryStatement =
-          salesCreateConnection.prepareStatement(salesEntryQuery);
-      PreparedStatement salesItemInsertStatement =
-          salesCreateConnection.prepareStatement(salesItemInsertQuery);
-      PreparedStatement salesPriceStatement =
-          salesCreateConnection.prepareStatement(salesPriceQuery);
-      PreparedStatement stockUpdateStatement =
-          salesCreateConnection.prepareStatement(stockUpdateQuery);
-      PreparedStatement grandTotalUpdateStatement =
-          salesCreateConnection.prepareStatement(grandTotalUpdateQuery);
+      PreparedStatement salesEntryStatement = salesConnection.prepareStatement(salesEntryQuery);
+      PreparedStatement salesItemInsertStatement = salesConnection.prepareStatement(salesItemInsertQuery);
+      PreparedStatement salesPriceStatement = salesConnection.prepareStatement(salesPriceQuery);
+      PreparedStatement stockUpdateStatement = salesConnection.prepareStatement(stockUpdateQuery);
+      PreparedStatement grandTotalUpdateStatement = salesConnection.prepareStatement(grandTotalUpdateQuery);
       salesEntryStatement.setDate(1, Date.valueOf(sales.getDate()));
       salesEntryStatement.setDouble(2, sales.getGrandTotal());
       ResultSet salesEntryResultSet = salesEntryStatement.executeQuery();
@@ -51,7 +45,7 @@ public class SalesDAOImplementation implements SalesDAO {
         stock = salesPriceResultSet.getFloat(2);
         grandTotal += price * salesItem.getQuantity();
         if (stock < salesItem.getQuantity()) {
-          salesCreateConnection.rollback();
+          salesConnection.rollback();
           return null;
         }
         salesItemInsertStatement.setInt(1, salesEntry.getId());
@@ -65,11 +59,7 @@ public class SalesDAOImplementation implements SalesDAO {
         stockUpdateResultSet.next();
         productName = stockUpdateResultSet.getString(1);
         while (salesItemInsertResultSet.next()) {
-          salesItemList.add(
-              new SalesItem(
-                  new Product(salesItemInsertResultSet.getString(2), productName),
-                  salesItemInsertResultSet.getFloat(3),
-                  salesItemInsertResultSet.getDouble(4)));
+          salesItemList.add(new SalesItem(new Product(salesItemInsertResultSet.getString(2), productName), salesItemInsertResultSet.getFloat(3), salesItemInsertResultSet.getDouble(4)));
         }
       }
       grandTotalUpdateStatement.setDouble(1, grandTotal);
@@ -77,29 +67,28 @@ public class SalesDAOImplementation implements SalesDAO {
       grandTotalUpdateStatement.executeUpdate();
       salesEntry.setGrandTotal(grandTotal);
       salesEntry.setSalesItemList(salesItemList);
-      salesCreateConnection.commit();
+      salesConnection.commit();
+      salesConnection.setAutoCommit(true);
       return salesEntry;
-    } catch (Exception e) {
+    } catch (SQLException e) {
+      salesConnection.rollback();
       throw new ApplicationErrorException(e.getMessage());
     }
   }
 
   @Override
   public int count(String parameter) throws ApplicationErrorException {
-    Connection getCountConnection = DBHelper.getConnection();
     try {
       if (parameter == null) {
-        Statement countStatement = getCountConnection.createStatement();
+        Statement countStatement = salesConnection.createStatement();
         ResultSet countResultSet = countStatement.executeQuery("SELECT COUNT(ID) FROM SALES");
         int count;
         countResultSet.next();
         count = countResultSet.getInt(1);
         return count;
       } else {
-        Statement countStatement = getCountConnection.createStatement();
-        ResultSet countResultSet =
-            countStatement.executeQuery(
-                "SELECT COUNT(*) FROM PURCHASE WHERE CAST(DATE AS TEXT) ILIKE'" + parameter + "'");
+        Statement countStatement = salesConnection.createStatement();
+        ResultSet countResultSet = countStatement.executeQuery("SELECT COUNT(*) FROM PURCHASE WHERE CAST(DATE AS TEXT) ILIKE'" + parameter + "'");
         int count;
         countResultSet.next();
         count = countResultSet.getInt(1);
@@ -109,110 +98,38 @@ public class SalesDAOImplementation implements SalesDAO {
       throw new ApplicationErrorException(e.getMessage());
     }
   }
-
   @Override
-  public List list(int pageLength, int pageNumber)
-      throws ApplicationErrorException, PageCountOutOfBoundsException {
-    Connection listConnection = DBHelper.getConnection();
-    List<Sales> salesList = new ArrayList<>();
-    int count = 0;
-    try {
-      Statement countStatement = listConnection.createStatement();
-      ResultSet countResultSet = countStatement.executeQuery("SELECT COUNT(ID) FROM PRODUCT");
-      countResultSet.next();
-      count = countResultSet.getInt(1);
-    } catch (Exception e) {
-      throw new ApplicationErrorException(e.getMessage());
-    }
-    if (count <= ((pageLength * pageNumber) - pageLength)) {
-      throw new PageCountOutOfBoundsException(
-          ">> Requested page doesnt exist !!!\\n>> Existing page count with given pagination \""
-              + ((count / pageLength) + 1));
-    } else {
-      try {
-        int begin = (pageLength * pageNumber) - pageLength;
-        Statement listStatement = listConnection.createStatement();
-        ResultSet listResultSet =
-            listStatement.executeQuery(
-                "SELECT * FROM PURCHASE ORDER BY ID LIMIT " + pageLength + " OFFSET " + begin);
-        while (listResultSet.next()) {
-          Sales listedSale = new Sales();
-          listedSale.setId(listResultSet.getInt(1));
-          listedSale.setDate(String.valueOf(listResultSet.getDate(2)));
-          listedSale.setGrandTotal(listResultSet.getDouble(3));
-          salesList.add(listedSale);
-        }
-        PreparedStatement listSalesItemStatement =
-            listConnection.prepareStatement(
-                "SELECT P.NAME, S.PRODUCTCODE,S.QUANTITY,S.PRICE FROM SALESITEMS S INNER JOIN PRODUCT P ON P.CODE=S.PRODUCTCODE WHERE S.ID=?");
-        List<SalesItem> salesItemList = new ArrayList<>();
-        for (Sales sales : salesList) {
-          listSalesItemStatement.setInt(1, sales.getId());
-          ResultSet listSalesResultSet = listSalesItemStatement.executeQuery();
-          while (listSalesResultSet.next()) {
-            salesItemList.add(
-                new SalesItem(
-                    new Product(listSalesResultSet.getString(2), listSalesResultSet.getString(1)),
-                    listSalesResultSet.getFloat(3),
-                    listSalesResultSet.getDouble(4)));
-          }
-          sales.setSalesItemList(salesItemList);
-        }
-        return salesList;
-      } catch (Exception e) {
-        throw new ApplicationErrorException(e.getMessage());
-      }
-    }
-  }
-
-  @Override
-  public List list(String attribute, String searchText, int pageLength, int offset)
-      throws ApplicationErrorException {
-    Connection listConnection = DBHelper.getConnection();
+  public List list(String attribute, String searchText, int pageLength, int offset) throws ApplicationErrorException {
     List<Sales> salesList = new ArrayList<>();
     try {
-      Statement listStatement =
-          listConnection.createStatement(
-              ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-      String listQuery =
-          "SELECT * FROM SALES WHERE "
-              + attribute
-              + " = '"
-              + searchText
-              + "' ORDER BY ID LIMIT "
-              + pageLength
-              + " OFFSET "
-              + offset;
-      ResultSet listResultSet = listStatement.executeQuery(listQuery);
-      if (listResultSet.next()) {
-        listResultSet.beforeFirst();
-        while (listResultSet.next()) {
-          Sales listedSale = new Sales();
-          listedSale.setId(listResultSet.getInt(1));
-          listedSale.setDate(String.valueOf(listResultSet.getDate(2)));
-          listedSale.setGrandTotal(listResultSet.getDouble(3));
-          salesList.add(listedSale);
-        }
-        PreparedStatement listSalesItemStatement =
-            listConnection.prepareStatement(
-                "SELECT P.NAME, S.PRODUCTCODE,S.QUANTITY,S.PRICE FROM SALESITEMS S INNER JOIN PRODUCT P ON P.CODE=S.PRODUCTCODE WHERE S.ID=?");
-        List<SalesItem> salesItemList = new ArrayList<>();
-        for (Sales sales : salesList) {
-          listSalesItemStatement.setInt(1, sales.getId());
-          ResultSet listSalesResultSet = listSalesItemStatement.executeQuery();
-          while (listSalesResultSet.next()) {
-            salesItemList.add(
-                new SalesItem(
-                    new Product(listSalesResultSet.getString(2), listSalesResultSet.getString(1)),
-                    listSalesResultSet.getFloat(3),
-                    listSalesResultSet.getDouble(4)));
-          }
-          sales.setSalesItemList(salesItemList);
-        }
-        return salesList;
+      String listQuery ="SELECT * FROM SALES WHERE " + attribute + "= COALESCE(?," + attribute + ")" + " ORDER BY ID LIMIT " + pageLength + "  OFFSET " + offset;
+      PreparedStatement listStatement = salesConnection.prepareStatement(listQuery);
+      if(attribute.equals("id") && searchText == null) {
+        listStatement.setNull(1, Types.INTEGER);
+      } else if(attribute.equals("id") || attribute.equals("grandtotal")) {
+        listStatement.setDouble(1, Double.parseDouble(searchText));
       } else {
-        return null;
+        listStatement.setDate(1, Date.valueOf(searchText));
       }
+      ResultSet listResultSet = listStatement.executeQuery();
+        while (listResultSet.next()) {
+          Sales listedSale = new Sales();
+          listedSale.setId(listResultSet.getInt(1));
+          listedSale.setDate(String.valueOf(listResultSet.getDate(2)));
+          listedSale.setGrandTotal(listResultSet.getDouble(3));
+          salesList.add(listedSale);
+        PreparedStatement listSalesItemStatement = salesConnection.prepareStatement("SELECT P.NAME, S.PRODUCTCODE,S.QUANTITY,S.PRICE FROM SALESITEMS S INNER JOIN PRODUCT P ON P.CODE=S.PRODUCTCODE WHERE S.ID=?");
+        List<SalesItem> salesItemList = new ArrayList<>();
+        for (Sales sales : salesList) {
+          listSalesItemStatement.setInt(1, sales.getId());
+          ResultSet listSalesResultSet = listSalesItemStatement.executeQuery();
+          while (listSalesResultSet.next()) {
+            salesItemList.add(new SalesItem(new Product(listSalesResultSet.getString(2), listSalesResultSet.getString(1)), listSalesResultSet.getFloat(3), listSalesResultSet.getDouble(4)));
+          }
+          sales.setSalesItemList(salesItemList);
+        }
+      }
+        return salesList;
     } catch (Exception e) {
       throw new ApplicationErrorException(e.getMessage());
     }
@@ -220,18 +137,10 @@ public class SalesDAOImplementation implements SalesDAO {
 
   @Override
   public List list(String searchText) throws ApplicationErrorException {
-    Connection listConnection = DBHelper.getConnection();
     List<Sales> salesList = new ArrayList<>();
     try {
-      Statement listStatement = listConnection.createStatement();
-      String listQuery =
-          "SELECT * FROM SALES WHERE CAST(ID AS TEXT) '"
-              + searchText
-              + "' OR CAST(DATE AS TEXT) ILIKE '"
-              + searchText
-              + "' OR CAST (INVOICE AS TEXT) ILIKE '"
-              + searchText
-              + "'";
+      Statement listStatement = salesConnection.createStatement();
+      String listQuery = "SELECT * FROM SALES WHERE CAST(ID AS TEXT) '" + searchText + "' OR CAST(DATE AS TEXT) ILIKE '" + searchText + "' OR CAST (INVOICE AS TEXT) ILIKE '" + searchText + "'";
       ResultSet listResultSet = listStatement.executeQuery(listQuery);
       while (listResultSet.next()) {
         Sales listedSale = new Sales();
@@ -241,18 +150,13 @@ public class SalesDAOImplementation implements SalesDAO {
         salesList.add(listedSale);
       }
       PreparedStatement listSalesItemStatement =
-          listConnection.prepareStatement(
-              "SELECT P.NAME, S.PRODUCTCODE,S.QUANTITY,S.PRICE FROM SALESITEMS S INNER JOIN PRODUCT P ON P.CODE=S.PRODUCTCODE WHERE S.ID=?");
+          salesConnection.prepareStatement("SELECT P.NAME, S.PRODUCTCODE,S.QUANTITY,S.PRICE FROM SALESITEMS S INNER JOIN PRODUCT P ON P.CODE=S.PRODUCTCODE WHERE S.ID=?");
       List<SalesItem> salesItemList = new ArrayList<>();
       for (Sales sales : salesList) {
         listSalesItemStatement.setInt(1, sales.getId());
         ResultSet listSalesResultSet = listSalesItemStatement.executeQuery();
         while (listSalesResultSet.next()) {
-          salesItemList.add(
-              new SalesItem(
-                  new Product(listSalesResultSet.getString(2), listSalesResultSet.getString(1)),
-                  listSalesResultSet.getFloat(3),
-                  listSalesResultSet.getDouble(4)));
+          salesItemList.add(new SalesItem(new Product(listSalesResultSet.getString(2), listSalesResultSet.getString(1)), listSalesResultSet.getFloat(3), listSalesResultSet.getDouble(4)));
         }
         sales.setSalesItemList(salesItemList);
       }
@@ -264,9 +168,8 @@ public class SalesDAOImplementation implements SalesDAO {
 
   @Override
   public int delete(int id) throws ApplicationErrorException {
-    Connection deleteConnection = DBHelper.getConnection();
     try {
-      Statement deleteStatement = deleteConnection.createStatement();
+      Statement deleteStatement = salesConnection.createStatement();
       if (deleteStatement.executeUpdate("DELETE FROM SALESITEMS WHERE ID='" + id + "'") > 0
           && deleteStatement.executeUpdate("DELETE FROM SALES WHERE ID='" + id + "'") > 0) {
         return 1;

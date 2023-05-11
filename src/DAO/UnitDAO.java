@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface UnitDAO {
-  Unit create(Unit unit) throws SQLException, ApplicationErrorException;
+  Unit create(Unit unit) throws SQLException, ApplicationErrorException, UniqueConstraintException;
 
   List<Unit> list() throws ApplicationErrorException;
 

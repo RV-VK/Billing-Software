@@ -11,10 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ProductCLI {
-  HashMap<String, String> attributeMap = new HashMap<>();
   HashMap<String, String> listAttributesMap = new HashMap<>();
-
-  public void CreateCLI(String[] arguments) {
+  public void Create(String[] arguments) {
     Scanner scanner = new Scanner(System.in);
     String nameRegex = "^[a-zA-Z\\s]{3,30}$";
     String codeRegex = "^[a-zA-Z0-9]{2,6}$";
@@ -83,24 +81,17 @@ public class ProductCLI {
       }
       Product product = new Product(code, name, unitcode, type, stock, price);
       ProductService productService = new ProductServiceImplementation();
-      int resultCode;
+      Product createdProduct;
       try {
-        resultCode = productService.createProductService(product);
+        createdProduct = productService.createProductService(product);
       } catch (Exception e) {
         System.out.println(e.getMessage());
         return;
       }
-      if (resultCode == 1) {
+      if (createdProduct!=null) {
         System.out.println(">> Product Created Successfully!");
-      } else if (resultCode == -1) {
-        System.out.println(">> Product Creation failed!!!");
-        System.out.println(">> The Product code you have entered already exists!!!");
-      } else if (resultCode == 0) {
-        System.out.println(">> Product Creation failed!!!");
-        System.out.println(">> The unit code you have entered does not exists!!!");
       }
       return;
-
     } else if (arguments.length < 7) {
       System.out.println(">>Insufficient or Invalid Arguments for command \"product create\"");
       System.out.println(">>Try \"product create help\" for Proper Syntax");
@@ -134,25 +125,21 @@ public class ProductCLI {
     }
     Product product = new Product(code, name, unitcode, type, stock, price);
     ProductService productService = new ProductServiceImplementation();
-    int resultCode;
+    Product createdProduct;
     try {
-      resultCode = productService.createProductService(product);
+      createdProduct = productService.createProductService(product);
     } catch (Exception e) {
       System.out.println(e.getMessage());
       return;
     }
-    if (resultCode == 1) {
+    if (createdProduct !=null) {
       System.out.println(">> Product Created Successfully!");
-    } else if (resultCode == -1) {
-      System.out.println(">> Product Creation failed");
-      System.out.println(">> The code you have entered Already exists!!!");
-    } else if (resultCode == 0) {
-      System.out.println(">> Product Creation Failed!!!");
-      System.out.println(">> The Unit you have entered does not exist!!!");
+    }
+    else {
+      System.out.println(">> Product Creation Failed!!");
     }
   }
-
-  public void productListCLI(String[] arguments)
+  public void list(String[] arguments)
       throws PageCountOutOfBoundsException, ApplicationErrorException {
     listAttributesMap.put("Pagelength", null);
     listAttributesMap.put("Pagenumber", null);
@@ -466,13 +453,13 @@ public class ProductCLI {
     }
   }
 
-  public void productCountCLI(String[] arguments) throws ApplicationErrorException {
+  public void count(String[] arguments) throws ApplicationErrorException {
     ProductService countProduct = new ProductServiceImplementation();
     int productCount = countProduct.countProductService();
     System.out.println(">> ProductCount " + productCount);
   }
 
-  public void productEditCLI(String[] arguments) {
+  public void edit(String[] arguments) {
     Product product=new Product ();
     Scanner scanner = new Scanner(System.in);
     ProductService productEdit = new ProductServiceImplementation();
@@ -637,7 +624,7 @@ public class ProductCLI {
     }
   }
 
-  public void productDeleteCLI(String[] arguments) throws ApplicationErrorException {
+  public void delete(String[] arguments) throws ApplicationErrorException {
     Scanner scanner = new Scanner(System.in);
     ProductService deleteProduct = new ProductServiceImplementation();
     String numberRegex = "^[0-9]*$";
@@ -693,7 +680,6 @@ public class ProductCLI {
             System.out.println(">>Selected Product has stock left and should not be deleted!!!");
             System.out.println(">>Please check the selected product to be deleted!!!");
           }
-
         } else if (prompt.equals("n")) {
           System.out.println(">> Delete operation cancelled");
         } else {

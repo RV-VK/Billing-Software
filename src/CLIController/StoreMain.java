@@ -46,19 +46,19 @@ public class StoreMain {
           String operationString1 = arguments[1];
           switch (operationString1) {
             case "create":
-              productCLI.CreateCLI(arguments);
+              productCLI.Create(arguments);
               break;
             case "count":
-              productCLI.productCountCLI(arguments);
+              productCLI.count(arguments);
               break;
             case "list":
-              productCLI.productListCLI(arguments);
+              productCLI.list(arguments);
               break;
             case "edit":
-              productCLI.productEditCLI(arguments);
+              productCLI.edit(arguments);
               break;
             case "delete":
-              productCLI.productDeleteCLI(arguments);
+              productCLI.delete(arguments);
               break;
             default:
               System.out.println("Invalid operation for command " + "\"" + commandString + "\"");

@@ -1,5 +1,4 @@
 package Service;
-
 import DAO.*;
 import Entity.Product;
 import java.sql.SQLException;
@@ -8,26 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ProductServiceImplementation implements ProductService {
-  public int createProductService(Product product)
-      throws SQLException, ApplicationErrorException, UniqueNameException {
-    ProductDAO productcreateDAO = new ProductDAOImplementation();
-    Product productResult = productcreateDAO.create(product);
-    if (productResult != null) {
-      if (!(productResult.getName() == null)) {
-        return 1;
-      } else {
-        return -1;
-      }
-    } else {
-      return 0;
+
+  private ProductDAO productDAO = new ProductDAOImplementation();
+  public Product createProductService(Product product)
+          throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException {
+
+    return productDAO.create(product);
     }
-  }
 
   public int countProductService() throws ApplicationErrorException {
-    ProductDAO productCountDAO = new ProductDAOImplementation();
-    return productCountDAO.count();
+    return productDAO.count();
   }
-
   public List<Product> listProductService(HashMap<String, String> listattributes)
       throws ApplicationErrorException, PageCountOutOfBoundsException {
     List<Product> productList;
@@ -50,7 +40,6 @@ public class ProductServiceImplementation implements ProductService {
     }
     return null;
   }
-
   public int editProductService(Product product)
       throws SQLException,
           ApplicationErrorException,
@@ -76,7 +65,6 @@ public class ProductServiceImplementation implements ProductService {
       return -1;
     }
   }
-
   public int deleteProductService(String parameter) throws ApplicationErrorException {
     ProductDAO deleteProductDAO = new ProductDAOImplementation();
     return deleteProductDAO.delete(parameter);

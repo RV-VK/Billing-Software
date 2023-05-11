@@ -8,7 +8,7 @@ import java.util.*;
 public class UserServiceImplementation implements UserService {
   @Override
   public int createUserService(User user) throws SQLException, ApplicationErrorException {
-    UserDAO createUserDAO = new UserDAOImplemetation();
+    UserDAO createUserDAO = new UserDAOImplementation();
     User userResult = createUserDAO.create(user);
     if (userResult != null) {
       return 1;
@@ -19,7 +19,7 @@ public class UserServiceImplementation implements UserService {
 
   @Override
   public int countUserService() throws ApplicationErrorException {
-    UserDAO countUserDAO = new UserDAOImplemetation();
+    UserDAO countUserDAO = new UserDAOImplementation();
     return countUserDAO.count();
   }
 
@@ -27,7 +27,7 @@ public class UserServiceImplementation implements UserService {
   public List listUserService(HashMap<String, String> listattributes)
       throws ApplicationErrorException, PageCountOutOfBoundsException {
     List<User> userList;
-    UserDAO listUserDAO = new UserDAOImplemetation();
+    UserDAO listUserDAO = new UserDAOImplementation();
 
     if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 2
         && listattributes.get("Pagelength") != null
@@ -60,7 +60,7 @@ public class UserServiceImplementation implements UserService {
   @Override
   public int editUserService(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
-    UserDAO editUserDAO = new UserDAOImplemetation();
+    UserDAO editUserDAO = new UserDAOImplementation();
     String numberRegex = "^[0-9]*$";
     String nameRegex = "^[a-zA-Z\\s]{1,30}$";
     String passwordRegex = "^[a-zA-Z0-9]{8,50}$";
@@ -88,7 +88,7 @@ public class UserServiceImplementation implements UserService {
 
   @Override
   public int deleteUserService(String username) throws ApplicationErrorException {
-    UserDAO deleteUserDAO = new UserDAOImplemetation();
+    UserDAO deleteUserDAO = new UserDAOImplementation();
     return deleteUserDAO.delete(username);
   }
 }
