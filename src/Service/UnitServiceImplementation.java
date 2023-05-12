@@ -1,51 +1,51 @@
 package Service;
+
 import DAO.ApplicationErrorException;
 import DAO.UniqueConstraintException;
 import DAO.UnitDAO;
 import DAO.UnitDAOImplementation;
 import Entity.Unit;
-import Entity.User;
 
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class UnitServiceImplementation implements UnitService {
+  private UnitDAO unitDAO=new UnitDAOImplementation();
+  private final String NAME_REGEX="^[a-zA-Z\\s]{1,30}$";
+  private final String CODE_REGEX="^[a-zA-Z]{0,4}$";
+
   @Override
-  public int createUnitService(Unit unit) throws SQLException, ApplicationErrorException, UniqueConstraintException {
-    UnitDAO unitCreateDAO = new UnitDAOImplementation();
-    Unit createdUnit = unitCreateDAO.create(unit);
-    if (createdUnit != null) {
-      return 1;
-    } else {
-      return -1;
-    }
+  public Unit createUnitService(Unit unit) throws SQLException, ApplicationErrorException, UniqueConstraintException {
+    if (validate(unit))
+      return unitDAO.create(unit);
+     else
+      return new Unit();
   }
 
   @Override
   public List<Unit> listUnitService() throws ApplicationErrorException {
-    UnitDAO unitListDAO = new UnitDAOImplementation();
-    return unitListDAO.list();
+    return unitDAO.list();
   }
 
   @Override
   public int editUnitService( Unit unit)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
-    UnitDAO unitEditDAO = new UnitDAOImplementation();
-    String unitCodeRegex = "^[a-zA-Z]{1,4}$";
-    String nameRegex = "^[a-zA-Z\\s]{3,30}$";
-    if (unit.getName() != null && !unit.getName().matches(nameRegex)
-        || unit.getCode() != null
-            && !unit.getCode().matches(unitCodeRegex)) {
+    if (validate(unit)) {
       return 0;
     }
-    return unitEditDAO.edit (unit);
+    return unitDAO.edit (unit);
   }
-
   @Override
   public int deleteUnitService(String code) throws ApplicationErrorException {
     UnitDAO unitDeleteDAO = new UnitDAOImplementation();
     return unitDeleteDAO.delete(code);
+  }
+
+  private boolean validate(Unit unit)
+  {
+    if(!unit.getName().matches(NAME_REGEX)||!unit.getCode().matches(CODE_REGEX))
+      return false;
+    else
+      return true;
   }
 }

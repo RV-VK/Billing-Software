@@ -81,8 +81,13 @@ public class ProductCLI {
       System.out.println(e.getMessage());
       return;
     }
-    if (createdProduct!=null) {
-      System.out.println(">> Product Created Successfully!");
+    if (createdProduct.getName()==null) {
+      System.out.println(">> Template Mismatch!!");
+      System.out.println(">> Try \"product create help\" for proper syntax");
+    }
+    else if(createdProduct!=null){
+      System.out.println(">> Product Creation Successfull!!");
+      System.out.println(product);
     }
   }
   public void list(List<String> arguments)  throws PageCountOutOfBoundsException, ApplicationErrorException {
@@ -326,58 +331,20 @@ public class ProductCLI {
   }
 
   public void delete(List<String> arguments) throws ApplicationErrorException {
-    Scanner scanner = new Scanner(System.in);
-    ProductService deleteProduct = new ProductServiceImplementation();
     String numberRegex = "^[0-9]*$";
     String productcodeRegex = "^[a-zA-Z0-9]{2,6}$";
     if (arguments.size() == 3) {
       if (arguments.get(2).equals("help")) {
         System.out.println("> product delete help \n" + ">> delete product using the following template\n" + "\t\n" + "\t\tproductid - numeric, existing\n" + ">> product delete -c <code>\n" + "\t \n" + "\n" + "> product delete <id>");
       } else if (arguments.get(2).matches(numberRegex)) {
-        System.out.println(">> Are you sure want to delete the product y/n ? : ");
-        String prompt = scanner.nextLine();
-        if (prompt.equals("y")) {
-          if (deleteProduct.deleteProductService(arguments.get(2)) == 1) {
-            System.out.println("Product Deletion Successfull!!!");
-          } else if (deleteProduct.deleteProductService(arguments.get(2)) == -1) {
-            System.out.println(">> Product Deletion Failed!!!");
-            System.out.println(">> Please check the Id  you have entered!!!");
-            System.out.println("Try \"product delete help\" for proper syntax");
-          } else if (deleteProduct.deleteProductService(arguments.get(2)) == 0) {
-            System.out.println(">> Product cannot be deleted!!!");
-            System.out.println(">>Selected Product has stock left and should not be deleted!!!");
-            System.out.println(">>Please check the selected product to be deleted!!!");
-          }
-        } else if (prompt.equals("n")) {
-          System.out.println(">> Delete operation cancelled");
-        } else {
-          System.out.println("Invalid delete prompt!!! Please select between y/n");
-        }
+          deleteHelper(arguments);
       } else {
         System.out.println(">> Invalid format for id!!!");
         System.out.println("Try \"product delete help\" for proper syntax");
       }
     } else if (arguments.size() == 4 && arguments.get(2).equals("-c")) {
       if (arguments.get(3).matches(productcodeRegex)) {
-        System.out.println(">> Are you sure want to delete the product y/n ? : ");
-        String prompt = scanner.nextLine();
-        if (prompt.equals("y")) {
-          if (deleteProduct.deleteProductService(arguments.get(3)) == 1) {
-            System.out.println(">> Product Deletion Successfull!!!");
-          } else if (deleteProduct.deleteProductService(arguments.get(3)) == -1) {
-            System.out.println(">> Product Deletion Failed!!!");
-            System.out.println(">> Please check the  Code that you have entered!!!");
-            System.out.println("Try \"product delete help\" for proper syntax");
-          } else if (deleteProduct.deleteProductService(arguments.get(3)) == 0) {
-            System.out.println(">> Product cannot be deleted!!!");
-            System.out.println(">>Selected Product has stock left and should not be deleted!!!");
-            System.out.println(">>Please check the selected product to be deleted!!!");
-          }
-        } else if (prompt.equals("n")) {
-          System.out.println(">> Delete operation cancelled");
-        } else {
-          System.out.println("Invalid delete prompt!!! Please select between y/n");
-        }
+        deleteHelper(arguments);
       } else {
         System.out.println(">> Invalid format for product Code!!!");
         System.out.println("Try \"product delete help\" for proper syntax");
@@ -385,6 +352,27 @@ public class ProductCLI {
     } else {
       System.out.println("Invalid command format");
       System.out.println("Try \"product delete help\" for proper syntax");
+    }
+  }
+  private void deleteHelper(List<String> arguments) throws ApplicationErrorException {
+    System.out.println(">> Are you sure want to delete the product y/n ? : ");
+    String prompt = scanner.nextLine();
+    if (prompt.equals("y")) {
+      if (productService.deleteProductService(arguments.get(2)) == 1) {
+        System.out.println("Product Deletion Successfull!!!");
+      } else if (productService.deleteProductService(arguments.get(2)) == -1) {
+        System.out.println(">> Product Deletion Failed!!!");
+        System.out.println(">> Please check the Id  you have entered!!!");
+        System.out.println("Try \"product delete help\" for proper syntax");
+      } else if (productService.deleteProductService(arguments.get(2)) == 0) {
+        System.out.println(">> Product cannot be deleted!!!");
+        System.out.println(">>Selected Product has stock left and should not be deleted!!!");
+        System.out.println(">>Please check the selected product to be deleted!!!");
+      }
+    } else if (prompt.equals("n")) {
+      System.out.println(">> Delete operation cancelled");
+    } else {
+      System.out.println("Invalid delete prompt!!! Please select between y/n");
     }
   }
 }

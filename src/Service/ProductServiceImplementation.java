@@ -9,6 +9,8 @@ import java.util.List;
 public class ProductServiceImplementation implements ProductService {
 
   private ProductDAO productDAO = new ProductDAOImplementation();
+  private final String NAME_REGEX="^[a-zA-Z\\s]{1,30}$";
+  private final String CODE_REGEX="^[a-zA-Z0-9]{2,6}$";
   public Product createProductService(Product product) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException {
     if(validate(product))
       return productDAO.create(product);
@@ -26,17 +28,15 @@ public class ProductServiceImplementation implements ProductService {
       int offset = (pageLength * pageNumber) - pageLength;
       productList = productDAO.list(listattributes.get("Attribute"), listattributes.get("Searchtext"), pageLength, offset);
       return productList;
-    } else if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 1
-        && listattributes.get("Searchtext") != null) {
+    } else if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 1 && listattributes.get("Searchtext") != null) {
       productList = productDAO.list(listattributes.get("Searchtext"));
       return productList;
     }
     return null;
   }
   public int editProductService(Product product) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException, UnitCodeViolationException {
-    if (!validate(product)) {
+    if (!validate(product))
       return 0;
-    }
     boolean status=productDAO.edit(product);
     if(status)
     {
@@ -52,7 +52,8 @@ public class ProductServiceImplementation implements ProductService {
 
   private boolean validate(Product product)
   {
-
-    return false;
+    if(!product.getName().matches(NAME_REGEX)||!product.getType().matches(NAME_REGEX)||!product.getCode().matches(CODE_REGEX))
+      return false;
+    else return true;
   }
 }

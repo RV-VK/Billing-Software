@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 public interface StoreService {
-  int createStoreService(Store store) throws SQLException, ApplicationErrorException;
+  Store createStoreService(Store store) throws SQLException, ApplicationErrorException;
 
   int editStoreService(Store store)
       throws SQLException, ApplicationErrorException;

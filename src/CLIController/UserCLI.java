@@ -2,235 +2,132 @@ package CLIController;
 
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
+import Entity.Product;
 import Entity.User;
 import Service.UserService;
 import Service.UserServiceImplementation;
+
+import javax.swing.*;
 import java.util.*;
 
 public class UserCLI {
-  HashMap<String, String> attributeMap = new HashMap<>();
-  HashMap<String, String> listAttributesMap = new HashMap<>();
+  private int id;
+  private String userType;
+  private String userName;
+  private String passWord;
+  private String firstName;
+  private String lastName;
+  private long phoneNumber;
+  private int pageLength;
+  private int pageNumber;
+  private String attribute;
+  private String searchText;
+  private List<User> userList;
+  private final UserService userService=new UserServiceImplementation();
+  private Scanner scanner=new Scanner(System.in);
+  private HashMap<String, String> listAttributesMap = new HashMap<>();
 
-  public void userCreateCLI(String[] arguments) {
+  private List<String> userAttributes = Arrays.asList("id", "usertype", "username", "password", "firstname", "lastname", "phonenumber");
+
+  public void userCreateCLI(List<String> arguments) {
     Scanner scanner = new Scanner(System.in);
-    String nameRegex = "^[a-zA-Z\\s]{3,30}$";
-    String codeRegex = "^[a-zA-Z0-9]{2,6}$";
-    List<String> userTypeList = new ArrayList<>(Arrays.asList("Admin", "Purchase", "Sales"));
-    if (arguments.length == 3 && arguments[2].equals("help")) {
-      System.out.println(
-          ">> create user using following template\n"
-              + ">>  usertype, username,  password, first name, last name, phone number\n"
-              + "\tusertype - text, purchase/sales, mandatory\n"
-              + "\tusername - text, min 3 - 30 char, mandatory\n"
-              + "\tpassword - text, alphanumeric, special char, min 8 char, mandatory\n"
-              + "\tfirstname - text, mandatory with 3 to 30 chars\n"
-              + "\tlastname  - text, optional\n"
-              + "\tphone - number, mandatory, ten digits, digit start with 9/8/7/6\t\t\t\t\n");
+    if (arguments.size() == 3 && arguments.get(2).equals("help")) {
+      System.out.println(">> create user using following template\n" + ">>  usertype, username,  password, first name, last name, phone number\n" + "\tusertype - text, purchase/sales, mandatory\n" + "\tusername - text, min 3 - 30 char, mandatory\n" + "\tpassword - text, alphanumeric, special char, min 8 char, mandatory\n" + "\tfirstname - text, mandatory with 3 to 30 chars\n" + "\tlastname  - text, optional\n" + "\tphone - number, mandatory, ten digits, digit start with 9/8/7/6\t\t\t\t\n");
       return;
-    } else if (arguments.length == 2) {
+    } else if (arguments.size() == 2) {
       System.out.print("> ");
       String parameters = scanner.nextLine();
-      String[] userAttributes = parameters.split("\\,");
-      if (userAttributes.length < 6) {
-        System.out.println("Insufficient arguments for command \"user create\"");
-        System.out.println("Try \"user create help\" for proper syntax");
-        return;
-      }
-      if (userAttributes.length > 6) {
-        System.out.println("Too many arguments for command \"user create\"");
-        System.out.println("Try \"user create help\" for proper syntax");
-        return;
-      }
-      String userType = userAttributes[0].trim();
-      String userName = userAttributes[1].trim();
-      String passWord = userAttributes[2].trim();
-      String firstName = userAttributes[3].trim();
-      String lastName = userAttributes[4].trim();
-      long phoneNumber = 0;
-      // Necessary Validations
-      if (!userTypeList.contains(userType)) {
-        System.out.println(">> Invalid Usertype given!!!");
-        System.out.println(">> Try \"user create help\" for proper syntax");
-        return;
-      }
-      try {
-        phoneNumber = Long.parseLong(userAttributes[5].trim());
-      } catch (Exception e) {
-        System.out.println(">> Invalid format for 6th argument \"phonenumber\"");
-        System.out.println(">> Try \"user create help\" for proper syntax");
-      }
-      User user = new User(userType, userName, passWord, firstName, lastName, phoneNumber);
-      UserService userCreateService = new UserServiceImplementation();
-      int resultcode = 1;
-      try {
-        resultcode = userCreateService.createUserService(user);
-
-      } catch (Exception e) {
-        System.out.println(e.getMessage());
-        return;
-      }
-      if (resultcode == 1) {
-        System.out.println(">> User Created Succesfully!!!");
-      } else if (resultcode == -1) {
-        System.out.println(">> User Creation Failed!!!");
-        System.out.println(">> The username you have entered already Exists!!!");
-      }
-      return;
-    } else if (arguments.length < 8) {
-      System.out.println(">>Insufficient Arguments for command \"user create\"");
-      System.out.println(">> Try \"user create help\" for proper syntax");
-      return;
-    } else if (arguments.length > 8) {
-      System.out.println("Too many arguments for aommand \"user create\"");
-      System.out.println(">> Try \"user create help\" for proper syntax");
+      List<String> userAttributes = List.of(parameters.split("\\,"));
+      createHelper(userAttributes);
+    }
+    createHelper(arguments.subList(2,arguments.size()));
+  }
+  private void createHelper(List<String> userAttributes)
+  {
+    if (userAttributes.size() < 6) {
+      System.out.println("Insufficient arguments for command \"user create\"");
+      System.out.println("Try \"user create help\" for proper syntax");
       return;
     }
-    String userType = arguments[2].trim();
-    String userName = arguments[3].trim();
-    String passWord = arguments[4].trim();
-    String firstName = arguments[5].trim();
-    String lastName = arguments[6].trim();
-    if (!userTypeList.contains(userType)) {
-      System.out.println(">> Invalid Usertype given!!!");
-      System.out.println(">> Try \"user create help\" for proper syntax");
+    if (userAttributes.size() > 6) {
+      System.out.println("Too many arguments for command \"user create\"");
+      System.out.println("Try \"user create help\" for proper syntax");
       return;
     }
-    long phoneNumber = 0L;
+     userType = userAttributes.get(0).trim();
+     userName = userAttributes.get(1).trim();
+     passWord = userAttributes.get(2).trim();
+     firstName = userAttributes.get(3).trim();
+     lastName = userAttributes.get(4).trim();
+     phoneNumber = 0;
     try {
-      phoneNumber = Long.parseLong(arguments[7].trim());
+      phoneNumber = Long.parseLong(userAttributes.get(5).trim());
     } catch (Exception e) {
       System.out.println(">> Invalid format for 6th argument \"phonenumber\"");
-      return;
+      System.out.println(">> Try \"user create help\" for proper syntax");
     }
     User user = new User(userType, userName, passWord, firstName, lastName, phoneNumber);
-    UserService userCreateService = new UserServiceImplementation();
-    int resultCode = 1;
+    User createdUser;
     try {
-      resultCode = userCreateService.createUserService(user);
+       createdUser= userService.createUserService(user);
     } catch (Exception e) {
       System.out.println(e.getMessage());
       return;
     }
-    if (resultCode == 1) {
-      System.out.println(">> User Created Successfully!!!");
-    } else if (resultCode == -1) {
-      System.out.println(">> User Creation failed");
-      System.out.println("The username you have entered already exists!!!");
+    if (createdUser.getUserName()==null) {
+      System.out.println("Template Mismatch!!");
+      System.out.println("Try \"user create help\" for proper syntax");
+    } else if (createdUser!=null) {
+      System.out.println(">> User Creation Successfull!!");
+      System.out.println(createdUser);
     }
   }
 
-  public void userCountCLI(String[] arguments) throws ApplicationErrorException {
-    UserService countUserService = new UserServiceImplementation();
-    int userCount = countUserService.countUserService();
+  public void userCountCLI() throws ApplicationErrorException {
+    int userCount = userService.countUserService();
     System.out.println(">> User Count " + userCount);
   }
 
-  public void userListCLI(String[] arguments)
+  public void userListCLI(List<String> arguments )
       throws PageCountOutOfBoundsException, ApplicationErrorException {
     listAttributesMap.put("Pagelength", null);
     listAttributesMap.put("Pagenumber", null);
     listAttributesMap.put("Attribute", null);
     listAttributesMap.put("Searchtext", null);
-    UserService listUserService = new UserServiceImplementation();
-    List<User> userList;
-    if (arguments.length == 3 && arguments[2].equals("help")) {
-      System.out.println(
-          ">> List user with the following options\n"
-              + ">> user list - will list all the users default to maximum upto 20 users\n"
-              + ">> user list -p 10 - pageable list shows 10 users as default\n"
-              + ">> user list -p 10 3 - pagable list shows 10 users in 3rd page, ie., user from 21 to 30\n"
-              + ">> user list -s searchtext - search the user with the given search text in all the searchable attributes\n"
-              + ">> user list -s <attr>: searchtext - search the user with the given search text in all the given attribute\n"
-              + ">> user list -s <attr>: searchtext -p 10 6 - pagable list shows 10 users in 6th page with the given search text in the given attribute\n");
-      return;
-    } else if (arguments.length == 2) {
+    if (arguments.size() == 3 && arguments.get(2).equals("help")) {
+      System.out.println(">> List user with the following options\n" + ">> user list - will list all the users default to maximum upto 20 users\n" + ">> user list -p 10 - pageable list shows 10 users as default\n" + ">> user list -p 10 3 - pagable list shows 10 users in 3rd page, ie., user from 21 to 30\n" + ">> user list -s searchtext - search the user with the given search text in all the searchable attributes\n" + ">> user list -s <attr>: searchtext - search the user with the given search text in all the given attribute\n" + ">> user list -s <attr>: searchtext -p 10 6 - pagable list shows 10 users in 6th page with the given search text in the given attribute\n");
+    } else if (arguments.size()== 2) {
       listAttributesMap.put("Pagelength", "20");
       listAttributesMap.put("Pagenumber", "1");
-      userList = listUserService.listUserService(listAttributesMap);
-      // DO PRINTINGS
-      for (User user : userList) {
-        System.out.println(
-            ">> id: "
-                + user.getId()
-                + ", usertype: "
-                + user.getUserType()
-                + ", username: "
-                + user.getUserName()
-                + ", password: "
-                + user.getPassWord()
-                + ", firstname: "
-                + user.getFirstName()
-                + ", lastname: "
-                + user.getLastName()
-                + ", phonenumber: "
-                + user.getPhoneNumber());
-      }
-      return;
-    } else if (arguments.length == 4) {
-      int pageLength = 0;
-      if (arguments[2].equals("-p")) {
+      listAttributesMap.put("Attribute","id");
+      listHelper(listAttributesMap);
+    } else if (arguments.size() == 4) {
+      if (arguments.get(2).equals("-p")) {
         try {
-          pageLength = Integer.parseInt(arguments[3]);
+          pageLength = Integer.parseInt(arguments.get(3));
         } catch (Exception e) {
           System.out.println(">> Invalid Page Size input!!!");
           System.out.println(">> Try \"user list help\" for proper syntax");
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", "1");
-        userList = listUserService.listUserService(listAttributesMap);
-        for (User user : userList) {
-          System.out.println(
-              ">> id: "
-                  + user.getId()
-                  + ", usertype: "
-                  + user.getUserType()
-                  + ", username: "
-                  + user.getUserName()
-                  + ", password: "
-                  + user.getPassWord()
-                  + ", firstname: "
-                  + user.getFirstName()
-                  + ", lastname: "
-                  + user.getLastName()
-                  + ", phonenumber: "
-                  + user.getPhoneNumber());
-        }
-      } else if (arguments[2].equals("-s")) {
-        String searchText = arguments[3].trim();
+        listAttributesMap.put("Attribute","id");
+        listHelper(listAttributesMap);
+      } else if (arguments.get(2).equals("-s")) {
+        searchText = arguments.get(3).trim();
         listAttributesMap.put("Searchtext", searchText);
-        userList = listUserService.listUserService(listAttributesMap);
-        if (userList.size() == 0) {
-          System.out.println(">> Given SearchText does not Exists!!!");
-        }
-        for (User user : userList) {
-          System.out.println(
-              ">> id: "
-                  + user.getId()
-                  + ", usertype: "
-                  + user.getUserType()
-                  + ", username: "
-                  + user.getUserName()
-                  + ", password: "
-                  + user.getPassWord()
-                  + ", firstname: "
-                  + user.getFirstName()
-                  + ", lastname: "
-                  + user.getLastName()
-                  + ", phonenumber: "
-                  + user.getPhoneNumber());
-        }
+        listHelper(listAttributesMap);
       } else {
         System.out.println(">> Invalid Extension given");
         System.out.println(">> Try \"user list help\" for proper syntax");
       }
-
-    } else if (arguments.length == 5) {
-      int pageLength = 0;
-      int pageNumber = 0;
-      if (arguments[2].equals("-p")) {
+    } else if (arguments.size()== 5) {
+       pageLength = 0;
+       pageNumber = 0;
+      if (arguments.get(2).equals("-p")) {
         try {
-          pageLength = Integer.parseInt(arguments[3]);
-          pageNumber = Integer.parseInt(arguments[4]);
+          pageLength = Integer.parseInt(arguments.get(3));
+          pageNumber = Integer.parseInt(arguments.get(4));
         } catch (Exception e) {
           System.out.println(">> Invalid page Size (or) page Number input");
           System.out.println(">> Try \"product list help\" for proper syntax");
@@ -238,87 +135,37 @@ public class UserCLI {
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
-        try {
-          userList = listUserService.listUserService(listAttributesMap);
-        } catch (Exception e) {
-          System.out.println(e.getMessage());
-          return;
-        }
-        for (User user : userList) {
-          System.out.println(
-              ">> id: "
-                  + user.getId()
-                  + ", usertype: "
-                  + user.getUserType()
-                  + ", username: "
-                  + user.getUserName()
-                  + ", password: "
-                  + user.getPassWord()
-                  + ", firstname: "
-                  + user.getFirstName()
-                  + ", lastname: "
-                  + user.getLastName()
-                  + ", phonenumber: "
-                  + user.getPhoneNumber());
-        }
-      } else if (arguments[2].equals("-s")) {
-        List<String> userAttributes =
-            Arrays.asList(
-                "id", "usertype", "username", "password", "firstname", "lastname", "phonenumber");
-        String attribute = arguments[3];
+        listAttributesMap.put("Attribute","id");
+       listHelper(listAttributesMap);
+      } else if (arguments.get(2).equals("-s")) {
+        attribute = arguments.get(3);
         attribute = attribute.replace(":", "");
-        String searchText = arguments[4];
+        searchText = arguments.get(4);
         if (userAttributes.contains(attribute)) {
           listAttributesMap.put("Attribute", attribute);
           listAttributesMap.put("Searchtext", searchText);
           listAttributesMap.put("Pagelength", "20");
           listAttributesMap.put("Pagenumber", "1");
-          userList = listUserService.listUserService(listAttributesMap);
-          if (userList == null) {
-            System.out.println(">> Given SearchText doesn not exists!!!");
-            return;
-          }
-          for (User user : userList) {
-            System.out.println(
-                ">> id: "
-                    + user.getId()
-                    + ", usertype: "
-                    + user.getUserType()
-                    + ", username: "
-                    + user.getUserName()
-                    + ", password: "
-                    + user.getPassWord()
-                    + ", firstname: "
-                    + user.getFirstName()
-                    + ", lastname: "
-                    + user.getLastName()
-                    + ", phonenumber: "
-                    + user.getPhoneNumber());
-          }
+          listHelper(listAttributesMap);
         } else {
           System.out.println(">> Given attribute is not a Searchable attribute!!!");
           System.out.println(">> Try \"user list help\" for proper syntax!!!");
         }
-        return;
       } else {
         System.out.println(">> Invalid Extension given");
         System.out.println(">> Try \"user list help\" for proper syntax");
       }
-    } else if (arguments.length == 7) {
-      if (arguments[2].equals("-s")) {
-        List<String> userAttributes =
-            Arrays.asList(
-                "id", "usertype", "username", "password", "firstname", "lastname", "phonenumber");
-        String attribute = arguments[3];
+    } else if (arguments.size()== 7) {
+      if (arguments.get(2).equals("-s")) {
+        attribute = arguments.get(3);
         attribute = attribute.replace(":", "");
-        String searchText = arguments[4];
+         searchText = arguments.get(4);
         listAttributesMap.put("Attribute", attribute);
         listAttributesMap.put("Searchtext", searchText);
         if (userAttributes.contains(attribute)) {
-          int pageLength = 0;
-          if (arguments[5].equals("-p")) {
+          if (arguments.get(5).equals("-p")) {
             try {
-              pageLength = Integer.parseInt(arguments[6]);
+              pageLength = Integer.parseInt(arguments.get(6));
             } catch (Exception e) {
               System.out.println(">> Invalid page Size input");
               System.out.println(">> Try \"product list help\" for proper syntax");
@@ -326,28 +173,7 @@ public class UserCLI {
             }
             listAttributesMap.put("Pagelength", String.valueOf(pageLength));
             listAttributesMap.put("Pagenumber", "1");
-            userList = listUserService.listUserService(listAttributesMap);
-            if (userList == null) {
-              System.out.println(">>Given SearchText does not exists");
-              return;
-            }
-            for (User user : userList) {
-              System.out.println(
-                  ">> id: "
-                      + user.getId()
-                      + ", usertype: "
-                      + user.getUserType()
-                      + ", username: "
-                      + user.getUserName()
-                      + ", password: "
-                      + user.getPassWord()
-                      + ", firstname: "
-                      + user.getFirstName()
-                      + ", lastname: "
-                      + user.getLastName()
-                      + ", phonenumber: "
-                      + user.getPhoneNumber());
-            }
+            listHelper(listAttributesMap);
           } else {
             System.out.println(">> Invalid Command Extension format !!!");
             System.out.println("Try \"user list help\" for proper syntax");
@@ -360,24 +186,18 @@ public class UserCLI {
         System.out.println(">> Invalid Extension given");
         System.out.println(">> Try \"user list help\" for proper syntax");
       }
-
-    } else if (arguments.length == 8) {
-      if (arguments[2].equals("-s")) {
-        List<String> userAttributes =
-            Arrays.asList(
-                "id", "usertype", "username", "password", "firstname", "lastname", "phonenumber");
-        String attribute = arguments[3];
+    } else if (arguments.size() == 8) {
+      if (arguments.get(2).equals("-s")) {
+        attribute = arguments.get(3);
         attribute = attribute.replace(":", "");
-        String searchText = arguments[4];
-        int pageLength = 0;
-        int pageNumber = 0;
+        searchText = arguments.get(4);
         listAttributesMap.put("Attribute", attribute);
         listAttributesMap.put("Searchtext", searchText);
         if (userAttributes.contains(attribute)) {
-          if (arguments[5].equals("-p")) {
+          if (arguments.get(5).equals("-p")) {
             try {
-              pageLength = Integer.parseInt(arguments[6]);
-              pageNumber = Integer.parseInt(arguments[7]);
+              pageLength = Integer.parseInt(arguments.get(6));
+              pageNumber = Integer.parseInt(arguments.get(7));
             } catch (Exception e) {
               System.out.println(">> Invalid page Size (or) page Number input");
               System.out.println(">> Try \"user list help\" for proper syntax");
@@ -385,28 +205,7 @@ public class UserCLI {
             }
             listAttributesMap.put("Pagelength", String.valueOf(pageLength));
             listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
-            userList = listUserService.listUserService(listAttributesMap);
-            if (userList == null) {
-              System.out.println(">>Given SearchText does not exist!!!");
-              return;
-            }
-            for (User user : userList) {
-              System.out.println(
-                  ">> id: "
-                      + user.getId()
-                      + ", usertype: "
-                      + user.getUserType()
-                      + ", username: "
-                      + user.getUserName()
-                      + ", password: "
-                      + user.getPassWord()
-                      + ", firstname: "
-                      + user.getFirstName()
-                      + ", lastname: "
-                      + user.getLastName()
-                      + ", phonenumber: "
-                      + user.getPhoneNumber());
-            }
+            listHelper(listAttributesMap);
           } else {
             System.out.println("Invalid Extension Given!!!");
             System.out.println("Try \"user list help\" for proper syntax");
@@ -419,199 +218,125 @@ public class UserCLI {
         System.out.println(">> Invalid Extension given");
         System.out.println(">> Try \"product list help\" for proper syntax");
       }
-    } else if (arguments.length == 3) {
+    } else if (arguments.size()== 3) {
       System.out.println("Invalid command format!!!");
       System.out.println(">> Try \"user list help\" for proper syntax");
     } else {
-      System.out.println("Invalid command formart!!!");
+      System.out.println("Invalid command format!!!");
       System.out.println(">> Try \"user list help\" for proper syntax!!!");
     }
   }
-
-  public void userEditCLI(String[] arguments) {
-    Scanner scanner = new Scanner(System.in);
-    UserService userEditService = new UserServiceImplementation();
-    User user=new User ();
-    if (arguments.length == 3 && arguments[2].equals("help")) {
-      System.out.println(
-          ">> Edit user using following template. Copy the user data from the list, edit the attribute values. \n"
-              + ">> id: <id - 6>, usertype: <usertype-edited>, username: <username>,  password: <password>, first name: <first name>, last name: <last name>, phone number: <phone number>\n"
-              + "\n"
-              + ">> You can also restrict the user data by editable attributes. Id attribute is mandatory for all the edit operation.\n"
-              + ">> id: <id - 6>, usertype: <usertype-edited>, username: <username-edited>\n"
-              + "\n"
-              + ">> You can not give empty or null values to the mandatory attributes.\n"
-              + ">> id: <id - 6>, usertype: , username: null\n"
-              + "\t\n"
-              + "\tid\t\t\t - number, mandatory\t\n"
-              + "\tusertype - text, purchase/sales, mandatory\n"
-              + "\tuse\trname - text, min 3 - 30 char, mandatory\n"
-              + "\tpassword - text, alphanumeric, special char, min 8 char, mandatory\n"
-              + "\tfirstname - text, mandatory with 3 to 30 chars\n"
-              + "\tlastname  - text, optional\n"
-              + "\tphone - number, mandatory, ten digits, digit start with 9/8/7/6");
+  private void listHelper(HashMap<String,String> listAttributesMap) throws PageCountOutOfBoundsException, ApplicationErrorException {
+    userList = userService.listUserService(listAttributesMap);
+    if (userList == null) {
+      System.out.println(">>Given SearchText does not exist!!!");
       return;
-    } else if (arguments.length == 2) {
+    }
+    for (User user : userList) {
+      System.out.println(">> id: " + user.getId() + ", usertype: " + user.getUserType() + ", username: " + user.getUserName() + ", password: " + user.getPassWord() + ", firstname: " + user.getFirstName() + ", lastname: " + user.getLastName() + ", phonenumber: " + user.getPhoneNumber());
+    }
+  }
+  public void userEditCLI(List<String> arguments) {
+    if (arguments.size() == 3 && arguments.get(2).equals("help")) {
+      System.out.println(">> Edit user using following template. Copy the user data from the list, edit the attribute values. \n" + ">> id: <id - 6>, usertype: <usertype-edited>, username: <username>,  password: <password>, first name: <first name>, last name: <last name>, phone number: <phone number>\n" + "\n" + ">> You can also restrict the user data by editable attributes. Id attribute is mandatory for all the edit operation.\n" + ">> id: <id - 6>, usertype: <usertype-edited>, username: <username-edited>\n" + "\n" + ">> You can not give empty or null values to the mandatory attributes.\n" + ">> id: <id - 6>, usertype: , username: null\n" + "\t\n" + "\tid\t\t\t - number, mandatory\t\n" + "\tusertype - text, purchase/sales, mandatory\n" + "\tuse\trname - text, min 3 - 30 char, mandatory\n" + "\tpassword - text, alphanumeric, special char, min 8 char, mandatory\n" + "\tfirstname - text, mandatory with 3 to 30 chars\n" + "\tlastname  - text, optional\n" + "\tphone - number, mandatory, ten digits, digit start with 9/8/7/6");
+    }
+    else if (arguments.size() == 2) {
       System.out.print("> ");
       String parameters = scanner.nextLine();
       String[] userAttributes = parameters.split("\\,");
-      if (userAttributes[0].contains("id")) {
-        for (String attribute : userAttributes) {
-          if (attribute.contains("id")) {
-            String[] keyValues = attribute.split("\\:");
-            int id;
-            try{
-              id= Integer.parseInt (keyValues[1].trim ());
-            }catch ( NumberFormatException e )
-            {
-              System.out.println(">> Id must be a number");
-              System.out.println(">> Try \"user edit help\" for proper syntax");
-              return;
-            }
-            user.setId (id);
-          } else if (attribute.contains("username")) {
-            String[] keyValues = attribute.split("\\:");
-            user.setUserName (keyValues[1].trim ());
-          } else if (attribute.contains("usertype")) {
-            String[] keyValues = attribute.split("\\:");
-            user.setUserType (keyValues[1].trim ());
-          } else if (attribute.contains("password")) {
-            String[] keyValues = attribute.split("\\:");
-            user.setPassWord (keyValues[1].trim ());
-          } else if (attribute.contains("firstname")) {
-            String[] keyValues = attribute.split("\\:");
-            user.setFirstName (keyValues[1].trim ());
-          } else if (attribute.contains("lastname")) {
-            String[] keyValues = attribute.split("\\:");
-            user.setLastName (keyValues[1].trim ());
-          } else if (attribute.contains("phonenumber")) {
-            String[] keyValues = attribute.split("\\:");
-            long phoneNumber;
-            try{
-              phoneNumber=Long.parseLong (keyValues[1].trim ());
-            }catch ( NumberFormatException e )
-            {
-              System.out.println(" Phone number must be a number");
-              System.out.println("Try \"user edit help\" for proper syntax");
-              return;
-            }
-            user.setPhoneNumber (phoneNumber);
-          } else {
-            System.out.println(">> Invalid attribute given!!! : " + attribute);
-            System.out.println(">> Try \"user edit help\" for proper syntax");
-            break;
-          }
-        }
-        int statusCode;
-        try {
-          statusCode = userEditService.editUserService(user);
-        } catch (Exception e) {
-          System.out.println(e.getMessage());
-          return;
-        }
-        if (statusCode == 1) {
-          System.out.println(">> User Edited Successfully!!!");
-        } else if (statusCode == -1) {
-          System.out.println(">> Product Edit failed!!!");
-          System.out.println(">> Please Check the Id you have entered!");
-        } else if (statusCode == 0) {
-          System.out.println(">> Invalid format of attributes given for edit Command!!!");
-          System.out.println(">> Try \"user edit help\" for proper syntax");
-        }
-      } else {
-        System.out.println(">> Id is a Mandatory argument for every Edit operation");
-        System.out.println(">> For every Edit operation the first argument must be User's ID");
-        System.out.println(">> Try \"user edit help\" for proper syntax");
+      List<String> splitAttributes=new ArrayList<>();
+      for(String string: userAttributes)
+      {
+        String[] keyValues=string.split(":");
+        splitAttributes.add(keyValues[0]);
+        splitAttributes.add(keyValues[1]);
       }
-    } else if (arguments.length > 16) {
+      editHelper(splitAttributes);
+    } else if (arguments.size() > 16) {
       System.out.println(">> Too many Arguments for command \"product edit\"");
-    } else if (arguments.length < 6) {
+    } else if (arguments.size() < 6) {
       System.out.println(">> Insufficient arguments for command \"product edit\"");
-    } else if (!arguments[2].contains("id")) {
+    } else if (! arguments.get(2).contains("id")) {
       System.out.println(">> Id is a Mandatory argument for every Edit operation");
       System.out.println(">> For every Edit operation the first argument must be user's ID");
       System.out.println(">> Try \"user edit help\" for proper syntax");
     } else {
-
-      int id = 0;
-      try {
-        id = Integer.parseInt(arguments[3].trim ());
-      } catch (Exception e) {
-        System.out.println(">> Id must be a Number!");
-        System.out.println(">> Please Try \"user edit help\" for proper Syntax");
-      }
-      user.setId (id);
-      for (int index = 4; index < arguments.length; index = index + 2) {
-        if (arguments[index].contains("username")) {
-          user.setUserName (arguments[index+1].trim ());
-        } else if (arguments[index].contains("usertype")) {
-          user.setUserType (arguments[index+1].trim ());
-        } else if (arguments[index].contains("password")) {
-          user.setPassWord (arguments[index+1].trim ());
-        } else if (arguments[index].contains("firstname")) {
-          user.setFirstName (arguments[index+1].trim ());
-        } else if (arguments[index].contains("lastname")) {
-          user.setLastName (arguments[index+1].trim ());
-        } else if (arguments[index].contains("phonenumber")) {
-          long phoneNumber;
-          try{
-            phoneNumber = Long.parseLong (arguments[index+1].trim ());
-          }catch(NumberFormatException e)
-          {
-            System.out.println(">> Phonenumber must be numeric!!");
-            System.out.println(">> Try \"user edit help\" for proper syntax");
-            return;
-          }
-          user.setPhoneNumber (phoneNumber);
-        } else {
-          System.out.println(">> Invalid attribute given!!! : " + arguments[index]);
-          System.out.println(">> Try \"user edit help\" for proper syntax");
-          break;
-        }
-      }
-      int statusCode;
-      try {
-        statusCode = userEditService.editUserService(user);
-      } catch (Exception e) {
-        System.out.println(e.getMessage());
-        return;
-      }
-      if (statusCode == 1) {
-        System.out.println(">> User Edited Succesfully");
-      } else if (statusCode == -1) {
-        System.out.println(">> User edit failed!!!");
-        System.out.println(">>Please check the Id you have entered!!!");
-      } else if (statusCode == 0) {
-        System.out.println(">>Invalid format of attributes given for edit Command!!!");
-        System.out.println(">>Try \"user edit help\" for proper syntax");
-      }
+          editHelper(arguments.subList(2,arguments.size()));
     }
   }
 
-  public void userDeleteCLI(String[] arguments) throws ApplicationErrorException {
-    Scanner scanner = new Scanner(System.in);
-    UserService userDeleteSerivice = new UserServiceImplementation();
+  private void editHelper(List<String> editAttributes)
+  {
+    User user=new User();
+    id = 0;
+    try {
+      id = Integer.parseInt(editAttributes.get(3).trim ());
+    } catch (Exception e) {
+      System.out.println(">> Id must be a Number!");
+      System.out.println(">> Please Try \"user edit help\" for proper Syntax");
+    }
+    user.setId (id);
+    for (int index = 4; index < editAttributes.size(); index = index + 2) {
+      if (editAttributes.get(index).contains("username")) {
+        user.setUserName (editAttributes.get(index + 1).trim ());
+      } else if (editAttributes.get(index).contains("usertype")) {
+        user.setUserType (editAttributes.get(index + 1).trim ());
+      } else if (editAttributes.get(index).contains("password")) {
+        user.setPassWord (editAttributes.get(index + 1).trim ());
+      } else if (editAttributes.get(index).contains("firstname")) {
+        user.setFirstName (editAttributes.get(index + 1).trim ());
+      } else if (editAttributes.get(index).contains("lastname")) {
+        user.setLastName (editAttributes.get(index + 1).trim ());
+      } else if (editAttributes.get(index).contains("phonenumber")) {
+        try{
+          phoneNumber = Long.parseLong (editAttributes.get(index + 1).trim ());
+        }catch(NumberFormatException e)
+        {
+          System.out.println(">> Phonenumber must be numeric!!");
+          System.out.println(">> Try \"user edit help\" for proper syntax");
+          return;
+        }
+        user.setPhoneNumber (phoneNumber);
+      } else {
+        System.out.println(">> Invalid attribute given!!! : " + editAttributes.get(index));
+        System.out.println(">> Try \"user edit help\" for proper syntax");
+        break;
+      }
+    }
+    int statusCode;
+    try {
+      statusCode = userService.editUserService(user);
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return;
+    }
+    if (statusCode == 1) {
+      System.out.println(">> User Edited Succesfully");
+    } else if (statusCode == -1) {
+      System.out.println(">> User edit failed!!!");
+      System.out.println(">>Please check the Id you have entered!!!");
+    } else if (statusCode == 0) {
+      System.out.println(">>Invalid format of attributes given for edit Command!!!");
+      System.out.println(">>Try \"user edit help\" for proper syntax");
+    }
+  }
+
+  public void userDeleteCLI(List<String> arguments) throws ApplicationErrorException {
     String nameregex = "^[a-zA-Z0-9]{3,30}$";
-    if (arguments.length == 3) {
-      if (arguments[2].equals("help")) {
-        System.out.println(
-            ">> delete user using the following template\n"
-                + "\t username\n"
-                + "\t \n"
-                + "\t  username - text, min 3 - 30 char, mandatory,existing\n"
-                + "\n");
-      } else if (arguments[2].matches(nameregex)) {
+    if (arguments.size() == 3) {
+      if (arguments.get(2).equals("help")) {
+        System.out.println(">> delete user using the following template\n" + "\t username\n" + "\t \n" + "\t  username - text, min 3 - 30 char, mandatory,existing\n" + "\n");
+      } else if (arguments.get(2).matches(nameregex)) {
         System.out.println(">> Are you sure want to delete the User y/n ? : ");
         String prompt = scanner.nextLine();
         if (prompt.equals("y")) {
-          if (userDeleteSerivice.deleteUserService(arguments[2]) == 1) {
+          if (userService.deleteUserService(arguments.get(2)) == 1) {
             System.out.println("User Deleted Successfull!!!");
-          } else if (userDeleteSerivice.deleteUserService(arguments[2]) == -1) {
+          } else if (userService.deleteUserService(arguments.get(2)) == -1) {
             System.out.println(">> User Deletion Failed!!!");
             System.out.println(">> Please check the username you have entered!!!");
             System.out.println("Try \"user delete help\" for proper syntax");
           }
-
         } else if (prompt.equals("n")) {
           System.out.println(">> Delete operation cancelled");
         } else {

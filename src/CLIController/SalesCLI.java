@@ -138,6 +138,7 @@ public class SalesCLI {
     if (arguments.length == 2) {
       listAttributesMap.put("Pagelength", "20");
       listAttributesMap.put("Pagenumber", "1");
+      listAttributesMap.put("Attribute","id");
       salesList = salesListService.listSalesService(listAttributesMap);
       for (Sales sales : salesList) {
         System.out.print("id: " + sales.getId() + ", date: " + sales.getDate() + ", ");
@@ -167,6 +168,7 @@ public class SalesCLI {
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(1));
+        listAttributesMap.put("Attribute","id");
         salesList = salesListService.listSalesService(listAttributesMap);
         for (Sales sales : salesList) {
           System.out.print("id: " + sales.getId() + ", date: " + sales.getDate() + ", ");
@@ -225,6 +227,7 @@ public class SalesCLI {
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
+        listAttributesMap.put("Attribute","id");
         try {
           salesList = salesListService.listSalesService(listAttributesMap);
         } catch (Exception e) {
@@ -401,7 +404,6 @@ public class SalesCLI {
       System.out.println(">> Try \"sales list help\" for proper syntax");
     }
   }
-
   public void salesDeleteCLI(String[] arguments) throws ApplicationErrorException {
     Scanner scanner = new Scanner(System.in);
     SalesService salesDeleteService = new SalesServiceImplementation();

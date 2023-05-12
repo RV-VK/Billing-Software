@@ -54,7 +54,7 @@ public class SalesServiceImplementation implements SalesService {
       throws ApplicationErrorException, PageCountOutOfBoundsException {
     List<Sales> salesList;
     SalesDAO listSalesDAO = new SalesDAOImplementation();
-    if (Collections.frequency(listAttributes.values(), null) == 0) {
+    if (Collections.frequency(listAttributes.values(), null) == 0||Collections.frequency(listAttributes.values(),null)==1) {
       int pageLength = Integer.parseInt(listAttributes.get("Pagelength"));
       int pageNumber = Integer.parseInt(listAttributes.get("Pagenumber"));
       int offset = (pageLength * pageNumber) - pageLength;

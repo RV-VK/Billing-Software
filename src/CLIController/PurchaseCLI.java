@@ -146,6 +146,7 @@ public class PurchaseCLI {
     if (arguments.length == 2) {
       listAttributesMap.put("Pagelength", "20");
       listAttributesMap.put("Pagenumber", "1");
+      listAttributesMap.put("Attribute","id");
       purchaseList = purchaseListService.listPurchaseService(listAttributesMap);
       for (Purchase purchase : purchaseList) {
         System.out.print(
@@ -181,6 +182,7 @@ public class PurchaseCLI {
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(1));
+        listAttributesMap.put("Attribute","id");
         purchaseList = purchaseListService.listPurchaseService(listAttributesMap);
         for (Purchase purchase : purchaseList) {
           System.out.print(
@@ -254,6 +256,7 @@ public class PurchaseCLI {
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
+        listAttributesMap.put("Attribute","id");
         try {
           purchaseList = purchaseListService.listPurchaseService(listAttributesMap);
         } catch (Exception e) {

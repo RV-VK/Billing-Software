@@ -6,69 +6,48 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class UserServiceImplementation implements UserService {
+
+  UserDAO userDAO=new UserDAOImplementation();
+  private final String NAME_REGEX="^[a-zA-Z\\s]{1,30}$";
+  private final String PASSWORD_REGEX="^[a-zA-Z0-9]{8,30}$";
+  private final List<String> userTypeList=Arrays.asList("Sales","Purchase","Admin");
+  private final String PHONE_NUMBER_REGEX="^[6789]\\d{9}$";
   @Override
-  public int createUserService(User user) throws SQLException, ApplicationErrorException, UniqueConstraintException {
-    UserDAO createUserDAO = new UserDAOImplementation();
-    User userResult = createUserDAO.create(user);
-    if (userResult != null) {
-      return 1;
-    } else {
-      return -1;
-    }
+  public User createUserService(User user) throws SQLException, ApplicationErrorException, UniqueConstraintException {
+    if(validate(user))
+      return userDAO.create(user);
+    else
+      return new User();
   }
 
   @Override
   public int countUserService() throws ApplicationErrorException {
-    UserDAO countUserDAO = new UserDAOImplementation();
-    return countUserDAO.count();
+    return userDAO.count();
   }
 
   @Override
   public List listUserService(HashMap<String, String> listattributes)
       throws ApplicationErrorException, PageCountOutOfBoundsException {
     List<User> userList;
-    UserDAO listUserDAO = new UserDAOImplementation();
-
-    if (Collections.frequency(listattributes.values(), null) == 0) {
+    if (Collections.frequency(listattributes.values(), null) == 0||Collections.frequency(listattributes.values(),null)==1 ) {
       int pageLength = Integer.parseInt(listattributes.get("Pagelength"));
       int pageNumber = Integer.parseInt(listattributes.get("Pagenumber"));
       int offset = (pageLength * pageNumber) - pageLength;
-      userList =
-          listUserDAO.list(
-              listattributes.get("Attribute"),
-              listattributes.get("Searchtext"),
-              pageLength,
-              offset);
+      userList = userDAO.list(listattributes.get("Attribute"), listattributes.get("Searchtext"), pageLength, offset);
       return userList;
-    } else if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 1
-        && listattributes.get("Searchtext") != null) {
-      userList = listUserDAO.list(listattributes.get("Searchtext"));
+    } else if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 1 && listattributes.get("Searchtext") != null) {
+      userList = userDAO.list(listattributes.get("Searchtext"));
       return userList;
     }
-
     return null;
   }
 
   @Override
   public int editUserService(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
-    UserDAO editUserDAO = new UserDAOImplementation();
-    String numberRegex = "^[0-9]*$";
-    String nameRegex = "^[a-zA-Z\\s]{1,30}$";
-    String passwordRegex = "^[a-zA-Z0-9]{8,50}$";
-    List<String> userTypeList = new ArrayList<>(Arrays.asList("Admin", "Purchase", "Sales"));
-    if (user.getUserName () != null && !user.getUserName ().matches(nameRegex)
-        || user.getPassWord () != null
-            && !user.getPassWord ().matches(passwordRegex)
-        || user.getUserType() != null
-            && !userTypeList.contains(user.getUserType())
-        || user.getFirstName() != null
-            && !user.getFirstName().matches(nameRegex)
-        || user.getLastName() != null
-            && !user.getLastName().matches(nameRegex)) {
+    if(!validate(user))
       return 0;
-    }
-    boolean status=editUserDAO.edit (user);
+    boolean status=userDAO.edit (user);
     if(status)
     {
       return 1;
@@ -79,7 +58,13 @@ public class UserServiceImplementation implements UserService {
   }
   @Override
   public int deleteUserService(String username) throws ApplicationErrorException {
-    UserDAO deleteUserDAO = new UserDAOImplementation();
-    return deleteUserDAO.delete(username);
+    return userDAO.delete(username);
+  }
+  private boolean validate(User user)
+  {
+    if(!user.getUserName().matches(NAME_REGEX)||!user.getFirstName().matches(NAME_REGEX)||!user.getLastName().matches(NAME_REGEX)||!user.getPassWord().matches(PASSWORD_REGEX)||!String.valueOf(user.getPhoneNumber()).matches(PHONE_NUMBER_REGEX)||!userTypeList.contains(user.getUserType()))
+      return false;
+    else
+      return true;
   }
 }

@@ -61,66 +61,66 @@ public class StoreMain {
               System.out.println("Try \"help\" for proper syntax");
           }
           break;
-//        case "user":
-//          UserCLI userCLI = new UserCLI();
-//          switch (operationString) {
-//            case "create":
-//              userCLI.userCreateCLI(commandlist);
-//              break;
-//            case "count":
-//              userCLI.userCountCLI(commandlist);
-//              break;
-//            case "list":
-//              userCLI.userListCLI(commandlist);
-//              break;
-//            case "edit":
-//              userCLI.userEditCLI(commandlist);
-//              break;
-//            case "delete":
-//              userCLI.userDeleteCLI(commandlist);
-//              break;
-//            default:
-//              System.out.println(">> Invalid operation for command " + "\"" + commandString + "\"");
-//              System.out.println(">> Try \"help\" for proper syntax");
-//          }
-//          break;
-//        case "store":
-//          StoreCLI storeCLI = new StoreCLI();
-//          switch (operationString) {
-//            case "create":
-//              storeCLI.storeCreateCLI(commandlist);
-//              break;
-//            case "edit":
-//              storeCLI.storeEditCLI(commandlist);
-//              break;
-//            case "delete":
-//              storeCLI.storeDeleteCLI(commandlist);
-//              break;
-//            default:
-//              System.out.println(">> Invalid operation for command " + "\"" + commandString + "\"");
-//              System.out.println(">> Try \"help\" for proper syntax");
-//          }
-//          break;
-//        case "unit":
-//          UnitCLI unitCLI = new UnitCLI();
-//          switch (operationString) {
-//            case "create":
-//              unitCLI.unitCreateCLI(commandlist);
-//              break;
-//            case "list":
-//              unitCLI.unitListCLI(commandlist);
-//              break;
-//            case "edit":
-//              unitCLI.unitEditCLI(commandlist);
-//              break;
-//            case "delete":
-//              unitCLI.unitDeleteCLI(commandlist);
-//              break;
-//            default:
-//              System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
-//              System.out.println("Try \"help\" for proper syntax");
-//          }
-//          break;
+        case "user":
+          UserCLI userCLI = new UserCLI();
+          switch (operationString) {
+            case "create":
+              userCLI.userCreateCLI(commandlist);
+              break;
+            case "count":
+              userCLI.userCountCLI();
+              break;
+            case "list":
+              userCLI.userListCLI(commandlist);
+              break;
+            case "edit":
+              userCLI.userEditCLI(commandlist);
+              break;
+            case "delete":
+              userCLI.userDeleteCLI(commandlist);
+              break;
+            default:
+              System.out.println(">> Invalid operation for command " + "\"" + commandString + "\"");
+              System.out.println(">> Try \"help\" for proper syntax");
+          }
+          break;
+        case "store":
+          StoreCLI storeCLI = new StoreCLI();
+          switch (operationString) {
+            case "create":
+              storeCLI.storeCreateCLI(commandlist);
+              break;
+            case "edit":
+              storeCLI.storeEditCLI(commandlist);
+              break;
+            case "delete":
+              storeCLI.storeDeleteCLI(commandlist);
+              break;
+            default:
+              System.out.println(">> Invalid operation for command " + "\"" + commandString + "\"");
+              System.out.println(">> Try \"help\" for proper syntax");
+          }
+          break;
+        case "unit":
+          UnitCLI unitCLI = new UnitCLI();
+          switch (operationString) {
+            case "create":
+              unitCLI.unitCreateCLI(commandlist);
+              break;
+            case "list":
+              unitCLI.unitListCLI(commandlist);
+              break;
+            case "edit":
+              unitCLI.unitEditCLI(commandlist);
+              break;
+            case "delete":
+              unitCLI.unitDeleteCLI(commandlist);
+              break;
+            default:
+              System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
+              System.out.println("Try \"help\" for proper syntax");
+          }
+          break;
 //        case "purchase":
 //          PurchaseCLI purchaseCLI = new PurchaseCLI();
 //          switch (operationString) {
