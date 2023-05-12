@@ -39,6 +39,7 @@ public class UserCLI {
       String parameters = scanner.nextLine();
       List<String> userAttributes = List.of(parameters.split("\\,"));
       createHelper(userAttributes);
+      return;
     }
     createHelper(arguments.subList(2,arguments.size()));
   }
@@ -248,8 +249,8 @@ public class UserCLI {
       for(String string: userAttributes)
       {
         String[] keyValues=string.split(":");
-        splitAttributes.add(keyValues[0]);
-        splitAttributes.add(keyValues[1]);
+        splitAttributes.add(keyValues[0].trim());
+        splitAttributes.add(keyValues[1].trim());
       }
       editHelper(splitAttributes);
     } else if (arguments.size() > 16) {
@@ -267,10 +268,10 @@ public class UserCLI {
 
   private void editHelper(List<String> editAttributes)
   {
+    System.out.println(editAttributes);
     User user=new User();
-    id = 0;
     try {
-      id = Integer.parseInt(editAttributes.get(3).trim ());
+      id = Integer.parseInt(editAttributes.get(1).trim ());
     } catch (Exception e) {
       System.out.println(">> Id must be a Number!");
       System.out.println(">> Please Try \"user edit help\" for proper Syntax");

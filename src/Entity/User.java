@@ -98,4 +98,17 @@ public class User {
   public void setPhoneNumber(long phoneNumber) {
     this.phoneNumber = phoneNumber;
   }
+
+  @Override
+  public String toString() {
+    return "User{" +
+            "id=" + id +
+            ", userType='" + userType + '\'' +
+            ", userName='" + userName + '\'' +
+            ", passWord='" + passWord + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", phoneNumber=" + phoneNumber +
+            '}';
+  }
 }

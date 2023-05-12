@@ -120,7 +120,7 @@ public class UnitCLI {
     Unit unit=new Unit();
     id = 0;
     try {
-      id = Integer.parseInt(editAttributes.get(3).trim());
+      id = Integer.parseInt(editAttributes.get(1).trim());
     } catch (Exception e) {
       System.out.println(">> Id must be a number");
       System.out.println(">> Please Try \"unit edit help\" for proper Syntax");

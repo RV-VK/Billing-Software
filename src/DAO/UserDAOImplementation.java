@@ -21,7 +21,7 @@ public class UserDAOImplementation implements UserDAO {
       userCreateStatement.setLong(6, user.getPhoneNumber());
       ResultSet userCreateResultSet = userCreateStatement.executeQuery();
       userCreateResultSet.next();
-      User createdUser = new User(userCreateResultSet.getString(3), userCreateResultSet.getString(2), userCreateResultSet.getString(4), userCreateResultSet.getString(5), userCreateResultSet.getString(6), userCreateResultSet.getLong(7));
+      User createdUser = new User(userCreateResultSet.getInt(1),userCreateResultSet.getString(3), userCreateResultSet.getString(2), userCreateResultSet.getString(4), userCreateResultSet.getString(5), userCreateResultSet.getString(6), userCreateResultSet.getLong(7));
       userConnection.commit();
       userConnection.setAutoCommit(true);
       return createdUser;
@@ -53,7 +53,7 @@ public class UserDAOImplementation implements UserDAO {
     List<User> userList = new ArrayList<>();
     try {
         Statement listStatement = userConnection.createStatement();
-        String listQuery = "SELECT * FROM USERS WHERE USERTYPE ILIKE '" + searchText + "' OR USERNAME ILIKE '" + searchText + "' OR FIRSTNAME ILIKE '" + searchText + "' OR LASTNAME ILIKE '" + searchText + "' OR PASSWORD ILIKE '"+searchText+"' OR CAST(PHONENUMBER AS TEXT) ILIKE '"+searchText+"' OR ID ILIKE '"+searchText;
+        String listQuery = "SELECT * FROM USERS WHERE USERTYPE ILIKE '" + searchText + "' OR USERNAME ILIKE '" + searchText + "' OR FIRSTNAME ILIKE '" + searchText + "' OR LASTNAME ILIKE '" + searchText + "' OR PASSWORD ILIKE '"+searchText+"' OR CAST(PHONENUMBER AS TEXT) ILIKE '"+searchText+"' OR CAST(ID AS TEXT) ILIKE '"+searchText+"'";
         ResultSet listresultSet = listStatement.executeQuery(listQuery);
         while (listresultSet.next()) {
           User listedUser = new User(listresultSet.getInt(1), listresultSet.getString(3), listresultSet.getString(2), listresultSet.getString(4), listresultSet.getString(5), listresultSet.getString(6), listresultSet.getLong(7));
@@ -62,6 +62,7 @@ public class UserDAOImplementation implements UserDAO {
         return userList;
       }
     catch (SQLException e) {
+      System.out.println(e.getMessage());
       throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
     }
   }
