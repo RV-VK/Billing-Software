@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAOImplementation implements ProductDAO {
-    Connection productConnection = DBHelper.getConnection();
+    private Connection productConnection = DBHelper.getConnection();
 
     /**
      * This Method Creates an Entry in the Product Table
@@ -51,6 +51,11 @@ public class ProductDAOImplementation implements ProductDAO {
         }
     }
 
+    /**
+     * This Method returns the number of entries in the Product table.
+     * @return count
+     * @throws ApplicationErrorException
+     */
     @Override
     public int count() throws ApplicationErrorException {
         try {
@@ -153,25 +158,30 @@ public class ProductDAOImplementation implements ProductDAO {
     public int delete(String parameter) throws ApplicationErrorException {
         try {
             Statement deleteStatement = productConnection.createStatement();
-            ResultSet stockResultSet = deleteStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='" + parameter + "' OR CODE='" + parameter + "'");
+            ResultSet stockResultSet;
+            if(Character.isAlphabetic(parameter.charAt(0)))
+                stockResultSet = deleteStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE CODE='" + parameter + "'");
+            else
+                stockResultSet=deleteStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='" + parameter + "'");
             if(! stockResultSet.next()) return - 1;
             float stock = stockResultSet.getFloat(1);
             if(stock > 0) return 0;
             else {
-                if(deleteStatement.execute("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE ID='" + parameter + "' OR CODE='" + parameter + "'"))
-                    return 1;
+                if(Character.isAlphabetic(parameter.charAt(0)))
+                    return deleteStatement.executeUpdate("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE CODE ='"+parameter+"'");
+                else
+                    return deleteStatement.executeUpdate("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE ID ='"+parameter+"'");
             }
         } catch(Exception e) {
+            e.printStackTrace();
             throw new ApplicationErrorException("Application has went into an Error!!!\n Please Try again");
         }
-        return 1;
     }
 
     @Override
     public Product findByCode(String code) throws ApplicationErrorException {
-        Connection getProductConnection = DBHelper.getConnection();
         try {
-            Statement getProductStatement = getProductConnection.createStatement();
+            Statement getProductStatement = productConnection.createStatement();
             ResultSet getProductResultSet = getProductStatement.executeQuery("SELECT * FROM PRODUCT  WHERE CODE='" + code + "'");
             Product product = null;
             while(getProductResultSet.next()) {

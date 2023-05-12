@@ -7,7 +7,7 @@ import java.util.*;
 
 public class UserServiceImplementation implements UserService {
   @Override
-  public int createUserService(User user) throws SQLException, ApplicationErrorException {
+  public int createUserService(User user) throws SQLException, ApplicationErrorException, UniqueConstraintException {
     UserDAO createUserDAO = new UserDAOImplementation();
     User userResult = createUserDAO.create(user);
     if (userResult != null) {
@@ -29,15 +29,7 @@ public class UserServiceImplementation implements UserService {
     List<User> userList;
     UserDAO listUserDAO = new UserDAOImplementation();
 
-    if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 2
-        && listattributes.get("Pagelength") != null
-        && listattributes.get("Pagenumber") != null) {
-      userList =
-          listUserDAO.list(
-              Integer.parseInt(listattributes.get("Pagelength")),
-              Integer.parseInt(listattributes.get("Pagenumber")));
-      return userList;
-    } else if (Collections.frequency(listattributes.values(), null) == 0) {
+    if (Collections.frequency(listattributes.values(), null) == 0) {
       int pageLength = Integer.parseInt(listattributes.get("Pagelength"));
       int pageNumber = Integer.parseInt(listattributes.get("Pagenumber"));
       int offset = (pageLength * pageNumber) - pageLength;
@@ -85,7 +77,6 @@ public class UserServiceImplementation implements UserService {
       return -1;
     }
   }
-
   @Override
   public int deleteUserService(String username) throws ApplicationErrorException {
     UserDAO deleteUserDAO = new UserDAOImplementation();

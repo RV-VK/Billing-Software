@@ -3,11 +3,13 @@ package Service;
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
 import Entity.Sales;
+
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
 public interface SalesService {
-  int createSalesService(Sales sales) throws ApplicationErrorException;
+  int createSalesService(Sales sales) throws ApplicationErrorException, SQLException;
 
   int countSalesService(String parameter) throws ApplicationErrorException;
 

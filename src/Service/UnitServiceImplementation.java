@@ -13,7 +13,7 @@ import java.util.List;
 
 public class UnitServiceImplementation implements UnitService {
   @Override
-  public int createUnitService(Unit unit) throws SQLException, ApplicationErrorException {
+  public int createUnitService(Unit unit) throws SQLException, ApplicationErrorException, UniqueConstraintException {
     UnitDAO unitCreateDAO = new UnitDAOImplementation();
     Unit createdUnit = unitCreateDAO.create(unit);
     if (createdUnit != null) {

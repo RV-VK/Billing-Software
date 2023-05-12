@@ -2,12 +2,14 @@ package Service;
 import DAO.*;
 import Entity.Sales;
 import Entity.SalesItem;
+
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 public class SalesServiceImplementation implements SalesService {
   @Override
-  public int createSalesService(Sales sales) throws ApplicationErrorException {
+  public int createSalesService(Sales sales) throws ApplicationErrorException, SQLException {
     ProductDAO unitCheckDAO = new ProductDAOImplementation();
     boolean isDividable;
     ProductDAO getProductByCode = new ProductDAOImplementation();
@@ -52,15 +54,7 @@ public class SalesServiceImplementation implements SalesService {
       throws ApplicationErrorException, PageCountOutOfBoundsException {
     List<Sales> salesList;
     SalesDAO listSalesDAO = new SalesDAOImplementation();
-    if (Collections.frequency(listAttributes.values(), null) == listAttributes.size() - 2
-        && listAttributes.get("Pagelength") != null
-        && listAttributes.get("Pagenumber") != null) {
-      salesList =
-          listSalesDAO.list(
-              Integer.parseInt(listAttributes.get("Pagelength")),
-              Integer.parseInt(listAttributes.get("Pagenumber")));
-      return salesList;
-    } else if (Collections.frequency(listAttributes.values(), null) == 0) {
+    if (Collections.frequency(listAttributes.values(), null) == 0) {
       int pageLength = Integer.parseInt(listAttributes.get("Pagelength"));
       int pageNumber = Integer.parseInt(listAttributes.get("Pagenumber"));
       int offset = (pageLength * pageNumber) - pageLength;

@@ -78,18 +78,17 @@ public class SalesDAOImplementation implements SalesDAO {
 
   @Override
   public int count(String parameter) throws ApplicationErrorException {
+    int count;
     try {
+      Statement countStatement = salesConnection.createStatement();
+
       if (parameter == null) {
-        Statement countStatement = salesConnection.createStatement();
         ResultSet countResultSet = countStatement.executeQuery("SELECT COUNT(ID) FROM SALES");
-        int count;
         countResultSet.next();
         count = countResultSet.getInt(1);
         return count;
       } else {
-        Statement countStatement = salesConnection.createStatement();
         ResultSet countResultSet = countStatement.executeQuery("SELECT COUNT(*) FROM PURCHASE WHERE CAST(DATE AS TEXT) ILIKE'" + parameter + "'");
-        int count;
         countResultSet.next();
         count = countResultSet.getInt(1);
         return count;

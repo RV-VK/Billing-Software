@@ -81,15 +81,7 @@ public class PurchaseServiceImplementation implements PurchaseService {
       throws PageCountOutOfBoundsException, ApplicationErrorException {
     List<Purchase> purchaseList;
     PurchaseDAO listPurchaseDAO = new PurchaseDAOImplementation();
-      if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 2
-          && listattributes.get("Pagelength") != null
-          && listattributes.get("Pagenumber") != null) {
-        purchaseList =
-            listPurchaseDAO.list(
-                Integer.parseInt(listattributes.get("Pagelength")),
-                Integer.parseInt(listattributes.get("Pagenumber")));
-        return purchaseList;
-      } else if (Collections.frequency(listattributes.values(), null) == 0) {
+      if (Collections.frequency(listattributes.values(), null) == 0) {
         int pageLength = Integer.parseInt(listattributes.get("Pagelength"));
         int pageNumber = Integer.parseInt(listattributes.get("Pagenumber"));
         int offset = (pageLength * pageNumber) - pageLength;
