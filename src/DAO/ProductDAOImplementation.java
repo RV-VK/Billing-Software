@@ -114,7 +114,7 @@ public class ProductDAOImplementation implements ProductDAO {
     }
 
     @Override
-    public boolean edit(Product product) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException, UnitCodeViolationException {
+    public boolean edit(Product product) throws SQLException, ApplicationErrorException, UniqueConstraintException, UnitCodeViolationException {
         try {
             productConnection.setAutoCommit(false);
             String editQuery = "UPDATE PRODUCT SET CODE= COALESCE(?,CODE),NAME= COALESCE(?,NAME),UNITCODE= COALESCE(?,UNITCODE),TYPE= COALESCE(?,TYPE),PRICE= COALESCE(?,PRICE) WHERE ID=? ";
@@ -140,7 +140,7 @@ public class ProductDAOImplementation implements ProductDAO {
                 if(e.getMessage().contains("product_code")) {
                     throw new UniqueConstraintException(">>Code must be unique!!!\n>>The code you have entered already exists!!!");
                 } else if(e.getMessage().contains("product_name")) {
-                    throw new UniqueNameException("Name must be unique!!!\n>>The Name you have entered already exists!!!");
+                    throw new UniqueConstraintException("Name must be unique!!!\n>>The Name you have entered already exists!!!");
                 }
             } else if(e.getSQLState().equals("23503")) {
                 productConnection.rollback();

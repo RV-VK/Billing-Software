@@ -11,7 +11,7 @@ public class ProductServiceImplementation implements ProductService {
   private ProductDAO productDAO = new ProductDAOImplementation();
   private final String NAME_REGEX="^[a-zA-Z\\s]{1,30}$";
   private final String CODE_REGEX="^[a-zA-Z0-9]{2,6}$";
-  public Product createProductService(Product product) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException {
+  public Product createProductService(Product product) throws SQLException, ApplicationErrorException, UniqueConstraintException {
     if(validate(product))
       return productDAO.create(product);
     else
@@ -34,7 +34,7 @@ public class ProductServiceImplementation implements ProductService {
     }
     return null;
   }
-  public int editProductService(Product product) throws SQLException, ApplicationErrorException, UniqueNameException, UniqueConstraintException, UnitCodeViolationException {
+  public int editProductService(Product product) throws SQLException, ApplicationErrorException, UniqueConstraintException, UnitCodeViolationException {
     if (!validate(product))
       return 0;
     boolean status=productDAO.edit(product);
