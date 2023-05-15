@@ -9,12 +9,11 @@ import java.util.List;
 
 public class ProductDAOImplementation implements ProductDAO {
     private Connection productConnection = DBHelper.getConnection();
-
     /**
      * This Method Creates an Entry in the Product Table
      *
-     * @param product
-     * @return product
+     * @param product - Input product
+     * @return product - Entered product
      * @throws ApplicationErrorException
      * @throws SQLException
      * @throws UniqueConstraintException
@@ -53,6 +52,7 @@ public class ProductDAOImplementation implements ProductDAO {
 
     /**
      * This Method returns the number of entries in the Product table.
+     *
      * @return count
      * @throws ApplicationErrorException
      */
@@ -71,6 +71,12 @@ public class ProductDAOImplementation implements ProductDAO {
         }
     }
 
+    /**
+     * This method Lists the products in the product table based on the given search-text.
+     * @param searchText
+     * @return List<Product>
+     * @throws ApplicationErrorException
+     */
     public List<Product> list(String searchText) throws ApplicationErrorException {
         List<Product> productList = new ArrayList<>();
         try {
@@ -162,15 +168,15 @@ public class ProductDAOImplementation implements ProductDAO {
             if(Character.isAlphabetic(parameter.charAt(0)))
                 stockResultSet = deleteStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE CODE='" + parameter + "'");
             else
-                stockResultSet=deleteStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='" + parameter + "'");
+                stockResultSet = deleteStatement.executeQuery("SELECT STOCK FROM PRODUCT WHERE ID='" + parameter + "'");
             if(! stockResultSet.next()) return - 1;
             float stock = stockResultSet.getFloat(1);
             if(stock > 0) return 0;
             else {
                 if(Character.isAlphabetic(parameter.charAt(0)))
-                    return deleteStatement.executeUpdate("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE CODE ='"+parameter+"'");
+                    return deleteStatement.executeUpdate("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE CODE ='" + parameter + "'");
                 else
-                    return deleteStatement.executeUpdate("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE ID ='"+parameter+"'");
+                    return deleteStatement.executeUpdate("UPDATE PRODUCT SET ISDELETED='TRUE' WHERE ID ='" + parameter + "'");
             }
         } catch(Exception e) {
             e.printStackTrace();

@@ -105,7 +105,7 @@ private final Scanner scanner=new Scanner(System.in);
   private void editHelper(List<String> editAttributes)
   {
     Store store=new Store();
-    for (int index = 2; index < editAttributes.size(); index = index + 2) {
+    for (int index = 0; index < editAttributes.size(); index = index + 2) {
       if (editAttributes.get(index).contains("name")) {
         store.setName (editAttributes.get(index + 1).trim ());
       } else if (editAttributes.get(index).contains("phonenumber")) {

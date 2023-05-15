@@ -14,7 +14,7 @@ public class SalesDAOImplementation implements SalesDAO {
       salesConnection.setAutoCommit(false);
       String salesEntryQuery = "INSERT INTO SALES(DATE,GRANDTOTAL) VALUES(?,?) RETURNING *";
       String salesItemInsertQuery = "INSERT INTO SALESITEM (ID, PRODUCTCODE, QUANTITY, SALESPRICE) VALUES (?,?,?) RETURNING *";
-      String salesPriceQuery = "SELECT PRICE,STOCK FROM PRODUCT WHERE CODE=?";
+      String salesPriceQuery = "SELECT PRICE,STOCK, FROM PRODUCT WHERE CODE=?";
       String stockUpdateQuery = "UPDATE PRODUCT SET STOCK=STOCK-? WHERE CODE=? RETURNING NAME";
       String grandTotalUpdateQuery = "UPDATE SALES SET GRANDTOTAL=? WHERE ID=?";
       PreparedStatement salesEntryStatement = salesConnection.prepareStatement(salesEntryQuery);

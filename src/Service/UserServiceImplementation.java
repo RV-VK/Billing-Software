@@ -43,8 +43,7 @@ public class UserServiceImplementation implements UserService {
   }
 
   @Override
-  public int editUserService(User user)
-      throws SQLException, ApplicationErrorException, UniqueConstraintException {
+  public int editUserService(User user) throws SQLException, ApplicationErrorException, UniqueConstraintException {
     if(!validate(user))
       return 0;
     boolean status=userDAO.edit (user);
@@ -63,8 +62,7 @@ public class UserServiceImplementation implements UserService {
   private boolean validate(User user)
   {
     if(!user.getUserName().matches(NAME_REGEX)||!user.getFirstName().matches(NAME_REGEX)||!user.getLastName().matches(NAME_REGEX)||!user.getPassWord().matches(PASSWORD_REGEX)||!String.valueOf(user.getPhoneNumber()).matches(PHONE_NUMBER_REGEX)||!userTypeList.contains(user.getUserType()))
-      return false;
-    else
-      return true;
+       return false;
+    else return true;
   }
 }

@@ -268,7 +268,6 @@ public class UserCLI {
 
   private void editHelper(List<String> editAttributes)
   {
-    System.out.println(editAttributes);
     User user=new User();
     try {
       id = Integer.parseInt(editAttributes.get(1).trim ());
@@ -277,7 +276,7 @@ public class UserCLI {
       System.out.println(">> Please Try \"user edit help\" for proper Syntax");
     }
     user.setId (id);
-    for (int index = 4; index < editAttributes.size(); index = index + 2) {
+    for (int index = 2; index < editAttributes.size(); index = index + 2) {
       if (editAttributes.get(index).contains("username")) {
         user.setUserName (editAttributes.get(index + 1).trim ());
       } else if (editAttributes.get(index).contains("usertype")) {

@@ -55,8 +55,9 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
       }
       purchaseEntry.setPurchaseItemList(purchaseItemList);
       purchaseConnection.commit();
+      purchaseConnection.setAutoCommit(true);
       return purchaseEntry;
-    } catch (Exception e) {
+    } catch (SQLException e) {
       purchaseConnection.rollback();
       throw new ApplicationErrorException(e.getMessage());
     }

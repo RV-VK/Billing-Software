@@ -121,71 +121,71 @@ public class StoreMain {
               System.out.println("Try \"help\" for proper syntax");
           }
           break;
-//        case "purchase":
-//          PurchaseCLI purchaseCLI = new PurchaseCLI();
-//          switch (operationString) {
-//            case "count":
-//              purchaseCLI.purchaseCountCLI(commandlist);
-//              break;
-//            case "list":
-//              purchaseCLI.purchaseListCLI(commandlist);
-//              break;
-//            case "delete":
-//              purchaseCLI.purchaseDeleteCLI(commandlist);
-//              break;
-//            case "help":
-//              System.out.println(
-//                  ">> purchase products using following command\n"
-//                      + "purchase date, invoice, [code1, quantity1, costprice1], [code2, quantity2, costprice2]....\n"
-//                      + "\n"
-//                      + "\t  date - format( YYYY-MM-DD ), mandatory\n"
-//                      + "\t\tinvoice - numbers, mandatory\n"
-//                      + "\t\t\n"
-//                      + "\t\tThe following purchase items should be given as array of items\n"
-//                      + "\t\tcode - text, min 2 - 6 char, mandatory\n"
-//                      + "\t\tquantity - numbers, mandatory\n"
-//                      + "\t\tcostprice - numbers, mandatory");
-//            default:
-//              if (operationString.matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")) {
-//                purchaseCLI.purchaseCreateCLI(command);
-//              } else {
-//                System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
-//                System.out.println(
-//                    "Try either \"help\" for proper syntax or \"purchase help\" if you are trying to start a purchase!");
-//              }
-//          }
-//          break;
-//        case "sales":
-//          SalesCLI salesCLI = new SalesCLI();
-//          switch (operationString) {
-//            case "count":
-//              salesCLI.salesCountCLI(commandlist);
-//              break;
-//            case "list":
-//              salesCLI.salesListCLI(commandlist);
-//              break;
-//            case "delete":
-//              salesCLI.salesDeleteCLI(commandlist);
-//              break;
-//            case "help":
-//              System.out.println(
-//                  ">> sell products using following command\n"
-//                      + "\n"
-//                      + "sales date, [code1, quantity1], [code2, quantity2]....\n"
-//                      + "\n"
-//                      + "\t\tcode - text, min 3 - 30 char, mandatory\n"
-//                      + "\t\tquantity - numbers, mandatory");
-//              break;
-//            default:
-//              if (operationString.matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")) {
-//                salesCLI.salesCreateCLI(command);
-//              } else {
-//                System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
-//                System.out.println(
-//                    "Try either \"help\" for proper syntax or \"sales help\" if you are trying to start a purchase!");
-//              }
-//          }
-//          break;
+        case "purchase":
+          PurchaseCLI purchaseCLI = new PurchaseCLI();
+          switch (operationString) {
+            case "count":
+              purchaseCLI.purchaseCountCLI(commandlist);
+              break;
+            case "list":
+              purchaseCLI.purchaseListCLI(commandlist);
+              break;
+            case "delete":
+              purchaseCLI.purchaseDeleteCLI(commandlist);
+              break;
+            case "help":
+              System.out.println(
+                  ">> purchase products using following command\n"
+                      + "purchase date, invoice, [code1, quantity1, costprice1], [code2, quantity2, costprice2]....\n"
+                      + "\n"
+                      + "\t  date - format( YYYY-MM-DD ), mandatory\n"
+                      + "\t\tinvoice - numbers, mandatory\n"
+                      + "\t\t\n"
+                      + "\t\tThe following purchase items should be given as array of items\n"
+                      + "\t\tcode - text, min 2 - 6 char, mandatory\n"
+                      + "\t\tquantity - numbers, mandatory\n"
+                      + "\t\tcostprice - numbers, mandatory");
+            default:
+              if (operationString.matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")) {
+                purchaseCLI.purchaseCreateCLI(command);
+              } else {
+                System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
+                System.out.println(
+                    "Try either \"help\" for proper syntax or \"purchase help\" if you are trying to start a purchase!");
+              }
+          }
+          break;
+        case "sales":
+          SalesCLI salesCLI = new SalesCLI();
+          switch (operationString) {
+            case "count":
+              salesCLI.salesCountCLI(commandlist);
+              break;
+            case "list":
+              salesCLI.salesListCLI(commandlist);
+              break;
+            case "delete":
+              salesCLI.salesDeleteCLI(commandlist);
+              break;
+            case "help":
+              System.out.println(
+                  ">> sell products using following command\n"
+                      + "\n"
+                      + "sales date, [code1, quantity1], [code2, quantity2]....\n"
+                      + "\n"
+                      + "\t\tcode - text, min 3 - 30 char, mandatory\n"
+                      + "\t\tquantity - numbers, mandatory");
+              break;
+            default:
+              if (operationString.matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")) {
+                salesCLI.salesCreateCLI(command);
+              } else {
+                System.out.println("Invalid operation for command " + "\"" + commandString + "\"");
+                System.out.println(
+                    "Try either \"help\" for proper syntax or \"sales help\" if you are trying to start a purchase!");
+              }
+          }
+          break;
         case "price":
           break;
         case "stock":

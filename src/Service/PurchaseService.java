@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface PurchaseService {
-  int createPurchaseService(Purchase purchase) throws ApplicationErrorException, SQLException;
+  Purchase createPurchaseService(Purchase purchase) throws ApplicationErrorException, SQLException;
 
   int countPurchaseService(String parameter) throws ApplicationErrorException;
 

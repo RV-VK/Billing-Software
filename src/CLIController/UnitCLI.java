@@ -127,7 +127,7 @@ public class UnitCLI {
       return;
     }
     unit.setId (id);
-    for (int index = 4; index < editAttributes.size(); index = index + 2) {
+    for (int index = 2; index < editAttributes.size(); index = index + 2) {
       if (editAttributes.get(index).contains("name")) {
         unit.setName (editAttributes.get(index + 1).trim ());
       } else if (editAttributes.get(index).contains("code")) {
