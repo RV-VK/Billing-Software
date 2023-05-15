@@ -14,8 +14,8 @@ public class SalesDAOImplementation implements SalesDAO {
       salesConnection.setAutoCommit(false);
       String salesEntryQuery = "INSERT INTO SALES(DATE,GRANDTOTAL) VALUES(?,?) RETURNING *";
       String salesItemInsertQuery = "INSERT INTO SALESITEM (ID, PRODUCTCODE, QUANTITY, SALESPRICE) VALUES (?,?,?) RETURNING *";
-      String salesPriceQuery = "SELECT PRICE,STOCK, FROM PRODUCT WHERE CODE=?";
-      String stockUpdateQuery = "UPDATE PRODUCT SET STOCK=STOCK-? WHERE CODE=? RETURNING NAME";
+      String salesPriceQuery = "SELECT PRICE,STOCK,NAME FROM PRODUCT WHERE CODE=?";
+      String stockUpdateQuery = "UPDATE PRODUCT SET STOCK=STOCK-? WHERE CODE=?";
       String grandTotalUpdateQuery = "UPDATE SALES SET GRANDTOTAL=? WHERE ID=?";
       PreparedStatement salesEntryStatement = salesConnection.prepareStatement(salesEntryQuery);
       PreparedStatement salesItemInsertStatement = salesConnection.prepareStatement(salesItemInsertQuery);
@@ -43,6 +43,7 @@ public class SalesDAOImplementation implements SalesDAO {
         salesPriceResultSet.next();
         price = salesPriceResultSet.getDouble(1);
         stock = salesPriceResultSet.getFloat(2);
+        productName=salesPriceResultSet.getString(3);
         grandTotal += price * salesItem.getQuantity();
         if (stock < salesItem.getQuantity()) {
           salesConnection.rollback();
@@ -55,9 +56,7 @@ public class SalesDAOImplementation implements SalesDAO {
         salesItemInsertResultSet = salesItemInsertStatement.executeQuery();
         stockUpdateStatement.setFloat(1, salesItem.getQuantity());
         stockUpdateStatement.setString(2, salesItem.getProduct().getCode());
-        ResultSet stockUpdateResultSet = stockUpdateStatement.executeQuery();
-        stockUpdateResultSet.next();
-        productName = stockUpdateResultSet.getString(1);
+        stockUpdateStatement.executeQuery();
         while (salesItemInsertResultSet.next()) {
           salesItemList.add(new SalesItem(new Product(salesItemInsertResultSet.getString(2), productName), salesItemInsertResultSet.getFloat(3), salesItemInsertResultSet.getDouble(4)));
         }
@@ -169,8 +168,10 @@ public class SalesDAOImplementation implements SalesDAO {
   public int delete(int id) throws ApplicationErrorException {
     try {
       Statement deleteStatement = salesConnection.createStatement();
-      if (deleteStatement.executeUpdate("DELETE FROM SALESITEMS WHERE ID='" + id + "'") > 0
-          && deleteStatement.executeUpdate("DELETE FROM SALES WHERE ID='" + id + "'") > 0) {
+      int salesItemUpdatedCount=deleteStatement.executeUpdate("DELETE FROM SALESITEMS WHERE ID='" + id + "'");
+      int salesUpdatedCount=deleteStatement.executeUpdate("DELETE FROM SALES WHERE ID='" + id + "'");
+      if (salesItemUpdatedCount > 0
+          && salesUpdatedCount > 0) {
         return 1;
       } else return -1;
 

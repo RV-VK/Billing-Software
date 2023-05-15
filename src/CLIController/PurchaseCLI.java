@@ -26,6 +26,7 @@ public class PurchaseCLI {
   private Scanner scanner = new Scanner(System.in);
   HashMap<String, String> listAttributesMap = new HashMap<>();
   public void purchaseCreateCLI(String command) {
+    String productCodeRegex="^[a-zA-Z0-9]{2,6}$";
     String[] commandEntities = command.split(",\\s*(?=\\[)");
     if (commandEntities.length < 1) {
       System.out.println(">> Insufficient arguments to start a purchase!!!");
@@ -54,6 +55,11 @@ public class PurchaseCLI {
           return;
         }
          code = itemVariables[0].trim();
+        if(!code.matches(productCodeRegex))
+        {
+          System.out.println("Invalid format for product code!!");
+          System.out.println("Try \"purchase help\" for proper syntax");
+        }
         try {
           quantity = Float.parseFloat(itemVariables[1].trim());
           costPrice = Double.parseDouble(itemVariables[2].trim());

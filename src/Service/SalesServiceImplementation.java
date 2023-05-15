@@ -8,16 +8,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 public class SalesServiceImplementation implements SalesService {
+  private SalesDAO salesDAO = new SalesDAOImplementation();
   @Override
   public int createSalesService(Sales sales) throws ApplicationErrorException, SQLException {
-    ProductDAO unitCheckDAO = new ProductDAOImplementation();
     boolean isDividable;
     ProductDAO getProductByCode = new ProductDAOImplementation();
-    UnitDAO getUnitNyCode=new UnitDAOImplementation ();
+    UnitDAO getUnitByCode=new UnitDAOImplementation ();
     int i = 1;
     for (SalesItem salesItem : sales.getSalesItemList()) {
       try{
-       isDividable = getUnitNyCode.findByCode ((getProductByCode.findByCode (salesItem.getProduct ().getCode ())).getunitcode ()).getIsDividable ();
+       isDividable = getUnitByCode.findByCode ((getProductByCode.findByCode (salesItem.getProduct ().getCode ())).getunitcode ()).getIsDividable ();
      }catch ( NullPointerException e )
       {
         return -1;
@@ -26,8 +26,7 @@ public class SalesServiceImplementation implements SalesService {
         return i + 1;
       }
     }
-    SalesDAO salesCreateDAO = new SalesDAOImplementation();
-    Sales createdSale = salesCreateDAO.create(sales);
+    Sales createdSale = salesDAO.create(sales);
     if (createdSale != null) {
       return 1;
     } else {

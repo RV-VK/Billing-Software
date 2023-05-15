@@ -6,31 +6,23 @@ import Service.SalesService;
 import Service.SalesServiceImplementation;
 import java.util.*;
 public class SalesCLI {
-
-
   private String salesDate;
-  List<SalesItem> salesItemList = new ArrayList<>();
+  private List<SalesItem> salesItemList = new ArrayList<>();
   private double grandTotal;
-
   private String code;
   private float quantity;
   private int pageLength;
   private int pageNumber;
   private String attribute;
   private String searchText;
-
   private HashMap<String, String> listAttributesMap = new HashMap<>();
-
   private List<String> saleAttributes = Arrays.asList("id", "date");
-
   private SalesService salesService = new SalesServiceImplementation();
-
-
-
+  private Scanner scanner=new Scanner(System.in);
   private List<Sales> salesList;
 
-
   public void salesCreateCLI(String command) {
+    String productcodeRegex="^[a-zA-Z0-9]{2,6}$";
     String[] commandEntities = command.split(",\\s*(?=\\[)");
     if (commandEntities.length < 1) {
       System.out.println(">> Insufficient arguments to start a Sale!!!");
@@ -51,6 +43,11 @@ public class SalesCLI {
           return;
         }
          code = itemVariables[0].trim();
+        if(!code.matches(productcodeRegex))
+        {
+          System.out.println(">> Invalid format for product code in product :"+i);
+          System.out.println(">> Try \"sales help\" for proper syntax!!");
+        }
         try {
           quantity = Float.parseFloat(itemVariables[1].trim());
         } catch (Exception e) {
@@ -265,8 +262,6 @@ public class SalesCLI {
     }
   }
   public void salesDeleteCLI(List<String> arguments) throws ApplicationErrorException {
-    Scanner scanner = new Scanner(System.in);
-    SalesService salesDeleteService = new SalesServiceImplementation();
     String numberRegex = "^[0-9]{1,10}$";
     if (arguments.size() == 3) {
       if (arguments.get(2).equals("help")) {
@@ -275,7 +270,7 @@ public class SalesCLI {
         System.out.println(">> Are you sure you want to delete the Sales Entry y/n : ");
         String prompt = scanner.nextLine();
         if (prompt.equals("y")) {
-          int resultCode = salesDeleteService.deleteSalesService(arguments.get(2));
+          int resultCode = salesService.deleteSalesService(arguments.get(2));
           if (resultCode == 1) {
             System.out.println(">> Sales Entry Deleted Successfully!!!");
           } else if (resultCode == -1) {
