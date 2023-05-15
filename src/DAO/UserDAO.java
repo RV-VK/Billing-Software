@@ -18,4 +18,9 @@ public interface UserDAO {
   boolean edit(User user) throws SQLException, ApplicationErrorException, UniqueConstraintException;
 
   int delete(String parameter) throws ApplicationErrorException;
+
+  boolean checkIfInitialSetup() throws SQLException;
+
+  String login(String user, String passWord) throws SQLException;
+
 }

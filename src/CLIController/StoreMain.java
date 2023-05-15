@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class StoreMain {
   static Scanner scanner;
 
-  public static void main(String[] args)
+  public static void main()
       throws ApplicationErrorException, PageCountOutOfBoundsException, SQLException {
     scanner = new Scanner(System.in);
     System.out.println("___________________WELCOME TO THE BILLING SOFTWARE_____________________");

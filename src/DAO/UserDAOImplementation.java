@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOImplementation implements UserDAO {
- private Connection userConnection = DBHelper.getConnection();
- private List<User> userList = new ArrayList<>();
+  private Connection userConnection = DBHelper.getConnection();
+  private List<User> userList = new ArrayList<>();
 
   @Override
   public User create(User user)
@@ -99,7 +99,8 @@ public class UserDAOImplementation implements UserDAO {
       throws ApplicationErrorException {
     int count;
     try {
-      String EntryCount="SELECT COUNT(*) OVER() FROM USERS WHERE "
+      String EntryCount =
+          "SELECT COUNT(*) OVER() FROM USERS WHERE "
               + attribute
               + "= COALESCE(?,"
               + attribute
@@ -115,46 +116,50 @@ public class UserDAOImplementation implements UserDAO {
               + pageLength
               + "  OFFSET "
               + offset;
-      PreparedStatement countStatement=userConnection.prepareStatement(EntryCount);
-      PreparedStatement listStatement = userConnection.prepareStatement(listQuery,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+      PreparedStatement countStatement = userConnection.prepareStatement(EntryCount);
+      PreparedStatement listStatement =
+          userConnection.prepareStatement(
+              listQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
       if (attribute.equals("id") && searchText == null) {
         listStatement.setNull(1, Types.INTEGER);
-        countStatement.setNull(1,Types.INTEGER);
+        countStatement.setNull(1, Types.INTEGER);
       } else if (attribute.equals("id") || attribute.equals("phonenumber")) {
         listStatement.setLong(1, Long.parseLong(searchText));
-        countStatement.setLong(1,Long.parseLong(searchText));
+        countStatement.setLong(1, Long.parseLong(searchText));
       } else {
         listStatement.setString(1, searchText);
-        countStatement.setString(1,searchText);
+        countStatement.setString(1, searchText);
       }
-      ResultSet countResultSet=countStatement.executeQuery();
+      ResultSet countResultSet = countStatement.executeQuery();
       countResultSet.next();
-      count=countResultSet.getInt(1);
-      if(count<offset)
-        throw new PageCountOutOfBoundsException(">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "+((count/pageLength)+1));
+      count = countResultSet.getInt(1);
+      if (count < offset)
+        throw new PageCountOutOfBoundsException(
+            ">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "
+                + ((count / pageLength) + 1));
       ResultSet listResultSet = listStatement.executeQuery();
       return listHelper(listResultSet);
     } catch (Exception e) {
-      throw new ApplicationErrorException(
-          e.getMessage());
+      throw new ApplicationErrorException(e.getMessage());
     }
   }
 
   private List<User> listHelper(ResultSet resultSet) throws SQLException {
     while (resultSet.next()) {
       User listedUser =
-              new User(
-                      resultSet.getInt(1),
-                      resultSet.getString(3),
-                      resultSet.getString(2),
-                      resultSet.getString(4),
-                      resultSet.getString(5),
-                      resultSet.getString(6),
-                      resultSet.getLong(7));
+          new User(
+              resultSet.getInt(1),
+              resultSet.getString(3),
+              resultSet.getString(2),
+              resultSet.getString(4),
+              resultSet.getString(5),
+              resultSet.getString(6),
+              resultSet.getLong(7));
       userList.add(listedUser);
     }
     return userList;
   }
+
   @Override
   public boolean edit(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
@@ -175,11 +180,10 @@ public class UserDAOImplementation implements UserDAO {
         editStatement.setLong(6, user.getPhoneNumber());
       }
       editStatement.setInt(7, user.getId());
-      if(editStatement.executeUpdate()>0)
-      {
-      editConnection.commit();
-      editConnection.setAutoCommit(true);
-      return true;
+      if (editStatement.executeUpdate() > 0) {
+        editConnection.commit();
+        editConnection.setAutoCommit(true);
+        return true;
       }
       return false;
     } catch (SQLException e) {
@@ -195,9 +199,8 @@ public class UserDAOImplementation implements UserDAO {
 
   @Override
   public int delete(String username) throws ApplicationErrorException {
-    Connection deleteConnection = DBHelper.getConnection();
     try {
-      Statement deleteStatement = deleteConnection.createStatement();
+      Statement deleteStatement = userConnection.createStatement();
       if (deleteStatement.executeUpdate("DELETE FROM USERS WHERE USERNAME='" + username + "'")
           > 0) {
         return 1;
@@ -209,5 +212,24 @@ public class UserDAOImplementation implements UserDAO {
       throw new ApplicationErrorException(
           "Application has went into an Error!!!\n Please Try again");
     }
+  }
+
+  public boolean checkIfInitialSetup() throws SQLException {
+    ResultSet resultSet =
+        userConnection.createStatement().executeQuery("SELECT COUNT(ID) FROM STORE");
+    resultSet.next();
+    return resultSet.getInt(1) == 0;
+  }
+
+  @Override
+  public String login(String userName, String passWord) throws SQLException {
+    ResultSet resultSet =
+        userConnection
+            .createStatement()
+            .executeQuery("SELECT PASSWORD,USERTYPE FROM USERS WHERE USERNAME=?" + userName);
+    if (resultSet.next()) {
+      if (resultSet.getString(1).equals(passWord)) return resultSet.getString(2);
+      else return null;
+    } else return null;
   }
 }
