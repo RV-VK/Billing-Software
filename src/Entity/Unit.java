@@ -15,7 +15,8 @@ public class Unit {
     this.id = id;
   }
 
-  public Unit(){}
+  public Unit() {}
+
   public Unit(String name, String code, String description, boolean isDividable) {
     this.name = name;
     this.code = code;
@@ -64,13 +65,21 @@ public class Unit {
   }
 
   @Override
-  public String toString () {
-    return "Unit{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", code='" + code + '\'' +
-            ", description='" + description + '\'' +
-            ", isDividable=" + isDividable +
-            '}';
+  public String toString() {
+    return "Unit{"
+        + "id="
+        + id
+        + ", name='"
+        + name
+        + '\''
+        + ", code='"
+        + code
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + ", isDividable="
+        + isDividable
+        + '}';
   }
 }

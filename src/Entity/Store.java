@@ -6,7 +6,8 @@ public class Store {
   private String address;
   private int gstCode;
 
-  public Store(){}
+  public Store() {}
+
   public Store(String name, long phoneNumber, String address, int gstCode) {
     this.name = name;
     this.phoneNumber = phoneNumber;

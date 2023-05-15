@@ -10,17 +10,24 @@ import java.util.List;
 import java.util.Scanner;
 
 public class StoreCLI {
-private String name;
-private long phoneNumber;
-private int GSTNumber;
-private String address;
-private StoreService storeService = new StoreServiceImplementation();
-private final Scanner scanner=new Scanner(System.in);
+  private String name;
+  private long phoneNumber;
+  private int GSTNumber;
+  private String address;
+  private StoreService storeService = new StoreServiceImplementation();
+  private final Scanner scanner = new Scanner(System.in);
 
-
-  public void storeCreateCLI(List<String> arguments) throws SQLException, ApplicationErrorException {
+  public void storeCreateCLI(List<String> arguments)
+      throws SQLException, ApplicationErrorException {
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
-      System.out.println(">> Create store using the following template,\n" + "     name, phone number, address, gst number\n" + " \n" + "\tname  - text, mandatory with 3 to 30 chars\t\n" + "\tphone - number, mandatory, ten digits, digit start with 9/8/7/6\n" + "\taddress - text, mandatory\n" + "\tgst number - text, 15 digit, mandatory");
+      System.out.println(
+          ">> Create store using the following template,\n"
+              + "     name, phone number, address, gst number\n"
+              + " \n"
+              + "\tname  - text, mandatory with 3 to 30 chars\t\n"
+              + "\tphone - number, mandatory, ten digits, digit start with 9/8/7/6\n"
+              + "\taddress - text, mandatory\n"
+              + "\tgst number - text, 15 digit, mandatory");
       return;
     } else if (arguments.size() == 2) {
       System.out.print("> ");
@@ -28,23 +35,23 @@ private final Scanner scanner=new Scanner(System.in);
       List<String> storeAttributes = List.of(parameters.split("\\,"));
       createHelper(storeAttributes);
     }
-    createHelper(arguments.subList(2,arguments.size()));
+    createHelper(arguments.subList(2, arguments.size()));
   }
-  private void createHelper(List<String> storeAttributes)
-  {
+
+  private void createHelper(List<String> storeAttributes) {
     if (storeAttributes.size() < 4) {
       System.out.println(">> Insufficient arguments for command \"store create\"");
       System.out.println(">> Try \"store create help\" for proper syntax");
       return;
     }
-    if (storeAttributes.size()> 4) {
+    if (storeAttributes.size() > 4) {
       System.out.println(">> Too many arguments for command \"store create\"");
       System.out.println(">> Try \"store create help\" for proper syntax");
       return;
     }
-     name = storeAttributes.get(0).trim();
-     phoneNumber = 0L;
-     address = storeAttributes.get(2).trim();
+    name = storeAttributes.get(0).trim();
+    phoneNumber = 0L;
+    address = storeAttributes.get(2).trim();
     try {
       phoneNumber = Long.parseLong(storeAttributes.get(1).trim());
     } catch (Exception e) {
@@ -67,27 +74,33 @@ private final Scanner scanner=new Scanner(System.in);
       System.out.println(e.getMessage());
       return;
     }
-    if (createdStore.getName()!=null) {
+    if (createdStore.getName() != null) {
       System.out.println(">> Store Created Successfully!!!");
-    } else if (createdStore.getName()==null) {
+    } else if (createdStore.getName() == null) {
       System.out.println(">> Template Mismatch!!");
-    }
-    else{
+    } else {
       System.out.println(">> Store Already Exists!!");
     }
   }
 
   public void storeEditCLI(List<String> arguments) {
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
-      System.out.println(">> Edit store uing the following template\t\n" + "\n" + "name, phone number, address, gst number\n" + " \n" + "\tname  - text, mandatory with 3 to 30 chars\t\n" + "\tphone - number, mandatory, ten digits, digit start with 9/8/7/6\n" + "\taddress - text, mandatory\n" + "\tgst number - text, 15 digit, mandatory");
+      System.out.println(
+          ">> Edit store uing the following template\t\n"
+              + "\n"
+              + "name, phone number, address, gst number\n"
+              + " \n"
+              + "\tname  - text, mandatory with 3 to 30 chars\t\n"
+              + "\tphone - number, mandatory, ten digits, digit start with 9/8/7/6\n"
+              + "\taddress - text, mandatory\n"
+              + "\tgst number - text, 15 digit, mandatory");
     } else if (arguments.size() == 2) {
       System.out.print("> ");
       String parameters = scanner.nextLine();
       String[] storeAttributes = parameters.split("\\,");
-      List<String> splitAttributes=new ArrayList<>();
-      for(String string: storeAttributes)
-      {
-        String[] keyValues=string.split(":");
+      List<String> splitAttributes = new ArrayList<>();
+      for (String string : storeAttributes) {
+        String[] keyValues = string.split(":");
         splitAttributes.add(keyValues[0]);
         splitAttributes.add(keyValues[1]);
       }
@@ -99,37 +112,35 @@ private final Scanner scanner=new Scanner(System.in);
       System.out.println(">> Insufficient arguments for command \"store edit\"");
       System.out.println(">> Try \"store edit help\" for proper syntax");
     } else {
-      editHelper(arguments.subList(2,arguments.size()));
+      editHelper(arguments.subList(2, arguments.size()));
     }
   }
-  private void editHelper(List<String> editAttributes)
-  {
-    Store store=new Store();
+
+  private void editHelper(List<String> editAttributes) {
+    Store store = new Store();
     for (int index = 0; index < editAttributes.size(); index = index + 2) {
       if (editAttributes.get(index).contains("name")) {
-        store.setName (editAttributes.get(index + 1).trim ());
+        store.setName(editAttributes.get(index + 1).trim());
       } else if (editAttributes.get(index).contains("phonenumber")) {
-        try{
-          phoneNumber=Integer.parseInt (editAttributes.get(index + 1).trim ());
-        }catch ( NumberFormatException e )
-        {
+        try {
+          phoneNumber = Integer.parseInt(editAttributes.get(index + 1).trim());
+        } catch (NumberFormatException e) {
           System.out.println(">> PhoneNumber must be numeric!!");
           System.out.println(">> Try \"store edit help\" for proper syntax!!");
           return;
         }
-        store.setPhoneNumber (phoneNumber);
+        store.setPhoneNumber(phoneNumber);
       } else if (editAttributes.get(index).contains("address")) {
-        store.setAddress (editAttributes.get(index + 1).trim ());
+        store.setAddress(editAttributes.get(index + 1).trim());
       } else if (editAttributes.get(index).contains("gstnumber")) {
-        try{
-          GSTNumber=Integer.parseInt (editAttributes.get(index + 1).trim ());
-        }catch ( NumberFormatException e )
-        {
+        try {
+          GSTNumber = Integer.parseInt(editAttributes.get(index + 1).trim());
+        } catch (NumberFormatException e) {
           System.out.println(">> GSTCode must be numeric!!");
           System.out.println(">> Try \"store edit help\" for proper syntax!!");
           return;
         }
-        store.setGstCode (GSTNumber);
+        store.setGstCode(GSTNumber);
       } else {
         System.out.println(">> Invalid attribute given!!!: " + editAttributes.get(index));
         System.out.println(">> Try \"store edit help\" for proper Syntax");
@@ -158,7 +169,8 @@ private final Scanner scanner=new Scanner(System.in);
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
       System.out.println(">> delete store using the following template\n" + "\tstore delete \n");
     } else if (arguments.size() == 2) {
-      System.out.print("Are you sure want to delete the Store? This will delete all you product/purchase/sales data y/n ? : ");
+      System.out.print(
+          "Are you sure want to delete the Store? This will delete all you product/purchase/sales data y/n ? : ");
       String prompt = scanner.nextLine();
       if (prompt.equals("y")) {
         System.out.print(">> Enter admin password to delete the store: ");

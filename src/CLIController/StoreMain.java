@@ -34,7 +34,7 @@ public class StoreMain {
         Collections.addAll(commandlist, commandlet);
         commandlist.addAll(Arrays.asList(parts).subList(1, parts.length));
       }
-      commandlist.stream().forEach(string-> string.trim());
+      commandlist.stream().forEach(string -> string.trim());
       String commandString = commandlist.get(0);
       String operationString = commandlist.get(1);
       switch (commandString) {

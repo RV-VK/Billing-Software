@@ -10,7 +10,6 @@ public interface PurchaseDAO {
 
   int count(String parameter) throws ApplicationErrorException;
 
-
   List list(String attribute, String searchText, int pageLength, int pageNumber)
       throws ApplicationErrorException;
 

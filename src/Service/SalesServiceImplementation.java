@@ -1,4 +1,5 @@
 package Service;
+
 import DAO.*;
 import Entity.Sales;
 import Entity.SalesItem;
@@ -7,19 +8,24 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
 public class SalesServiceImplementation implements SalesService {
   private SalesDAO salesDAO = new SalesDAOImplementation();
+
   @Override
   public int createSalesService(Sales sales) throws ApplicationErrorException, SQLException {
     boolean isDividable;
     ProductDAO getProductByCode = new ProductDAOImplementation();
-    UnitDAO getUnitByCode=new UnitDAOImplementation ();
+    UnitDAO getUnitByCode = new UnitDAOImplementation();
     int i = 1;
     for (SalesItem salesItem : sales.getSalesItemList()) {
-      try{
-       isDividable = getUnitByCode.findByCode ((getProductByCode.findByCode (salesItem.getProduct ().getCode ())).getunitcode ()).getIsDividable ();
-     }catch ( NullPointerException e )
-      {
+      try {
+        isDividable =
+            getUnitByCode
+                .findByCode(
+                    (getProductByCode.findByCode(salesItem.getProduct().getCode())).getunitcode())
+                .getIsDividable();
+      } catch (NullPointerException e) {
         return -1;
       }
       if (!isDividable && salesItem.getQuantity() % 1 == 0) {
@@ -37,12 +43,10 @@ public class SalesServiceImplementation implements SalesService {
   @Override
   public int countSalesService(String parameter) throws ApplicationErrorException {
     SalesDAO salesCountDAO = new SalesDAOImplementation();
-    String dateRegex="([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))";
-    if(parameter!=null)
-    {
-      if(!parameter.matches (dateRegex))
-      {
-        return-1;
+    String dateRegex = "([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))";
+    if (parameter != null) {
+      if (!parameter.matches(dateRegex)) {
+        return -1;
       }
     }
     return salesCountDAO.count(parameter);
@@ -53,7 +57,8 @@ public class SalesServiceImplementation implements SalesService {
       throws ApplicationErrorException, PageCountOutOfBoundsException {
     List<Sales> salesList;
     SalesDAO listSalesDAO = new SalesDAOImplementation();
-    if (Collections.frequency(listAttributes.values(), null) == 0||Collections.frequency(listAttributes.values(),null)==1) {
+    if (Collections.frequency(listAttributes.values(), null) == 0
+        || Collections.frequency(listAttributes.values(), null) == 1) {
       int pageLength = Integer.parseInt(listAttributes.get("Pagelength"));
       int pageNumber = Integer.parseInt(listAttributes.get("Pagenumber"));
       int offset = (pageLength * pageNumber) - pageLength;

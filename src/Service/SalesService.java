@@ -13,7 +13,8 @@ public interface SalesService {
 
   int countSalesService(String parameter) throws ApplicationErrorException;
 
-  List<Sales> listSalesService(HashMap<String, String> listAttributes) throws ApplicationErrorException, PageCountOutOfBoundsException;
+  List<Sales> listSalesService(HashMap<String, String> listAttributes)
+      throws ApplicationErrorException, PageCountOutOfBoundsException;
 
   int deleteSalesService(String id) throws ApplicationErrorException;
 }

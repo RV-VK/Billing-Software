@@ -1,10 +1,12 @@
 package CLIController;
+
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
 import Entity.*;
 import Service.SalesService;
 import Service.SalesServiceImplementation;
 import java.util.*;
+
 public class SalesCLI {
   private String salesDate;
   private List<SalesItem> salesItemList = new ArrayList<>();
@@ -18,11 +20,11 @@ public class SalesCLI {
   private HashMap<String, String> listAttributesMap = new HashMap<>();
   private List<String> saleAttributes = Arrays.asList("id", "date");
   private SalesService salesService = new SalesServiceImplementation();
-  private Scanner scanner=new Scanner(System.in);
+  private Scanner scanner = new Scanner(System.in);
   private List<Sales> salesList;
 
   public void salesCreateCLI(String command) {
-    String productcodeRegex="^[a-zA-Z0-9]{2,6}$";
+    String productcodeRegex = "^[a-zA-Z0-9]{2,6}$";
     String[] commandEntities = command.split(",\\s*(?=\\[)");
     if (commandEntities.length < 1) {
       System.out.println(">> Insufficient arguments to start a Sale!!!");
@@ -42,10 +44,9 @@ public class SalesCLI {
           System.out.println(">> Try \"sales help\" for proper syntax");
           return;
         }
-         code = itemVariables[0].trim();
-        if(!code.matches(productcodeRegex))
-        {
-          System.out.println(">> Invalid format for product code in product :"+i);
+        code = itemVariables[0].trim();
+        if (!code.matches(productcodeRegex)) {
+          System.out.println(">> Invalid format for product code in product :" + i);
           System.out.println(">> Try \"sales help\" for proper syntax!!");
         }
         try {
@@ -69,15 +70,25 @@ public class SalesCLI {
 
   /**
    * To count the number of Sales Entry Recorded in the Sales Table.
-   * @param arguments
-   * The arguments provided for the command.
-   * @throws ApplicationErrorException
-   * Exception thrown when there is an error with DB Persistence
+   *
+   * @param arguments The arguments provided for the command.
+   * @throws ApplicationErrorException Exception thrown when there is an error with DB Persistence
    */
   public void salesCountCLI(List<String> arguments) throws ApplicationErrorException {
     if (arguments.size() == 3) {
       if (arguments.get(2).equals("help")) {
-        System.out.println("Count Sales using the Following Template\n sales count -d <date>\n" + "\n" + ">> count : <number>\n" + "\n" + "> sales count\n" + "\n" + ">> count : <number>\n" + "\n" + "> sales count -c <category>\n" + "\n" + ">> count : <number>\n");
+        System.out.println(
+            "Count Sales using the Following Template\n sales count -d <date>\n"
+                + "\n"
+                + ">> count : <number>\n"
+                + "\n"
+                + "> sales count\n"
+                + "\n"
+                + ">> count : <number>\n"
+                + "\n"
+                + "> sales count -c <category>\n"
+                + "\n"
+                + ">> count : <number>\n");
       } else {
         System.out.println(">> Invalid command given!!!");
         System.out.println(">> Try \"sales count  help\" for proper syntax!!");
@@ -107,6 +118,7 @@ public class SalesCLI {
       System.out.println(">> Try \"sales count help\" for proper syntax");
     }
   }
+
   public void salesListCLI(List<String> arguments)
       throws PageCountOutOfBoundsException, ApplicationErrorException {
     listAttributesMap.put("Pagelength", null);
@@ -115,17 +127,28 @@ public class SalesCLI {
     listAttributesMap.put("Searchtext", null);
     if (arguments.size() == 3) {
       if (arguments.get(2).equals("help")) {
-        System.out.println(" >> List sales with the following options\n" + ">> sales list - will list all the sales default to maximum upto 20 sales\n" + ">> sales list -p 10 - pageable list shows 10 sales as default\n" + ">> sales list -p 10 3 - pagable list shows 10 sales in 3rd page, ie., sale from 21 to 30\n" + "\n" + ">> Use only the following attributes: id, date\n" + ">> sales list -s <attr>: searchtext - search the sale with the given search text in all the given attribute\n" + ">> sales list -s <attr>: searchtext -p 10 6 - pagable list shows 10 sales in 6th page with the given search text in the given attribute\n" + "\n" + "> sales list -s <date> : <23/03/2023> -p 5 2 \n" + "> sales list -s <id> : <10>\n");
+        System.out.println(
+            " >> List sales with the following options\n"
+                + ">> sales list - will list all the sales default to maximum upto 20 sales\n"
+                + ">> sales list -p 10 - pageable list shows 10 sales as default\n"
+                + ">> sales list -p 10 3 - pagable list shows 10 sales in 3rd page, ie., sale from 21 to 30\n"
+                + "\n"
+                + ">> Use only the following attributes: id, date\n"
+                + ">> sales list -s <attr>: searchtext - search the sale with the given search text in all the given attribute\n"
+                + ">> sales list -s <attr>: searchtext -p 10 6 - pagable list shows 10 sales in 6th page with the given search text in the given attribute\n"
+                + "\n"
+                + "> sales list -s <date> : <23/03/2023> -p 5 2 \n"
+                + "> sales list -s <id> : <10>\n");
         return;
       }
     }
     if (arguments.size() == 2) {
       listAttributesMap.put("Pagelength", "20");
       listAttributesMap.put("Pagenumber", "1");
-      listAttributesMap.put("Attribute","id");
+      listAttributesMap.put("Attribute", "id");
       listHelper(listAttributesMap);
     } else if (arguments.size() == 4) {
-       pageLength = 0;
+      pageLength = 0;
       if (arguments.get(2).equals("-p")) {
         try {
           pageLength = Integer.parseInt(arguments.get(3));
@@ -135,7 +158,7 @@ public class SalesCLI {
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(1));
-        listAttributesMap.put("Attribute","id");
+        listAttributesMap.put("Attribute", "id");
         listHelper(listAttributesMap);
       } else if (arguments.get(2).equals("-s")) {
         String searchText = arguments.get(3).trim();
@@ -157,18 +180,18 @@ public class SalesCLI {
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
-        listAttributesMap.put("Attribute","id");
+        listAttributesMap.put("Attribute", "id");
         listHelper(listAttributesMap);
       } else if (arguments.get(2).equals("-s")) {
-         attribute = arguments.get(3);
+        attribute = arguments.get(3);
         attribute = attribute.replace(":", "");
-         searchText = arguments.get(4);
+        searchText = arguments.get(4);
         if (saleAttributes.contains(attribute)) {
           listAttributesMap.put("Attribute", attribute);
           listAttributesMap.put("Searchtext", searchText);
           listAttributesMap.put("Pagelength", "20");
           listAttributesMap.put("Pagenumber", String.valueOf(1));
-         listHelper(listAttributesMap);
+          listHelper(listAttributesMap);
         } else {
           System.out.println("Given attribute is not a searchable attribute!!");
           System.out.println("Try \"sales list help\" for proper syntax");
@@ -246,7 +269,8 @@ public class SalesCLI {
     }
   }
 
-  private void listHelper(HashMap<String,String> listAttributesMap) throws PageCountOutOfBoundsException, ApplicationErrorException {
+  private void listHelper(HashMap<String, String> listAttributesMap)
+      throws PageCountOutOfBoundsException, ApplicationErrorException {
     salesList = salesService.listSalesService(listAttributesMap);
     if (salesList.size() == 0) {
       System.out.println(">> Given SearchText does not exist!!!");
@@ -255,17 +279,29 @@ public class SalesCLI {
       System.out.print("id: " + sales.getId() + ", date: " + sales.getDate() + ", ");
       System.out.print("[");
       for (SalesItem salesItem : sales.getSalesItemList()) {
-        System.out.print("[name: " + salesItem.getProduct().getName() + ", quantity: " + salesItem.getQuantity() + ", price: " + salesItem.getUnitSalesPrice() + "], ");
+        System.out.print(
+            "[name: "
+                + salesItem.getProduct().getName()
+                + ", quantity: "
+                + salesItem.getQuantity()
+                + ", price: "
+                + salesItem.getUnitSalesPrice()
+                + "], ");
       }
       System.out.print("]");
       System.out.println();
     }
   }
+
   public void salesDeleteCLI(List<String> arguments) throws ApplicationErrorException {
     String numberRegex = "^[0-9]{1,10}$";
     if (arguments.size() == 3) {
       if (arguments.get(2).equals("help")) {
-        System.out.println(">> >> Delete sales using following command \n" + "\n" + ">> sales delete <id>\n" + "\t\tid - numeric, mandatory");
+        System.out.println(
+            ">> >> Delete sales using following command \n"
+                + "\n"
+                + ">> sales delete <id>\n"
+                + "\t\tid - numeric, mandatory");
       } else if (arguments.get(2).matches(numberRegex)) {
         System.out.println(">> Are you sure you want to delete the Sales Entry y/n : ");
         String prompt = scanner.nextLine();

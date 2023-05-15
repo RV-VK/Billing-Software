@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface UnitService {
-  Unit createUnitService(Unit unit) throws SQLException, ApplicationErrorException, UniqueConstraintException;
+  Unit createUnitService(Unit unit)
+      throws SQLException, ApplicationErrorException, UniqueConstraintException;
 
   List<Unit> listUnitService() throws ApplicationErrorException;
 

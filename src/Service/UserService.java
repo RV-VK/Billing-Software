@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface UserService {
-  User createUserService(User user) throws SQLException, ApplicationErrorException, UniqueConstraintException;
+  User createUserService(User user)
+      throws SQLException, ApplicationErrorException, UniqueConstraintException;
 
   int countUserService() throws ApplicationErrorException;
 
