@@ -2,6 +2,7 @@ package DAO;
 
 import DBConnection.DBHelper;
 import Entity.Product;
+import org.checkerframework.checker.units.qual.A;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.List;
 
 public class ProductDAOImplementation implements ProductDAO {
   private Connection productConnection = DBHelper.getConnection();
+  private List<Product> productList = new ArrayList<>();
+
   /**
    * This Method Creates an Entry in the Product Table
    *
@@ -95,7 +98,6 @@ public class ProductDAOImplementation implements ProductDAO {
    * @throws ApplicationErrorException
    */
   public List<Product> list(String searchText) throws ApplicationErrorException {
-    List<Product> productList = new ArrayList<>();
     try {
       Statement listStatement = productConnection.createStatement();
       String listQuery =
@@ -115,20 +117,7 @@ public class ProductDAOImplementation implements ProductDAO {
               + searchText
               + "'";
       ResultSet listresultSet = listStatement.executeQuery(listQuery);
-      while (listresultSet.next()) {
-        Product listedProduct =
-            new Product(
-                listresultSet.getInt(1),
-                listresultSet.getString(2),
-                listresultSet.getString(3),
-                listresultSet.getString(4),
-                listresultSet.getString(5),
-                listresultSet.getFloat(6),
-                listresultSet.getDouble(7),
-                listresultSet.getDouble(8));
-        productList.add(listedProduct);
-      }
-      return productList;
+      return listHelper(listresultSet);
     } catch (SQLException e) {
       e.printStackTrace();
       throw new ApplicationErrorException(
@@ -149,9 +138,15 @@ public class ProductDAOImplementation implements ProductDAO {
    */
   @Override
   public List<Product> list(String attribute, String searchText, int pageLength, int offset)
-      throws ApplicationErrorException {
-    List<Product> productList = new ArrayList<>();
+      throws ApplicationErrorException, PageCountOutOfBoundsException {
+    int count;
     try {
+      String EntryCount="SELECT COUNT(*) OVER() FROM PRODUCT WHERE "
+              + attribute
+              + "= COALESCE(?,"
+              + attribute
+              + ")"
+              + " ORDER BY ID";
       String listQuery =
           "SELECT * FROM PRODUCT WHERE "
               + attribute
@@ -162,36 +157,53 @@ public class ProductDAOImplementation implements ProductDAO {
               + pageLength
               + "  OFFSET "
               + offset;
+      PreparedStatement countStatement=productConnection.prepareStatement(EntryCount);
       PreparedStatement listStatement =
           productConnection.prepareStatement(
               listQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
       if (attribute.equals("id") && searchText == null) {
         listStatement.setNull(1, Types.INTEGER);
+        countStatement.setNull(1,Types.INTEGER);
       } else if (attribute.equals("id") || attribute.equals("stock") || attribute.equals("price")) {
         listStatement.setDouble(1, Double.parseDouble(searchText));
+        countStatement.setDouble(1,Double.parseDouble(searchText));
       } else {
         listStatement.setString(1, searchText);
+        countStatement.setString(1,searchText);
       }
-      ResultSet listResultSet = listStatement.executeQuery();
-      while (listResultSet.next()) {
-        Product listedProduct =
-            new Product(
-                listResultSet.getInt(1),
-                listResultSet.getString(2),
-                listResultSet.getString(3),
-                listResultSet.getString(4),
-                listResultSet.getString(5),
-                listResultSet.getFloat(6),
-                listResultSet.getDouble(7),
-                listResultSet.getDouble(8));
-        productList.add(listedProduct);
-      }
-      return productList;
+      ResultSet countResultSet=countStatement.executeQuery();
+      countResultSet.next();
+      count=countResultSet.getInt(1);
+      if(count<offset)
+        throw new PageCountOutOfBoundsException(">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "+((count/pageLength)+1));
+      ResultSet resultSet=listStatement.executeQuery();
+      return listHelper(resultSet);
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
-      throw new ApplicationErrorException(
-          "Application has went into an Error!!!\n Please Try again");
+      throw new ApplicationErrorException(e.getMessage());
     }
+  }
+
+  /**
+   * This method serves the ListDAO function.
+   * @param resultSet
+   * @return List - Product
+   * @throws SQLException
+   */
+  private List<Product> listHelper(ResultSet resultSet) throws SQLException {
+    while (resultSet.next()) {
+      Product listedProduct =
+              new Product(
+                      resultSet.getInt(1),
+                      resultSet.getString(2),
+                      resultSet.getString(3),
+                      resultSet.getString(4),
+                      resultSet.getString(5),
+                      resultSet.getFloat(6),
+                      resultSet.getDouble(7),
+                      resultSet.getDouble(8));
+      productList.add(listedProduct);
+    }
+    return productList;
   }
 
   /**

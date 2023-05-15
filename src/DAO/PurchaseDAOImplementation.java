@@ -4,12 +4,16 @@ import DBConnection.DBHelper;
 import Entity.Product;
 import Entity.Purchase;
 import Entity.PurchaseItem;
+
+import javax.swing.plaf.basic.BasicListUI;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PurchaseDAOImplementation implements PurchaseDAO {
-  Connection purchaseConnection = DBHelper.getConnection();
+  private Connection purchaseConnection = DBHelper.getConnection();
+  private List<Purchase> purchaseList = new ArrayList<>();
+
 
   @Override
   public Purchase create(Purchase purchase) throws ApplicationErrorException, SQLException {
@@ -101,8 +105,14 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
   @Override
   public List list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException {
-    List<Purchase> purchaseList = new ArrayList<>();
+    int count;
     try {
+      String EntryCount="SELECT COUNT(*) OVER() FROM PURCHASE WHERE "
+              + attribute
+              + "= COALESCE(?,"
+              + attribute
+              + ")"
+              + " ORDER BY ID";
       String listQuery =
           "SELECT * FROM PURCHASE WHERE "
               + attribute
@@ -113,43 +123,27 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
               + pageLength
               + "  OFFSET "
               + offset;
+      PreparedStatement countStatement=purchaseConnection.prepareStatement(EntryCount);
       PreparedStatement listStatement = purchaseConnection.prepareStatement(listQuery);
       if (attribute.equals("id") && searchText == null) {
         listStatement.setNull(1, Types.INTEGER);
+        countStatement.setNull(1,Types.INTEGER);
       } else if (attribute.equals("id")
           || attribute.equals("grandtotal")
           || attribute.equals("invoice")) {
         listStatement.setDouble(1, Double.parseDouble(searchText));
+        countStatement.setDouble(1,Double.parseDouble(searchText));
       } else {
         listStatement.setDate(1, Date.valueOf(searchText));
+        countStatement.setDate(1,Date.valueOf(searchText));
       }
-      ResultSet listResultSet = listStatement.executeQuery(listQuery);
-      while (listResultSet.next()) {
-        Purchase listedPurchase = new Purchase();
-        listedPurchase.setId(listResultSet.getInt(1));
-        listedPurchase.setDate(String.valueOf(listResultSet.getDate(2)));
-        listedPurchase.setInvoice(listResultSet.getInt(3));
-        listedPurchase.setGrandTotal(listResultSet.getInt(4));
-        purchaseList.add(listedPurchase);
-      }
-      PreparedStatement listPurchaseItemsStatement =
-          purchaseConnection.prepareStatement(
-              "SELECT P.NAME,PU.PRODUCTCODE,PU.QUANTITY,PU.COSTPRICE FROM PURCHASEITEMS PU INNER JOIN PRODUCT P ON P.CODE=PU.PRODUCTCODE WHERE PU.INVOICE=?");
-      List<PurchaseItem> purchaseItemList = new ArrayList<>();
-      for (Purchase purchase : purchaseList) {
-        listPurchaseItemsStatement.setInt(1, purchase.getInvoice());
-        ResultSet listPurchaseResultSet = listPurchaseItemsStatement.executeQuery();
-        while (listPurchaseResultSet.next()) {
-          purchaseItemList.add(
-              new PurchaseItem(
-                  new Product(
-                      listPurchaseResultSet.getString(2), listPurchaseResultSet.getString(1)),
-                  listPurchaseResultSet.getFloat(3),
-                  listPurchaseResultSet.getDouble(4)));
-        }
-        purchase.setPurchaseItemList(purchaseItemList);
-      }
-      return purchaseList;
+      ResultSet countResultSet=countStatement.executeQuery();
+      countResultSet.next();
+      count=countResultSet.getInt(1);
+      if(count<offset)
+        throw new PageCountOutOfBoundsException(">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "+((count/pageLength)+1));
+      ResultSet listResultSet = listStatement.executeQuery();
+      return listHelper(listResultSet);
     } catch (Exception e) {
       throw new ApplicationErrorException(e.getMessage());
     }
@@ -157,7 +151,6 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
 
   @Override
   public List list(String searchText) throws ApplicationErrorException {
-    List<Purchase> purchaseList = new ArrayList<>();
     try {
       Statement listStatement = purchaseConnection.createStatement();
       String listQuery =
@@ -169,37 +162,40 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
               + searchText
               + "'";
       ResultSet listResultSet = listStatement.executeQuery(listQuery);
-      while (listResultSet.next()) {
-        Purchase listedPurchase = new Purchase();
-        listedPurchase.setId(listResultSet.getInt(1));
-        listedPurchase.setDate(String.valueOf(listResultSet.getDate(2)));
-        listedPurchase.setInvoice(listResultSet.getInt(3));
-        listedPurchase.setGrandTotal(listResultSet.getInt(4));
-        purchaseList.add(listedPurchase);
-      }
-      PreparedStatement listPurchaseItemsStatement =
-          purchaseConnection.prepareStatement(
-              "SELECT P.NAME,PU.PRODUCTCODE,PU.QUANTITY,PU.COSTPRICE FROM PURCHASEITEMS PU INNER JOIN PRODUCT P ON P.CODE=PU.PRODUCTCODE WHERE PU.INVOICE=?");
-      List<PurchaseItem> purchaseItemList = new ArrayList<>();
-      for (Purchase purchase : purchaseList) {
-        listPurchaseItemsStatement.setInt(1, purchase.getInvoice());
-        ResultSet listPurchaseResultSet = listPurchaseItemsStatement.executeQuery();
-        while (listPurchaseResultSet.next()) {
-          purchaseItemList.add(
-              new PurchaseItem(
-                  new Product(
-                      listPurchaseResultSet.getString(2), listPurchaseResultSet.getString(1)),
-                  listPurchaseResultSet.getFloat(3),
-                  listPurchaseResultSet.getDouble(4)));
-        }
-        purchase.setPurchaseItemList(purchaseItemList);
-      }
-      return purchaseList;
+      return listHelper(listResultSet);
     } catch (Exception e) {
       throw new ApplicationErrorException(e.getMessage());
     }
   }
 
+  private List<Purchase> listHelper(ResultSet resultSet) throws SQLException {
+    while (resultSet.next()) {
+      Purchase listedPurchase = new Purchase();
+      listedPurchase.setId(resultSet.getInt(1));
+      listedPurchase.setDate(String.valueOf(resultSet.getDate(2)));
+      listedPurchase.setInvoice(resultSet.getInt(3));
+      listedPurchase.setGrandTotal(resultSet.getInt(4));
+      purchaseList.add(listedPurchase);
+    }
+    PreparedStatement listPurchaseItemsStatement =
+            purchaseConnection.prepareStatement(
+                    "SELECT P.NAME,PU.PRODUCTCODE,PU.QUANTITY,PU.COSTPRICE FROM PURCHASEITEMS PU INNER JOIN PRODUCT P ON P.CODE=PU.PRODUCTCODE WHERE PU.INVOICE=?");
+    for (Purchase purchase : purchaseList) {
+      List<PurchaseItem> purchaseItemList = new ArrayList<>();
+      listPurchaseItemsStatement.setInt(1, purchase.getInvoice());
+      ResultSet listPurchaseResultSet = listPurchaseItemsStatement.executeQuery();
+      while (listPurchaseResultSet.next()) {
+        purchaseItemList.add(
+                new PurchaseItem(
+                        new Product(
+                                listPurchaseResultSet.getString(2), listPurchaseResultSet.getString(1)),
+                        listPurchaseResultSet.getFloat(3),
+                        listPurchaseResultSet.getDouble(4)));
+      }
+      purchase.setPurchaseItemList(purchaseItemList);
+    }
+    return purchaseList;
+  }
   @Override
   public int delete(int invoice) throws ApplicationErrorException {
     Connection deleteConnection = DBHelper.getConnection();

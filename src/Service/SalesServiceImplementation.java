@@ -13,7 +13,8 @@ public class SalesServiceImplementation implements SalesService {
   private SalesDAO salesDAO = new SalesDAOImplementation();
 
   @Override
-  public Sales createSalesService(Sales sales) throws ApplicationErrorException, SQLException {
+  public Sales createSalesService(Sales sales)
+      throws ApplicationErrorException, SQLException, UnDividableEntityException {
     boolean isDividable;
     ProductDAO getProductByCode = new ProductDAOImplementation();
     UnitDAO getUnitByCode = new UnitDAOImplementation();
@@ -27,8 +28,8 @@ public class SalesServiceImplementation implements SalesService {
       } catch (NullPointerException e) {
         return new Sales();
       }
-      if (!isDividable && salesItem.getQuantity() % 1 == 0) {
-        return null;
+      if ((! isDividable && salesItem.getQuantity() % 1 != 0)) {
+        throw new UnDividableEntityException(">> Product "+salesItem.getProduct().getCode()+" is not a dividable product");
       }
     }
     Sales createdSale = salesDAO.create(sales);

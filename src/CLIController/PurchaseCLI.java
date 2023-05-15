@@ -320,6 +320,7 @@ public class PurchaseCLI {
 
   private void listHelper(HashMap<String, String> listAttributesMap)
       throws PageCountOutOfBoundsException, ApplicationErrorException {
+    try{
     purchaseList = purchaseService.listPurchaseService(listAttributesMap);
     if (purchaseList == null) {
       System.out.println(">>Given SearchText does not exists");
@@ -348,7 +349,13 @@ public class PurchaseCLI {
       System.out.print("]");
       System.out.println();
     }
+    }
+    catch(Exception e)
+    {
+      System.out.println(e.getMessage());
+    }
   }
+
 
   public void purchaseDeleteCLI(List<String> arguments) throws ApplicationErrorException {
     PurchaseService purchaseDeleteService = new PurchaseServiceImplementation();

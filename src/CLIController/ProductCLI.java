@@ -277,6 +277,7 @@ public class ProductCLI {
    */
   private void listHelper(HashMap<String, String> listAttributesMap)
       throws PageCountOutOfBoundsException, ApplicationErrorException {
+    try{
     resultList = productService.listProductService(listAttributesMap);
     if (resultList.size() == 0) {
       System.out.println(">> Given SearchText does not exist!!!");
@@ -299,6 +300,11 @@ public class ProductCLI {
               + resultProduct.getPrice()
               + ", costprice: "
               + resultProduct.getCostPrice());
+    }
+    }
+    catch(Exception e)
+    {
+      System.out.println(e.getMessage());
     }
   }
 

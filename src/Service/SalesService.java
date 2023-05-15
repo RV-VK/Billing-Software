@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface SalesService {
-  Sales createSalesService(Sales sales) throws ApplicationErrorException, SQLException;
+  Sales createSalesService(Sales sales)
+      throws ApplicationErrorException, SQLException, UnDividableEntityException;
 
   int countSalesService(String parameter) throws ApplicationErrorException;
 

@@ -11,7 +11,7 @@ public interface ProductDAO {
   int count() throws ApplicationErrorException;
 
   List list(String attribute, String searchText, int pageLength, int offset)
-      throws ApplicationErrorException;
+      throws ApplicationErrorException, PageCountOutOfBoundsException;
 
   List list(String searchText) throws ApplicationErrorException;
 

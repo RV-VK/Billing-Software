@@ -67,10 +67,10 @@ public class SalesCLI {
         System.out.println(e.getMessage());
         return;
       }
-      if (createdSale.getDate() == null) {
+      if (createdSale == null) {
         System.out.println(
-            ">> The product code you have entered do not exists!! Please check the product codes");
-      } else if (createdSale != null) {
+            ">> Out of Stock Product Entered Please check the entered products!!");
+      } else if (createdSale != null&&createdSale.getDate()!=null) {
         System.out.println(
             "**********************************************************************************");
         System.out.println("\t\tSALES BILL " + createdSale.getId());
@@ -81,7 +81,7 @@ public class SalesCLI {
             "----------------------------------------------------------------------------------");
         for (int i = 0; i < createdSale.getSalesItemList().size(); i++) {
           System.out.printf(
-              "%d\t\t%-20s\t\t%d\t\t%.2f\t\t%.2f%n",
+              "%d\t\t%-20s\t\t%.2f\t\t%.2f\t\t%.2f%n",
               i + 1,
               createdSale.getSalesItemList().get(i).getProduct().getName(),
               createdSale.getSalesItemList().get(i).getQuantity(),
@@ -91,12 +91,9 @@ public class SalesCLI {
         }
         System.out.println(
             "----------------------------------------------------------------------------------");
-        System.out.printf("GRAND TOTAL\t\t\t\t\t\t\t%.2f%n", grandTotal);
+        System.out.printf("GRAND TOTAL\t\t\t\t\t\t\t%.2f%n", createdSale.getGrandTotal());
         System.out.println(
             "----------------------------------------------------------------------------------");
-      } else {
-        System.out.println(
-            ">> Not a dividable entity!! Please check the quantity you have entered!!");
       }
     }
   }
@@ -304,10 +301,12 @@ public class SalesCLI {
 
   private void listHelper(HashMap<String, String> listAttributesMap)
       throws PageCountOutOfBoundsException, ApplicationErrorException {
+    try{
     salesList = salesService.listSalesService(listAttributesMap);
     if (salesList.size() == 0) {
       System.out.println(">> Given SearchText does not exist!!!");
     }
+      System.out.println(salesList);
     for (Sales sales : salesList) {
       System.out.print("id: " + sales.getId() + ", date: " + sales.getDate() + ", ");
       System.out.print("[");
@@ -321,8 +320,15 @@ public class SalesCLI {
                 + salesItem.getUnitSalesPrice()
                 + "], ");
       }
-      System.out.print("]");
+      System.out.print("] ");
+        System.out.print(sales.getGrandTotal());
       System.out.println();
+    }
+
+    }
+    catch(Exception e)
+    {
+      System.out.println(e.getMessage());
     }
   }
 

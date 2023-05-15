@@ -245,8 +245,8 @@ public class UserCLI {
     }
   }
 
-  private void listHelper(HashMap<String, String> listAttributesMap)
-      throws PageCountOutOfBoundsException, ApplicationErrorException {
+  private void listHelper(HashMap<String, String> listAttributesMap) {
+    try{
     userList = userService.listUserService(listAttributesMap);
     if (userList == null) {
       System.out.println(">>Given SearchText does not exist!!!");
@@ -268,6 +268,11 @@ public class UserCLI {
               + user.getLastName()
               + ", phonenumber: "
               + user.getPhoneNumber());
+    }
+    }
+    catch(Exception e)
+    {
+      System.out.println(e.getMessage());
     }
   }
 

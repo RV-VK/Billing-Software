@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOImplementation implements UserDAO {
-  Connection userConnection = DBHelper.getConnection();
+ private Connection userConnection = DBHelper.getConnection();
+ private List<User> userList = new ArrayList<>();
 
   @Override
   public User create(User user)
@@ -66,7 +67,6 @@ public class UserDAOImplementation implements UserDAO {
 
   @Override
   public List<User> list(String searchText) throws ApplicationErrorException {
-    List<User> userList = new ArrayList<>();
     try {
       Statement listStatement = userConnection.createStatement();
       String listQuery =
@@ -86,19 +86,7 @@ public class UserDAOImplementation implements UserDAO {
               + searchText
               + "'";
       ResultSet listresultSet = listStatement.executeQuery(listQuery);
-      while (listresultSet.next()) {
-        User listedUser =
-            new User(
-                listresultSet.getInt(1),
-                listresultSet.getString(3),
-                listresultSet.getString(2),
-                listresultSet.getString(4),
-                listresultSet.getString(5),
-                listresultSet.getString(6),
-                listresultSet.getLong(7));
-        userList.add(listedUser);
-      }
-      return userList;
+      return listHelper(listresultSet);
     } catch (SQLException e) {
       System.out.println(e.getMessage());
       throw new ApplicationErrorException(
@@ -109,8 +97,14 @@ public class UserDAOImplementation implements UserDAO {
   @Override
   public List list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException {
-    List<User> userList = new ArrayList<>();
+    int count;
     try {
+      String EntryCount="SELECT COUNT(*) OVER() FROM USERS WHERE "
+              + attribute
+              + "= COALESCE(?,"
+              + attribute
+              + ")"
+              + " ORDER BY ID";
       String listQuery =
           "SELECT * FROM USERS WHERE "
               + attribute
@@ -121,34 +115,46 @@ public class UserDAOImplementation implements UserDAO {
               + pageLength
               + "  OFFSET "
               + offset;
-      PreparedStatement listStatement = userConnection.prepareStatement(listQuery);
+      PreparedStatement countStatement=userConnection.prepareStatement(EntryCount);
+      PreparedStatement listStatement = userConnection.prepareStatement(listQuery,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
       if (attribute.equals("id") && searchText == null) {
         listStatement.setNull(1, Types.INTEGER);
+        countStatement.setNull(1,Types.INTEGER);
       } else if (attribute.equals("id") || attribute.equals("phonenumber")) {
         listStatement.setLong(1, Long.parseLong(searchText));
+        countStatement.setLong(1,Long.parseLong(searchText));
       } else {
         listStatement.setString(1, searchText);
+        countStatement.setString(1,searchText);
       }
+      ResultSet countResultSet=countStatement.executeQuery();
+      countResultSet.next();
+      count=countResultSet.getInt(1);
+      if(count<offset)
+        throw new PageCountOutOfBoundsException(">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "+((count/pageLength)+1));
       ResultSet listResultSet = listStatement.executeQuery();
-      while (listResultSet.next()) {
-        User listedUser =
-            new User(
-                listResultSet.getInt(1),
-                listResultSet.getString(3),
-                listResultSet.getString(2),
-                listResultSet.getString(4),
-                listResultSet.getString(5),
-                listResultSet.getString(6),
-                listResultSet.getLong(7));
-        userList.add(listedUser);
-      }
-      return userList;
+      return listHelper(listResultSet);
     } catch (Exception e) {
       throw new ApplicationErrorException(
-          "Application has went into an Error!!!\n Please Try again");
+          e.getMessage());
     }
   }
 
+  private List<User> listHelper(ResultSet resultSet) throws SQLException {
+    while (resultSet.next()) {
+      User listedUser =
+              new User(
+                      resultSet.getInt(1),
+                      resultSet.getString(3),
+                      resultSet.getString(2),
+                      resultSet.getString(4),
+                      resultSet.getString(5),
+                      resultSet.getString(6),
+                      resultSet.getLong(7));
+      userList.add(listedUser);
+    }
+    return userList;
+  }
   @Override
   public boolean edit(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
