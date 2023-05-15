@@ -28,6 +28,11 @@ public class ProductCLI {
   private final Scanner scanner = new Scanner(System.in);
   private final String helpMessage = ">> Try \"product create help for proper syntax";
 
+  /**
+   * This method handles the presentation layer for the create function.
+   *
+   * @param arguments - List of Command arguments.
+   */
   public void Create(List<String> arguments) {
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
       System.out.println(
@@ -56,6 +61,11 @@ public class ProductCLI {
     createHelper(arguments.subList(2, arguments.size()));
   }
 
+  /**
+   * This method serves the create function
+   *
+   * @param productAttributes
+   */
   private void createHelper(List<String> productAttributes) {
     if (productAttributes.size() < 5) {
       System.out.println(">>Insufficient Arguments for command \"product create\"");
@@ -104,6 +114,13 @@ public class ProductCLI {
     }
   }
 
+  /**
+   * This method handles the Presentation layer of the List function.
+   *
+   * @param arguments - List of Command Arguments.
+   * @throws PageCountOutOfBoundsException
+   * @throws ApplicationErrorException
+   */
   public void list(List<String> arguments)
       throws PageCountOutOfBoundsException, ApplicationErrorException {
     listAttributesMap.put("Pagelength", null);
@@ -251,6 +268,13 @@ public class ProductCLI {
     }
   }
 
+  /**
+   * This method serves the List function.
+   *
+   * @param listAttributesMap
+   * @throws PageCountOutOfBoundsException
+   * @throws ApplicationErrorException
+   */
   private void listHelper(HashMap<String, String> listAttributesMap)
       throws PageCountOutOfBoundsException, ApplicationErrorException {
     resultList = productService.listProductService(listAttributesMap);
@@ -278,12 +302,22 @@ public class ProductCLI {
     }
   }
 
+  /**
+   * This method handles the Presentation Layer of the Count function.
+   *
+   * @throws ApplicationErrorException
+   */
   public void count() throws ApplicationErrorException {
     ProductService countProduct = new ProductServiceImplementation();
     int productCount = countProduct.countProductService();
     System.out.println(">> ProductCount " + productCount);
   }
 
+  /**
+   * This method handles the Presentation Layer of the Edit function.
+   *
+   * @param arguments - List of Command arguments
+   */
   public void edit(List<String> arguments) {
     Scanner scanner = new Scanner(System.in);
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
@@ -332,6 +366,11 @@ public class ProductCLI {
     }
   }
 
+  /**
+   * This method serves the Edit function
+   *
+   * @param editAttributes
+   */
   private void editHelper(List<String> editAttributes) {
     Product product = new Product();
     try {
@@ -389,6 +428,12 @@ public class ProductCLI {
     }
   }
 
+  /**
+   * This method handles the Presentation Layer of the Delete function.
+   *
+   * @param arguments - List of Command arguments.
+   * @throws ApplicationErrorException
+   */
   public void delete(List<String> arguments) throws ApplicationErrorException {
     String numberRegex = "^[0-9]*$";
     String productcodeRegex = "^[a-zA-Z0-9]{2,6}$";
@@ -422,6 +467,12 @@ public class ProductCLI {
     }
   }
 
+  /**
+   * This method serves the Delete function
+   *
+   * @param arguments
+   * @throws ApplicationErrorException
+   */
   private void deleteHelper(List<String> arguments) throws ApplicationErrorException {
     System.out.println(">> Are you sure want to delete the product y/n ? : ");
     String prompt = scanner.nextLine();

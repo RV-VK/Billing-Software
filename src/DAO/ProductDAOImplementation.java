@@ -90,7 +90,7 @@ public class ProductDAOImplementation implements ProductDAO {
   /**
    * This method Lists the products in the product table based on the given search-text.
    *
-   * @param searchText
+   * @param searchText The search-text that must be found.
    * @return List<Product>
    * @throws ApplicationErrorException
    */
@@ -136,6 +136,17 @@ public class ProductDAOImplementation implements ProductDAO {
     }
   }
 
+  /**
+   * This method lists the products in the products table based on the given searchable attribute
+   * and its corresponding search-text formatted in a pageable manner.
+   *
+   * @param attribute The attribute to be looked upon.
+   * @param searchText The searchtext to be found.
+   * @param pageLength The number of entries that must be listed.
+   * @param offset The Page number that has to be listed
+   * @return List<Product>
+   * @throws ApplicationErrorException
+   */
   @Override
   public List<Product> list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException {
@@ -183,6 +194,16 @@ public class ProductDAOImplementation implements ProductDAO {
     }
   }
 
+  /**
+   * This method updates the attributes of the product entry in the Product table
+   *
+   * @param product The Updated Product entry
+   * @return status - Boolean
+   * @throws SQLException
+   * @throws ApplicationErrorException
+   * @throws UniqueConstraintException
+   * @throws UnitCodeViolationException
+   */
   @Override
   public boolean edit(Product product)
       throws SQLException,
@@ -232,6 +253,13 @@ public class ProductDAOImplementation implements ProductDAO {
     return false;
   }
 
+  /**
+   * This method deletes an entry in the Product table based on the given parameter.
+   *
+   * @param parameter
+   * @return resultCode - Integer
+   * @throws ApplicationErrorException
+   */
   @Override
   public int delete(String parameter) throws ApplicationErrorException {
     try {
@@ -262,6 +290,13 @@ public class ProductDAOImplementation implements ProductDAO {
     }
   }
 
+  /**
+   * This method finds the Product by its product code attribute.
+   *
+   * @param code
+   * @return Product
+   * @throws ApplicationErrorException
+   */
   @Override
   public Product findByCode(String code) throws ApplicationErrorException {
     try {
