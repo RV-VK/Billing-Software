@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UnitDAOImplementation implements UnitDAO {
-  Connection unitConnection = DBHelper.getConnection();
+  private Connection unitConnection = DBHelper.getConnection();
 
   @Override
   public Unit create(Unit unit)

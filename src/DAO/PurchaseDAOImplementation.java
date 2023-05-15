@@ -4,8 +4,6 @@ import DBConnection.DBHelper;
 import Entity.Product;
 import Entity.Purchase;
 import Entity.PurchaseItem;
-
-import javax.swing.plaf.basic.BasicListUI;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

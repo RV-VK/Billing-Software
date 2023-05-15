@@ -13,7 +13,7 @@ public class PurchaseCLI {
   private String purchaseDate;
   private int invoice;
   private double grandTotal;
-  List<PurchaseItem> purchaseItemList = new ArrayList<>();
+  private List<PurchaseItem> purchaseItemList = new ArrayList<>();
   private String code;
   private float quantity;
   private double costPrice;
@@ -26,7 +26,7 @@ public class PurchaseCLI {
   private PurchaseService purchaseService = new PurchaseServiceImplementation();
   private List<Purchase> purchaseList;
   private Scanner scanner = new Scanner(System.in);
-  HashMap<String, String> listAttributesMap = new HashMap<>();
+  private HashMap<String, String> listAttributesMap = new HashMap<>();
 
   public void purchaseCreateCLI(String command) {
     String productCodeRegex = "^[a-zA-Z0-9]{2,6}$";

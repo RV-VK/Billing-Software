@@ -7,7 +7,7 @@ import java.util.*;
 
 public class UserServiceImplementation implements UserService {
 
-  UserDAO userDAO = new UserDAOImplementation();
+  private UserDAO userDAO = new UserDAOImplementation();
   private final String NAME_REGEX = "^[a-zA-Z\\s]{1,30}$";
   private final String PASSWORD_REGEX = "^[a-zA-Z0-9]{8,30}$";
   private final List<String> userTypeList = Arrays.asList("Sales", "Purchase", "Admin");

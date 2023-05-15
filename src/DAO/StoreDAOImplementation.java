@@ -5,7 +5,7 @@ import Entity.Store;
 import java.sql.*;
 
 public class StoreDAOImplementation implements StoreDAO {
-  Connection storeConnection = DBHelper.getConnection();
+  private Connection storeConnection = DBHelper.getConnection();
 
   @Override
   public Store create(Store store) throws ApplicationErrorException, SQLException {
