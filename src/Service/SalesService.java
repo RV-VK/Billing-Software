@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface SalesService {
-  int createSalesService(Sales sales) throws ApplicationErrorException, SQLException;
+  Sales createSalesService(Sales sales) throws ApplicationErrorException, SQLException;
 
   int countSalesService(String parameter) throws ApplicationErrorException;
 

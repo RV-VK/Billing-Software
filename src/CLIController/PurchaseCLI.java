@@ -79,7 +79,11 @@ public class PurchaseCLI {
       } catch (Exception e) {
         System.out.println(e.getMessage());
       }
-      if (createdPurchase != null) {
+      if(createdPurchase.getDate()==null)
+      {
+        System.out.println(">> The product code you have entered do not exist!!");
+      }
+      else if (createdPurchase != null) {
         System.out.println(
             "**********************************************************************************");
         System.out.println(
@@ -108,6 +112,9 @@ public class PurchaseCLI {
             "GRAND TOTAL\t\t\t\t\t\t\t\t\t\t\t%.2f%n", createdPurchase.getGrandTotal());
         System.out.println(
             "----------------------------------------------------------------------------------");
+      }
+      else{
+        System.out.println(">> Not a dividable Entity!!Please check the quantity you have entered");
       }
     }
   }

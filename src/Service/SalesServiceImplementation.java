@@ -13,11 +13,10 @@ public class SalesServiceImplementation implements SalesService {
   private SalesDAO salesDAO = new SalesDAOImplementation();
 
   @Override
-  public int createSalesService(Sales sales) throws ApplicationErrorException, SQLException {
+  public Sales createSalesService(Sales sales) throws ApplicationErrorException, SQLException {
     boolean isDividable;
     ProductDAO getProductByCode = new ProductDAOImplementation();
     UnitDAO getUnitByCode = new UnitDAOImplementation();
-    int i = 1;
     for (SalesItem salesItem : sales.getSalesItemList()) {
       try {
         isDividable =
@@ -26,18 +25,14 @@ public class SalesServiceImplementation implements SalesService {
                     (getProductByCode.findByCode(salesItem.getProduct().getCode())).getunitcode())
                 .getIsDividable();
       } catch (NullPointerException e) {
-        return -1;
+        return new Sales();
       }
       if (!isDividable && salesItem.getQuantity() % 1 == 0) {
-        return i + 1;
+        return null;
       }
     }
     Sales createdSale = salesDAO.create(sales);
-    if (createdSale != null) {
-      return 1;
-    } else {
-      return -2;
-    }
+    return createdSale;
   }
 
   @Override

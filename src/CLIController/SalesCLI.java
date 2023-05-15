@@ -60,10 +60,43 @@ public class SalesCLI {
         grandTotal = 0;
       }
       Sales sales = new Sales(salesDate, salesItemList, grandTotal);
+      Sales createdSale;
       try {
-        salesService.createSalesService(sales);
+        createdSale = salesService.createSalesService(sales);
       } catch (Exception e) {
         System.out.println(e.getMessage());
+        return;
+      }
+      if (createdSale.getDate() == null) {
+        System.out.println(
+            ">> The product code you have entered do not exists!! Please check the product codes");
+      } else if (createdSale != null) {
+        System.out.println(
+            "**********************************************************************************");
+        System.out.println("\t\tSALES BILL " + createdSale.getId());
+        System.out.println(
+            "**********************************************************************************");
+        System.out.println("SNO\t\tPRODUCT NAME\t\t\tQTY\t\tPRICE\t\tTOTAL");
+        System.out.println(
+            "----------------------------------------------------------------------------------");
+        for (int i = 0; i < createdSale.getSalesItemList().size(); i++) {
+          System.out.printf(
+              "%d\t\t%-20s\t\t%d\t\t%.2f\t\t%.2f%n",
+              i + 1,
+              createdSale.getSalesItemList().get(i).getProduct().getName(),
+              createdSale.getSalesItemList().get(i).getQuantity(),
+              createdSale.getSalesItemList().get(i).getUnitSalesPrice(),
+              (createdSale.getSalesItemList().get(i).getQuantity()
+                  * createdSale.getSalesItemList().get(i).getUnitSalesPrice()));
+        }
+        System.out.println(
+            "----------------------------------------------------------------------------------");
+        System.out.printf("GRAND TOTAL\t\t\t\t\t\t\t%.2f%n", grandTotal);
+        System.out.println(
+            "----------------------------------------------------------------------------------");
+      } else {
+        System.out.println(
+            ">> Not a dividable entity!! Please check the quantity you have entered!!");
       }
     }
   }
