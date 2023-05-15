@@ -3,6 +3,7 @@ package CLIController;
 import DAO.ApplicationErrorException;
 import DAO.PageCountOutOfBoundsException;
 import DAO.UniqueConstraintException;
+import Entity.Store;
 import Entity.User;
 import Service.LoginService;
 import Service.LoginServiceImplementation;
@@ -10,8 +11,8 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class LoginCLI {
-  private static LoginService loginService = new LoginServiceImplementation();
-  private static Scanner scanner = new Scanner(System.in);
+  private static final LoginService loginService = new LoginServiceImplementation();
+  private static final Scanner scanner = new Scanner(System.in);
   private static String userName;
   private static String passWord;
   private static String firstName;
@@ -82,15 +83,26 @@ public class LoginCLI {
           Login();
     }
   }
-  private static void Login() throws SQLException, PageCountOutOfBoundsException, ApplicationErrorException {
+
+  private static void Login()
+      throws SQLException, PageCountOutOfBoundsException, ApplicationErrorException {
     System.out.print(">> Enter UserName: ");
     userName=scanner.nextLine();
     System.out.println(">> Enter the Password!!");
     passWord=scanner.nextLine();
-    if(loginService.login(userName,passWord)!=null)
+    String userType=loginService.login(userName,passWord);
+    if(userType!=null)
     {
       System.out.println("____________WELCOME "+userName+"_______________");
-      //Split Control Here**
+      /**
+       * Split control Here
+       */
+      if(userType.equalsIgnoreCase("Admin"))
+        StoreMain.main();
+      else if(userType.equalsIgnoreCase("Sales"))
+        StoreMain.main();
+      else if(userType.equalsIgnoreCase("Purchase"))
+        StoreMain.main();
     }
     else{
       System.out.println(">> Login credentials invalid ! You should try with a valid user name and password. If you have any issues contact software administrator.");
