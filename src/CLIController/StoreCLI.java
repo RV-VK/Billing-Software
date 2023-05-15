@@ -74,12 +74,11 @@ public class StoreCLI {
       System.out.println(e.getMessage());
       return;
     }
-    if (createdStore.getName() != null) {
+    if (createdStore == null) System.out.println(">> Store already exists!!");
+    else if (createdStore.getName() != null) {
       System.out.println(">> Store Created Successfully!!!");
     } else if (createdStore.getName() == null) {
       System.out.println(">> Template Mismatch!!");
-    } else {
-      System.out.println(">> Store Already Exists!!");
     }
   }
 
@@ -182,7 +181,7 @@ public class StoreCLI {
           System.out.println(">> Unable to delete Store!");
           System.out.println(">> Invalid Admin Password");
         } else if (resultCode == 0) {
-          System.out.println();
+          System.out.println(">> No store exists to delete!!");
         }
       } else if (prompt.equals("n")) {
         System.out.println(">> Delete operation cancelled!!!");

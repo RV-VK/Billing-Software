@@ -85,7 +85,7 @@ public class UserCLI {
       System.out.println(e.getMessage());
       return;
     }
-    if (createdUser.getUserName() == null) {
+    if (createdUser== null) {
       System.out.println("Template Mismatch!!");
       System.out.println("Try \"user create help\" for proper syntax");
     } else if (createdUser != null) {

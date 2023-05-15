@@ -175,10 +175,13 @@ public class UserDAOImplementation implements UserDAO {
         editStatement.setLong(6, user.getPhoneNumber());
       }
       editStatement.setInt(7, user.getId());
-      editStatement.executeUpdate();
+      if(editStatement.executeUpdate()>0)
+      {
       editConnection.commit();
       editConnection.setAutoCommit(true);
       return true;
+      }
+      return false;
     } catch (SQLException e) {
       if (e.getSQLState().equals("23505")) {
         throw new UniqueConstraintException(

@@ -6,7 +6,10 @@ import java.util.List;
 
 public interface ProductDAO {
   Product create(Product product)
-      throws SQLException, ApplicationErrorException, UniqueConstraintException;
+      throws SQLException,
+          ApplicationErrorException,
+          UniqueConstraintException,
+          UnitCodeViolationException;
 
   int count() throws ApplicationErrorException;
 

@@ -21,7 +21,10 @@ public class ProductDAOImplementation implements ProductDAO {
    */
   @Override
   public Product create(Product product)
-      throws ApplicationErrorException, SQLException, UniqueConstraintException {
+      throws ApplicationErrorException,
+          SQLException,
+          UniqueConstraintException,
+          UnitCodeViolationException {
     try {
       productConnection.setAutoCommit(false);
       PreparedStatement productCreateStatement =
@@ -51,7 +54,7 @@ public class ProductDAOImplementation implements ProductDAO {
     } catch (SQLException e) {
       productConnection.rollback();
       if (e.getSQLState().equals("23503")) {
-        return null;
+        throw new UnitCodeViolationException(">> The unit Code you have entered already Exists!!");
       } else if (e.getSQLState().equals("23505")) {
         if (e.getMessage().contains("product_name"))
           throw new UniqueConstraintException(
@@ -287,11 +290,17 @@ public class ProductDAOImplementation implements ProductDAO {
       if (stock > 0) return 0;
       else {
         if (Character.isAlphabetic(parameter.charAt(0)))
-          return deleteStatement.executeUpdate(
-              "UPDATE PRODUCT SET ISDELETED='TRUE' WHERE CODE ='" + parameter + "'");
+          if (deleteStatement.executeUpdate(
+              "UPDATE PRODUCT SET ISDELETED='TRUE' WHERE CODE ='" + parameter + "'")>0)
+            return 1;
+          else
+            return -1;
         else
-          return deleteStatement.executeUpdate(
-              "UPDATE PRODUCT SET ISDELETED='TRUE' WHERE ID ='" + parameter + "'");
+          if (deleteStatement.executeUpdate(
+              "UPDATE PRODUCT SET ISDELETED='TRUE' WHERE ID ='" + parameter + "'")>0)
+            return 1;
+          else
+            return -1;
       }
     } catch (Exception e) {
       e.printStackTrace();

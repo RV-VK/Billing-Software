@@ -105,7 +105,7 @@ public class ProductCLI {
       System.out.println(e.getMessage());
       return;
     }
-    if (createdProduct.getName() == null) {
+    if (createdProduct == null) {
       System.out.println(">> Template Mismatch!!");
       System.out.println(">> Try \"product create help\" for proper syntax");
     } else if (createdProduct != null) {

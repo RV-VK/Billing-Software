@@ -17,7 +17,7 @@ public class UserServiceImplementation implements UserService {
   public User createUserService(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
     if (validate(user)) return userDAO.create(user);
-    else return new User();
+    else return null;
   }
 
   @Override

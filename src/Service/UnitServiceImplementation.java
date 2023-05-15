@@ -18,7 +18,7 @@ public class UnitServiceImplementation implements UnitService {
   public Unit createUnitService(Unit unit)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
     if (validate(unit)) return unitDAO.create(unit);
-    else return new Unit();
+    else return null;
   }
 
   @Override

@@ -22,16 +22,19 @@ public class StoreDAOImplementation implements StoreDAO {
       storeCreateResultSet.next();
       Store createdStore =
           new Store(
-              storeCreateResultSet.getString(1),
-              storeCreateResultSet.getLong(2),
-              storeCreateResultSet.getString(3),
-              storeCreateResultSet.getInt(4));
+              storeCreateResultSet.getString(2),
+              storeCreateResultSet.getLong(3),
+              storeCreateResultSet.getString(4),
+              storeCreateResultSet.getInt(5));
       storeConnection.commit();
       storeConnection.setAutoCommit(true);
       return createdStore;
-    } catch (Exception e) {
+    } catch (SQLException e) {
       storeConnection.rollback();
-      throw new ApplicationErrorException(
+      if(e.getSQLState().equals("23514"))
+        return null;
+      else
+        throw new ApplicationErrorException(
           "Application has went into an Error!!!\n Please Try again");
     }
   }
@@ -89,7 +92,8 @@ public class StoreDAOImplementation implements StoreDAO {
           } else {
             return -1;
           }
-        } else {
+        }
+        else {
           return -1;
         }
       } else {

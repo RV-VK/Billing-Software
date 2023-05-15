@@ -8,7 +8,10 @@ import java.util.List;
 
 public interface ProductService {
   Product createProductService(Product product)
-      throws SQLException, ApplicationErrorException, UniqueConstraintException;
+      throws SQLException,
+          ApplicationErrorException,
+          UniqueConstraintException,
+          UnitCodeViolationException;
 
   int countProductService() throws ApplicationErrorException;
 

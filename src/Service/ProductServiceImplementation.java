@@ -15,6 +15,7 @@ public class ProductServiceImplementation implements ProductService {
 
   /**
    * This method invokes the ProductDAO object and serves the Product creation.
+   *
    * @param product
    * @return Product
    * @throws SQLException
@@ -22,9 +23,12 @@ public class ProductServiceImplementation implements ProductService {
    * @throws UniqueConstraintException
    */
   public Product createProductService(Product product)
-      throws SQLException, ApplicationErrorException, UniqueConstraintException {
+      throws SQLException,
+          ApplicationErrorException,
+          UniqueConstraintException,
+          UnitCodeViolationException {
     if (validate(product)) return productDAO.create(product);
-    else return new Product();
+    else return null;
   }
 
   /**

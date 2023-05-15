@@ -70,7 +70,7 @@ public class UnitCLI {
       System.out.println(e.getMessage());
       return;
     }
-    if (createdUnit.getName() == null) {
+    if (createdUnit == null) {
       System.out.println(">> Template Mismatch!!");
     } else if (createdUnit != null) {
       System.out.println("Unit creation Succesful!!");
