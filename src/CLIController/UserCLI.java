@@ -30,7 +30,6 @@ public class UserCLI {
   private List<String> userAttributes =
       Arrays.asList(
           "id", "usertype", "username", "password", "firstname", "lastname", "phonenumber");
-
   public void userCreateCLI(List<String> arguments) {
     Scanner scanner = new Scanner(System.in);
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {

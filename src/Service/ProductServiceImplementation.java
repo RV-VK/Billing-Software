@@ -22,7 +22,7 @@ public class ProductServiceImplementation implements ProductService {
    * @throws ApplicationErrorException
    * @throws UniqueConstraintException
    */
-  public Product createProductService(Product product)
+  public Product create(Product product)
       throws SQLException,
           ApplicationErrorException,
           UniqueConstraintException,
@@ -36,7 +36,7 @@ public class ProductServiceImplementation implements ProductService {
    * @return count - Integer
    * @throws ApplicationErrorException
    */
-  public int countProductService() throws ApplicationErrorException {
+  public int count() throws ApplicationErrorException {
     return productDAO.count();
   }
 
@@ -47,7 +47,7 @@ public class ProductServiceImplementation implements ProductService {
    * @throws ApplicationErrorException
    * @throws PageCountOutOfBoundsException
    */
-  public List<Product> listProductService(HashMap<String, String> listattributes)
+  public List<Product> list(HashMap<String, String> listattributes)
       throws ApplicationErrorException, PageCountOutOfBoundsException {
     List<Product> productList;
     if (Collections.frequency(listattributes.values(), null) == 0
@@ -79,7 +79,7 @@ public class ProductServiceImplementation implements ProductService {
    * @throws UniqueConstraintException
    * @throws UnitCodeViolationException
    */
-  public int editProductService(Product product)
+  public int edit(Product product)
       throws SQLException,
           ApplicationErrorException,
           UniqueConstraintException,
@@ -99,7 +99,7 @@ public class ProductServiceImplementation implements ProductService {
    * @return resultCode - Integer
    * @throws ApplicationErrorException
    */
-  public int deleteProductService(String parameter) throws ApplicationErrorException {
+  public int delete(String parameter) throws ApplicationErrorException {
     return productDAO.delete(parameter);
   }
 

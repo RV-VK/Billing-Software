@@ -100,7 +100,7 @@ public class ProductCLI {
     Product product = new Product(code, name, unitCode, type, stock, price);
     Product createdProduct;
     try {
-      createdProduct = productService.createProductService(product);
+      createdProduct = productService.create(product);
     } catch (Exception e) {
       System.out.println(e.getMessage());
       return;
@@ -114,7 +114,7 @@ public class ProductCLI {
     }
   }
 
-  /**
+   /**
    * This method handles the Presentation layer of the List function.
    *
    * @param arguments - List of Command Arguments.
@@ -184,7 +184,7 @@ public class ProductCLI {
           listAttributesMap.put("Searchtext", searchText);
           listAttributesMap.put("Pagelength", "20");
           listAttributesMap.put("Pagenumber", String.valueOf(1));
-          resultList = productService.listProductService(listAttributesMap);
+          resultList = productService.list(listAttributesMap);
           listHelper(listAttributesMap);
         } else {
           System.out.println("Given attribute is not a searchable attribute!!");
@@ -212,7 +212,7 @@ public class ProductCLI {
             }
             listAttributesMap.put("Pagelength", String.valueOf(pageLength));
             listAttributesMap.put("Pagenumber", "1");
-            resultList = productService.listProductService(listAttributesMap);
+            resultList = productService.list(listAttributesMap);
             listHelper(listAttributesMap);
           } else {
             System.out.println(">> Invalid Command Extension format !!!");
@@ -245,7 +245,7 @@ public class ProductCLI {
             }
             listAttributesMap.put("Pagelength", String.valueOf(pageLength));
             listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
-            resultList = productService.listProductService(listAttributesMap);
+            resultList = productService.list(listAttributesMap);
             listHelper(listAttributesMap);
           } else {
             System.out.println("Invalid Extension Given!!!");
@@ -272,13 +272,10 @@ public class ProductCLI {
    * This method serves the List function.
    *
    * @param listAttributesMap
-   * @throws PageCountOutOfBoundsException
-   * @throws ApplicationErrorException
    */
-  private void listHelper(HashMap<String, String> listAttributesMap)
-      throws PageCountOutOfBoundsException, ApplicationErrorException {
+  private void listHelper(HashMap<String, String> listAttributesMap) {
     try{
-    resultList = productService.listProductService(listAttributesMap);
+    resultList = productService.list(listAttributesMap);
     if (resultList.size() == 0) {
       System.out.println(">> Given SearchText does not exist!!!");
     }
@@ -315,7 +312,7 @@ public class ProductCLI {
    */
   public void count() throws ApplicationErrorException {
     ProductService countProduct = new ProductServiceImplementation();
-    int productCount = countProduct.countProductService();
+    int productCount = countProduct.count();
     System.out.println(">> ProductCount " + productCount);
   }
 
@@ -418,7 +415,7 @@ public class ProductCLI {
     }
     int statusCode;
     try {
-      statusCode = productService.editProductService(product);
+      statusCode = productService.edit(product);
     } catch (Exception e) {
       System.out.println(e.getMessage());
       return;
@@ -483,13 +480,13 @@ public class ProductCLI {
     System.out.println(">> Are you sure want to delete the product y/n ? : ");
     String prompt = scanner.nextLine();
     if (prompt.equals("y")) {
-      if (productService.deleteProductService(arguments.get(2)) == 1) {
+      if (productService.delete(arguments.get(2)) == 1) {
         System.out.println("Product Deletion Successfull!!!");
-      } else if (productService.deleteProductService(arguments.get(2)) == -1) {
+      } else if (productService.delete(arguments.get(2)) == -1) {
         System.out.println(">> Product Deletion Failed!!!");
         System.out.println(">> Please check the Id  you have entered!!!");
         System.out.println("Try \"product delete help\" for proper syntax");
-      } else if (productService.deleteProductService(arguments.get(2)) == 0) {
+      } else if (productService.delete(arguments.get(2)) == 0) {
         System.out.println(">> Product cannot be deleted!!!");
         System.out.println(">>Selected Product has stock left and should not be deleted!!!");
         System.out.println(">>Please check the selected product to be deleted!!!");

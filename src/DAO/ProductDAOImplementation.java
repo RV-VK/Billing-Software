@@ -175,8 +175,10 @@ public class ProductDAOImplementation implements ProductDAO {
       ResultSet countResultSet=countStatement.executeQuery();
       countResultSet.next();
       count=countResultSet.getInt(1);
-      if(count<offset)
-        throw new PageCountOutOfBoundsException(">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "+((count/pageLength)+1));
+      if (count < offset)
+        throw new PageCountOutOfBoundsException(
+            ">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "
+                + ((count / pageLength) + 1));
       ResultSet resultSet=listStatement.executeQuery();
       return listHelper(resultSet);
     } catch (SQLException e) {

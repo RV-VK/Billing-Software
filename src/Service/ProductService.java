@@ -7,22 +7,22 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface ProductService {
-  Product createProductService(Product product)
+  Product create(Product product)
       throws SQLException,
           ApplicationErrorException,
           UniqueConstraintException,
           UnitCodeViolationException;
 
-  int countProductService() throws ApplicationErrorException;
+  int count() throws ApplicationErrorException;
 
-  List<Product> listProductService(HashMap<String, String> listattributes)
+  List<Product> list(HashMap<String, String> listattributes)
       throws ApplicationErrorException, PageCountOutOfBoundsException;
 
-  int editProductService(Product product)
+  int edit(Product product)
       throws SQLException,
           ApplicationErrorException,
           UniqueConstraintException,
           UnitCodeViolationException;
 
-  int deleteProductService(String parameter) throws ApplicationErrorException;
+  int delete(String parameter) throws ApplicationErrorException;
 }
