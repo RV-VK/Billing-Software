@@ -212,12 +212,36 @@ public class AdminMain {
           break;
         case "help":
           String help =
-              "product\n"
-                  + "\t    create - productname,unit,type,costprice\n"
-                  + "\t    count\n"
-                  + "\t    list\n"
-                  + "\t    edit - productname,unit,type,costprice\n"
-                  + "\t    delete - y/n with productname or productid";
+              "\t\tstore\n"
+                  + "\t\t\tcreate  - name, phone number, address, gst number\n"
+                  + "\t\t\tedit - name, phone number, address, gst number\n"
+                  + "\t\t\tdelete - y/n with admin password\n"
+                  + "\t\t\n"
+                  + "\t\tuser\n"
+                  + "\t\t\tcreate - usertype, username,  password, first name, last name, phone number\n"
+                  + "\t\t\tcount \n"
+                  + "\t\t\tlist \n"
+                  + "\t\t\tedit - usertype, username,  password, first name, last name, phone number\n"
+                  + "\t\t\tdelete - y/n with username\n"
+                  + "\t       \n"
+                  + "\t       product\n"
+                  + "\t\t    \tcreate - productname,unit,type,costprice\n"
+                  + "\t\t    \tcount\n"
+                  + "\t\t    \tlist\n"
+                  + "\t\t    \tedit - productname,unit,type,costprice\n"
+                  + "\t\t    \tdelete - y/n with productname or productid\n"
+                  + "\t       \n"
+                  + "\t       unit\n"
+                  + "\t \t\tcreate - name, code, description, isdividable\n"
+                  + "\t \t\tlist -\n"
+                  + "\t \t\tedit - name, code, description, isdividable\n"
+                  + "\t \t\tdelete - code\n"
+                  + "\t       \n"
+                  + "\t       stock\n"
+                  + "\t    \t\tupdate - code, quantity\n"
+                  + "\t       \n"
+                  + "\t       price\n"
+                  + "\t    \t\tupdate - code, price";
           System.out.println(help);
           break;
         default:

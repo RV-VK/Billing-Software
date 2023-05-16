@@ -26,9 +26,9 @@ public class LoginCLI {
     if (loginService.checkIfInitialSetup()) {
 
         System.out.println(
-                          "\t\t\t*********************************************************\n"
-                        + "\t\t\t*********************   WELCOME   ***********************\n"
-                        + "\t\t\t*********************************************************\n\n");
+                          "\t\t\t\t\t\t*********************************************************\n"
+                        + "\t\t\t\t\t\t*********************   WELCOME   ***********************\n"
+                        + "\t\t\t\t\t\t*********************************************************\n\n");
         System.out.println(
                 "> Welcome to the Billing software setup. You have to create admin user to continue with the setup.\n\n");
       do{
@@ -44,9 +44,9 @@ public class LoginCLI {
         System.out.print(">> Enter the Admin Username: ");
         userName = scanner.nextLine();
         while (true) {
-          System.out.print(">> Enter the password:");
+          System.out.print(">> Enter the password: ");
           passWord = scanner.nextLine();
-          System.out.print(">> Renter the Passowrd: ");
+          System.out.print(">> Renter the password: ");
           if (scanner.nextLine().equals(passWord)) break;
           else System.out.println("Passwords do not Match!-- Re-enter");
         }
@@ -89,7 +89,7 @@ public class LoginCLI {
     do{
     System.out.print(">> Enter UserName: ");
     userName=scanner.nextLine();
-    System.out.print(">> Enter the Password!!");
+    System.out.print(">> Enter the Password: ");
     passWord=scanner.nextLine();
     String userType;
     try{
@@ -102,7 +102,7 @@ public class LoginCLI {
     }
     if(userType!=null)
     {
-      System.out.print("____________WELCOME "+userName);
+      System.out.print("\t\t\t\t\t____________WELCOME "+userName);
       /**
        * Split control Here
        */

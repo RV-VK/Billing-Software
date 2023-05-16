@@ -12,7 +12,7 @@ public class ProductServiceImplementation implements ProductService {
   private ProductDAO productDAO = new ProductDAOImplementation();
   private final String NAME_REGEX = "^[a-zA-Z\\s]{1,30}$";
   private final String CODE_REGEX = "^[a-zA-Z0-9]{2,6}$";
-  private final String NUMBER_REGEX="^[0-9]";
+  private final String NUMBER_REGEX="^[0-9]*$";
 
   /**
    * This method invokes the ProductDAO object and serves the Product creation.

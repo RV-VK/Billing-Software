@@ -17,8 +17,7 @@ public class StoreCLI {
   private StoreService storeService = new StoreServiceImplementation();
   private final Scanner scanner = new Scanner(System.in);
 
-  public void storeCreateCLI(List<String> arguments)
-      throws SQLException, ApplicationErrorException {
+  public void storeCreateCLI(List<String> arguments) {
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
       System.out.println(
           ">> Create store using the following template,\n"
@@ -74,7 +73,8 @@ public class StoreCLI {
       System.out.println(e.getMessage());
       return;
     }
-    if (createdStore == null) System.out.println(">> Store already exists!!");
+    if (createdStore == null)
+      System.out.println(">> Store already exists!!");
     else if (createdStore.getName() != null) {
       System.out.println(">> Store Created Successfully!!!");
     } else if (createdStore.getName() == null) {

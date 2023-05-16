@@ -36,6 +36,7 @@ public class UnitCLI {
       String parameters = scanner.nextLine();
       List<String> unitAttributes = List.of(parameters.split("\\,"));
       createHelper(unitAttributes);
+      return;
     }
     createHelper(arguments.subList(2, arguments.size()));
   }

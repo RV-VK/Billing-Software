@@ -25,7 +25,7 @@ public class StockPriceCLI {
     {
         int resultCode;
         try{
-        resultCode=productService.updateStock(arguments.get(2),arguments.get(3));
+        resultCode=productService.updateStock(arguments.get(2).trim(),arguments.get(3).trim());
         }
         catch(Exception e)
         {
@@ -64,7 +64,7 @@ public class StockPriceCLI {
     {
         int resultCode;
         try{
-            resultCode=productService.updatePrice(arguments.get(2),arguments.get(3));
+            resultCode=productService.updatePrice(arguments.get(2).trim(),arguments.get(3).trim());
         }
         catch(Exception e)
         {
