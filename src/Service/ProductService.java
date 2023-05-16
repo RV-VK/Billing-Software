@@ -25,4 +25,6 @@ public interface ProductService {
           UnitCodeViolationException;
 
   int delete(String parameter) throws ApplicationErrorException;
+  int updateStock(String code,String stock) throws ApplicationErrorException;
+  int updatePrice(String code,String price) throws ApplicationErrorException;
 }

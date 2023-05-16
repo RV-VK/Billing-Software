@@ -342,4 +342,20 @@ public class ProductDAOImplementation implements ProductDAO {
       throw new ApplicationErrorException(e.getMessage());
     }
   }
+  public int updateStock(String code,float stock) throws ApplicationErrorException {
+    try{
+    return productConnection.createStatement().executeUpdate("UPDATE PRODUCT SET STOCK="+stock+" WHERE CODE='"+code+"'");
+    }catch(Exception e)
+    {
+      throw new ApplicationErrorException(e.getMessage());
+    }
+  }
+  public int updatePrice(String code,double price) throws ApplicationErrorException {
+    try{
+      return productConnection.createStatement().executeUpdate("UPDATE PRODUCT SET PRICE="+price+" WHERE CODE='"+code+"'");
+    }catch(Exception e)
+    {
+      throw new ApplicationErrorException(e.getMessage());
+    }
+  }
 }

@@ -189,8 +189,26 @@ public class AdminMain {
           }
           break;
         case "price":
+          StockPriceCLI stockPriceCLI=new StockPriceCLI();
+          switch(operationString)
+          {
+            case "update":
+              stockPriceCLI.updatePrice(commandlist);
+              break;
+            default:
+              System.out.println(">> Invalid Command! Not found!");
+          }
           break;
         case "stock":
+          StockPriceCLI stockPriceCLI1=new StockPriceCLI();
+          switch(operationString)
+          {
+            case "update":
+              stockPriceCLI1.updateStock(commandlist);
+              break;
+            default:
+              System.out.println(">> Invalid Command! Not found!");
+          }
           break;
         case "help":
           String help =

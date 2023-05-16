@@ -12,6 +12,7 @@ public class ProductServiceImplementation implements ProductService {
   private ProductDAO productDAO = new ProductDAOImplementation();
   private final String NAME_REGEX = "^[a-zA-Z\\s]{1,30}$";
   private final String CODE_REGEX = "^[a-zA-Z0-9]{2,6}$";
+  private final String NUMBER_REGEX="^[0-9]";
 
   /**
    * This method invokes the ProductDAO object and serves the Product creation.
@@ -103,6 +104,18 @@ public class ProductServiceImplementation implements ProductService {
     return productDAO.delete(parameter);
   }
 
+  public int updateStock(String code,String stock) throws ApplicationErrorException {
+    if (stock.matches(NUMBER_REGEX) && code.matches(CODE_REGEX))
+      return productDAO.updateStock(code, Float.parseFloat(stock));
+    else return -1;
+  }
+
+  public int updatePrice(String code,String price) throws ApplicationErrorException{
+    if(price.matches(NUMBER_REGEX) && code.matches(CODE_REGEX))
+      return productDAO.updatePrice(code,Double.parseDouble(price));
+    else
+      return -1;
+  }
   /**
    * This method validates the Product attributes.
    * @param product
