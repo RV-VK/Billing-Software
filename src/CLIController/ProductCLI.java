@@ -351,9 +351,12 @@ public class ProductCLI {
       String[] productAttributes = parameters.split(",");
       List<String> splitAttributes = new ArrayList<>();
       for (String string : productAttributes) {
-        String[] keyValues = string.split(":");
-        splitAttributes.add(keyValues[0]);
-        splitAttributes.add(keyValues[1]);
+        if (string.contains(":")) {
+          String[] keyValues = string.split(":");
+          splitAttributes.add(keyValues[0]);
+          splitAttributes.add(keyValues[1]);
+        }
+        else System.out.println(">> Invalid Format! Edit Attibutes must be split as Key Value Pair!\n>> Try \"product edit help\" for syntax");
       }
       editHelper(splitAttributes);
     } else if (arguments.size() > 14) {
