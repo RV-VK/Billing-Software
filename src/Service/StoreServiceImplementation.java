@@ -33,9 +33,9 @@ public class StoreServiceImplementation implements StoreService {
   }
 
   private boolean validate(Store store) {
-    if (!store.getName().matches(NAME_REGEX)
-        || !String.valueOf(store.getPhoneNumber()).matches(PHONE_NUMBER_REGEX)
-        || !String.valueOf(store.getGstCode()).matches(GST_NUMBER_REGEX)) return true;
+    if ((store.getName()!=null&&!store.getName().matches(NAME_REGEX))
+        || (store.getPhoneNumber()!=0&&!String.valueOf(store.getPhoneNumber()).matches(PHONE_NUMBER_REGEX))
+        || (store.getGstCode()!=null&&!String.valueOf(store.getGstCode()).matches(GST_NUMBER_REGEX))) return true;
     else return false;
   }
 }

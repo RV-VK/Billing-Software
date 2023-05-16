@@ -122,9 +122,9 @@ public class ProductServiceImplementation implements ProductService {
    * @return status - Boolean.
    */
   private boolean validate(Product product) {
-    if (!product.getName().matches(NAME_REGEX)
-        || !product.getType().matches(NAME_REGEX)
-        || !product.getCode().matches(CODE_REGEX)) return false;
+    if ((product.getName()!=null&&!product.getName().matches(NAME_REGEX))
+        || (product.getType()!=null && !product.getType().matches(NAME_REGEX))
+        || (product.getCode()!=null&&!product.getCode().matches(CODE_REGEX))) return false;
     else return true;
   }
 }

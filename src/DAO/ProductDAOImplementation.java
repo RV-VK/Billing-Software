@@ -246,8 +246,8 @@ public class ProductDAOImplementation implements ProductDAO {
         return true;
       }
     } catch (SQLException e) {
+      productConnection.rollback();
       if (e.getSQLState().equals("23505")) {
-        productConnection.rollback();
         if (e.getMessage().contains("product_code")) {
           throw new UniqueConstraintException(
               ">>Code must be unique!!!\n>>The code you have entered already exists!!!");
@@ -256,10 +256,8 @@ public class ProductDAOImplementation implements ProductDAO {
               "Name must be unique!!!\n>>The Name you have entered already exists!!!");
         }
       } else if (e.getSQLState().equals("23503")) {
-        productConnection.rollback();
-        throw new UnitCodeViolationException(">>The unitcode you have entered doesnt exist!!!");
+        throw new UnitCodeViolationException(">>The unitcode you have entered doesn't exist!!!");
       } else {
-        productConnection.rollback();
         e.printStackTrace();
         throw new ApplicationErrorException(
             "Application has went into an Error!!!\n Please Try again");

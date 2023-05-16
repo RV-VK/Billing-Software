@@ -184,7 +184,6 @@ public class ProductCLI {
           listAttributesMap.put("Searchtext", searchText);
           listAttributesMap.put("Pagelength", "20");
           listAttributesMap.put("Pagenumber", String.valueOf(1));
-          resultList = productService.list(listAttributesMap);
           listHelper(listAttributesMap);
         } else {
           System.out.println("Given attribute is not a searchable attribute!!");
@@ -212,7 +211,6 @@ public class ProductCLI {
             }
             listAttributesMap.put("Pagelength", String.valueOf(pageLength));
             listAttributesMap.put("Pagenumber", "1");
-            resultList = productService.list(listAttributesMap);
             listHelper(listAttributesMap);
           } else {
             System.out.println(">> Invalid Command Extension format !!!");
@@ -245,7 +243,6 @@ public class ProductCLI {
             }
             listAttributesMap.put("Pagelength", String.valueOf(pageLength));
             listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
-            resultList = productService.list(listAttributesMap);
             listHelper(listAttributesMap);
           } else {
             System.out.println("Invalid Extension Given!!!");
@@ -271,7 +268,7 @@ public class ProductCLI {
   /**
    * This method serves the List function.
    *
-   * @param listAttributesMap
+   * @param listAttributesMap - Attribute list of the List function
    */
   private void listHelper(HashMap<String, String> listAttributesMap) {
     try{
@@ -308,7 +305,7 @@ public class ProductCLI {
   /**
    * This method handles the Presentation Layer of the Count function.
    *
-   * @throws ApplicationErrorException
+   * @throws ApplicationErrorException - Exception thrown due to Persistence problem.
    */
   public void count() throws ApplicationErrorException {
     ProductService countProduct = new ProductServiceImplementation();
@@ -413,13 +410,14 @@ public class ProductCLI {
       } else {
         System.out.println(">> Invalid attribute given!!! : " + editAttributes.get(index));
         System.out.println(">> Try \"product edit help\" for proper syntax");
-        break;
+        return;
       }
     }
     int statusCode;
     try {
       statusCode = productService.edit(product);
     } catch (Exception e) {
+      e.printStackTrace();
       System.out.println(e.getMessage());
       return;
     }

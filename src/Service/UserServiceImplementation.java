@@ -67,12 +67,12 @@ public class UserServiceImplementation implements UserService {
   }
 
   private boolean validate(User user) {
-    if (!user.getUserName().matches(NAME_REGEX)
-        || !user.getFirstName().matches(NAME_REGEX)
-        || !user.getLastName().matches(NAME_REGEX)
-        || !user.getPassWord().matches(PASSWORD_REGEX)
-        || !String.valueOf(user.getPhoneNumber()).matches(PHONE_NUMBER_REGEX)
-        || !userTypeList.contains(user.getUserType())) return false;
+    if ((user.getUserName()!=null&&!user.getUserName().matches(NAME_REGEX))
+        || (user.getFirstName()!=null&&!user.getFirstName().matches(NAME_REGEX))
+        || (user.getLastName()!=null&&!user.getLastName().matches(NAME_REGEX))
+        || (user.getPassWord()!=null&&!user.getPassWord().matches(PASSWORD_REGEX))
+        || (user.getPhoneNumber()!=0&&!String.valueOf(user.getPhoneNumber()).matches(PHONE_NUMBER_REGEX))
+        || (user.getUserType()!=null&&!userTypeList.contains(user.getUserType()))) return false;
     else return true;
   }
 }

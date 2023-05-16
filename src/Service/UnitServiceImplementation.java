@@ -42,7 +42,7 @@ public class UnitServiceImplementation implements UnitService {
   }
 
   private boolean validate(Unit unit) {
-    if (!unit.getName().matches(NAME_REGEX) || !unit.getCode().matches(CODE_REGEX)) return false;
+    if ((unit.getName()!=null&&!unit.getName().matches(NAME_REGEX)) || (unit.getCode()!=null&&!unit.getCode().matches(CODE_REGEX))) return false;
     else return true;
   }
 }

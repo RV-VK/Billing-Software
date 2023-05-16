@@ -350,7 +350,7 @@ public class UserCLI {
       } else {
         System.out.println(">> Invalid attribute given!!! : " + editAttributes.get(index));
         System.out.println(">> Try \"user edit help\" for proper syntax");
-        break;
+        return;
       }
     }
     int statusCode;

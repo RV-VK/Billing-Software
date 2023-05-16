@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class StoreCLI {
   private String name;
   private long phoneNumber;
-  private int GSTNumber;
+  private String GSTNumber;
   private String address;
   private StoreService storeService = new StoreServiceImplementation();
   private final Scanner scanner = new Scanner(System.in);
@@ -58,13 +58,8 @@ public class StoreCLI {
       System.out.println(">> Try \"store create help\" for proper syntax");
       return;
     }
-    try {
-      GSTNumber = Integer.parseInt(storeAttributes.get(3).trim());
-    } catch (Exception e) {
-      System.out.println(">> Invalid format for 4th argument \"gstnumber\"");
-      System.out.println(">> Try \"store create help\" for proper syntax");
-      return;
-    }
+
+    GSTNumber =storeAttributes.get(3).trim();
     Store store = new Store(name, phoneNumber, address, GSTNumber);
     Store createdStore;
     try {
@@ -132,14 +127,9 @@ public class StoreCLI {
       } else if (editAttributes.get(index).contains("address")) {
         store.setAddress(editAttributes.get(index + 1).trim());
       } else if (editAttributes.get(index).contains("gstnumber")) {
-        try {
-          GSTNumber = Integer.parseInt(editAttributes.get(index + 1).trim());
-        } catch (NumberFormatException e) {
-          System.out.println(">> GSTCode must be numeric!!");
-          System.out.println(">> Try \"store edit help\" for proper syntax!!");
-          return;
-        }
-        store.setGstCode(GSTNumber);
+
+          GSTNumber = editAttributes.get(index + 1).trim();
+          store.setGstCode(GSTNumber);
       } else {
         System.out.println(">> Invalid attribute given!!!: " + editAttributes.get(index));
         System.out.println(">> Try \"store edit help\" for proper Syntax");

@@ -17,7 +17,7 @@ public class StoreDAOImplementation implements StoreDAO {
       unitCreateStatement.setString(1, store.getName());
       unitCreateStatement.setLong(2, store.getPhoneNumber());
       unitCreateStatement.setString(3, store.getAddress());
-      unitCreateStatement.setInt(4, store.getGstCode());
+      unitCreateStatement.setString(4, store.getGstCode());
       ResultSet storeCreateResultSet = unitCreateStatement.executeQuery();
       storeCreateResultSet.next();
       Store createdStore =
@@ -25,7 +25,7 @@ public class StoreDAOImplementation implements StoreDAO {
               storeCreateResultSet.getString(2),
               storeCreateResultSet.getLong(3),
               storeCreateResultSet.getString(4),
-              storeCreateResultSet.getInt(5));
+              storeCreateResultSet.getString(5));
       storeConnection.commit();
       storeConnection.setAutoCommit(true);
       return createdStore;
@@ -53,11 +53,7 @@ public class StoreDAOImplementation implements StoreDAO {
         editStatement.setLong(2, store.getPhoneNumber());
       }
       editStatement.setString(3, store.getAddress());
-      if (store.getGstCode() == 0) {
-        editStatement.setNull(4, Types.INTEGER);
-      } else {
-        editStatement.setInt(4, store.getGstCode());
-      }
+      editStatement.setString(4,store.getGstCode());
       if (editStatement.executeUpdate() > 0) {
         storeConnection.commit();
         storeConnection.setAutoCommit(true);

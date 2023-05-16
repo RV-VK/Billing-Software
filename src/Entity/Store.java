@@ -4,11 +4,11 @@ public class Store {
   private String name;
   private long phoneNumber;
   private String address;
-  private int gstCode;
+  private String gstCode;
 
   public Store() {}
 
-  public Store(String name, long phoneNumber, String address, int gstCode) {
+  public Store(String name, long phoneNumber, String address, String gstCode) {
     this.name = name;
     this.phoneNumber = phoneNumber;
     this.address = address;
@@ -39,11 +39,11 @@ public class Store {
     this.address = address;
   }
 
-  public int getGstCode() {
+  public String getGstCode() {
     return gstCode;
   }
 
-  public void setGstCode(int gstCode) {
+  public void setGstCode(String gstCode) {
     this.gstCode = gstCode;
   }
 }
