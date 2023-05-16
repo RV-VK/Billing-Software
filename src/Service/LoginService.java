@@ -10,6 +10,5 @@ public interface LoginService {
     boolean checkIfInitialSetup() throws SQLException;
     User createUser(User user) throws UniqueConstraintException, SQLException, ApplicationErrorException;
 
-    String  login(String userName,String passWord) throws SQLException;
-
+  String login(String userName, String passWord) throws SQLException, ApplicationErrorException;
 }

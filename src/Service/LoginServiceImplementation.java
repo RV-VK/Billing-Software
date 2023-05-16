@@ -17,11 +17,13 @@ public class LoginServiceImplementation implements  LoginService{
 
     @Override
     public User createUser(User user) throws UniqueConstraintException, SQLException, ApplicationErrorException {
-        return userDAO.create(user);
+        UserService userService=new UserServiceImplementation();
+        return userService.createUserService(user);
     }
 
-    @Override
-    public String  login(String userName, String passWord) throws SQLException {
+  @Override
+  public String login(String userName, String passWord)
+      throws SQLException, ApplicationErrorException {
         return userDAO.login(userName,passWord);
     }
 

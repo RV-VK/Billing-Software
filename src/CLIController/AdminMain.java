@@ -8,13 +8,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
-public class StoreMain {
+public class AdminMain {
   static Scanner scanner;
 
-  public static void main()
+  public static void AdminView()
       throws ApplicationErrorException, PageCountOutOfBoundsException, SQLException {
     scanner = new Scanner(System.in);
-    System.out.println("___________________WELCOME TO THE BILLING SOFTWARE_____________________");
+      System.out.println(" TO THE BILLING SOFTWARE_____________________");
+    System.out.println(">> Try \"help\" to know better!\n");
     do {
       System.out.print("> ");
       String command = scanner.nextLine();
@@ -34,9 +35,10 @@ public class StoreMain {
         Collections.addAll(commandlist, commandlet);
         commandlist.addAll(Arrays.asList(parts).subList(1, parts.length));
       }
-      commandlist.stream().forEach(string -> string.trim());
       String commandString = commandlist.get(0);
-      String operationString = commandlist.get(1);
+      String operationString="";
+      if(commandlist.size()>1)
+         operationString = commandlist.get(1);
       switch (commandString) {
         case "product":
           ProductCLI productCLI = new ProductCLI();

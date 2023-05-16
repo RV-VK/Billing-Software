@@ -216,20 +216,26 @@ public class UserDAOImplementation implements UserDAO {
 
   public boolean checkIfInitialSetup() throws SQLException {
     ResultSet resultSet =
-        userConnection.createStatement().executeQuery("SELECT COUNT(ID) FROM STORE");
+        userConnection.createStatement().executeQuery("SELECT COUNT(ID) FROM USERS WHERE USERTYPE='Admin'");
     resultSet.next();
     return resultSet.getInt(1) == 0;
   }
 
   @Override
-  public String login(String userName, String passWord) throws SQLException {
-    ResultSet resultSet =
-        userConnection
+  public String login(String userName, String passWord)
+      throws SQLException, ApplicationErrorException {
+    try{
+    ResultSet resultSet = userConnection
             .createStatement()
-            .executeQuery("SELECT PASSWORD,USERTYPE FROM USERS WHERE USERNAME=?" + userName);
+            .executeQuery("SELECT PASSWORD,USERTYPE FROM USERS WHERE USERNAME='"+userName+"'");
     if (resultSet.next()) {
       if (resultSet.getString(1).equals(passWord)) return resultSet.getString(2);
       else return null;
     } else return null;
+    }
+    catch(SQLException e)
+    {
+      throw new ApplicationErrorException(e.getMessage());
+    }
   }
 }

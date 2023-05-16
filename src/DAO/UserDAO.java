@@ -21,6 +21,5 @@ public interface UserDAO {
 
   boolean checkIfInitialSetup() throws SQLException;
 
-  String login(String user, String passWord) throws SQLException;
-
+  String login(String user, String passWord) throws SQLException, ApplicationErrorException;
 }
