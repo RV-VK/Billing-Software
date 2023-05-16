@@ -10,7 +10,7 @@ import java.util.List;
 
 public class PurchaseServiceImplementation implements PurchaseService {
 
-  private PurchaseDAO purchaseDAO = new PurchaseDAOImplementation();
+  private final PurchaseDAO purchaseDAO = new PurchaseDAOImplementation();
 
   @Override
   public Purchase createPurchaseService(Purchase purchase)
@@ -32,8 +32,7 @@ public class PurchaseServiceImplementation implements PurchaseService {
         return null;
       }
     }
-    Purchase createdPurchase = purchaseDAO.create(purchase);
-    return createdPurchase;
+    return purchaseDAO.create(purchase);
   }
 
   @Override

@@ -70,7 +70,7 @@ public class SalesCLI {
       if (createdSale == null) {
         System.out.println(
             ">> Out of Stock Product Entered Please check the entered products!!");
-      } else if (createdSale != null&&createdSale.getDate()!=null) {
+      } else if (createdSale.getDate() != null) {
         System.out.println(
             "**********************************************************************************");
         System.out.println("\t\tSALES BILL " + createdSale.getId());
@@ -81,7 +81,7 @@ public class SalesCLI {
             "----------------------------------------------------------------------------------");
         for (int i = 0; i < createdSale.getSalesItemList().size(); i++) {
           System.out.printf(
-              "%d\t\t%-20s\t\t%.2f\t\t%.2f\t\t%.2f%n",
+              "%d\t\t%-20s\t\t\t%.1f\t\t%.2f\t\t%.2f%n",
               i + 1,
               createdSale.getSalesItemList().get(i).getProduct().getName(),
               createdSale.getSalesItemList().get(i).getQuantity(),
@@ -91,9 +91,12 @@ public class SalesCLI {
         }
         System.out.println(
             "----------------------------------------------------------------------------------");
-        System.out.printf("GRAND TOTAL\t\t\t\t\t\t\t%.2f%n", createdSale.getGrandTotal());
+        System.out.printf("GRAND TOTAL\t\t\t\t\t\t\t\t\t\t\t%.2f%n", createdSale.getGrandTotal());
         System.out.println(
             "----------------------------------------------------------------------------------");
+      }
+      else if(createdSale.getDate()==null){
+        System.out.println(">> Non-Existing Product Code Entered!! Please check the Product codes!");
       }
     }
   }

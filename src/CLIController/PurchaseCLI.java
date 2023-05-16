@@ -80,9 +80,7 @@ public class PurchaseCLI {
         System.out.println(e.getMessage());
       }
       if(createdPurchase.getDate()==null)
-      {
-        System.out.println(">> The product code you have entered do not exist!!");
-      }
+        System.out.println(">> The product code you have entered do not exist!! Please check the product codes");
       else if (createdPurchase != null) {
         System.out.println(
             "**********************************************************************************");
