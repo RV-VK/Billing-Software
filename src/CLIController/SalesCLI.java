@@ -309,7 +309,6 @@ public class SalesCLI {
       else
         return;
     }
-      System.out.println(salesList);
     for (Sales sales : salesList) {
       System.out.print("id: " + sales.getId() + ", date: " + sales.getDate() + ", ");
       System.out.print("[");

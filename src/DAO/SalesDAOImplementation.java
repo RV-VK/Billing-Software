@@ -111,7 +111,7 @@ public class SalesDAOImplementation implements SalesDAO {
   @Override
   public List list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException {
-    int count=Integer.MAX_VALUE;
+    int count;
     try {
       String EntryCount="SELECT COUNT(*) OVER() FROM SALES WHERE "
               + attribute
@@ -156,7 +156,6 @@ public class SalesDAOImplementation implements SalesDAO {
 
   @Override
   public List list(String searchText) throws ApplicationErrorException {
-    List<Sales> salesList = new ArrayList<>();
     try {
       Statement listStatement = salesConnection.createStatement();
       String listQuery =
