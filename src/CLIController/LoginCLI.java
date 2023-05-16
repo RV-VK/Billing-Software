@@ -102,7 +102,7 @@ public class LoginCLI {
     }
     if(userType!=null)
     {
-      System.out.print("\t\t\t\t\t____________WELCOME "+userName);
+      System.out.print("\n\n\n\t\t\t\t\t____________WELCOME "+userName);
       /**
        * Split control Here
        */

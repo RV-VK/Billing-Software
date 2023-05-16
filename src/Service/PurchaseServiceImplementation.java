@@ -38,26 +38,24 @@ public class PurchaseServiceImplementation implements PurchaseService {
 
   @Override
   public int countPurchaseService(String parameter) throws ApplicationErrorException {
-    PurchaseDAO countPurchaseDAO = new PurchaseDAOImplementation();
     String dateRegex = "([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))";
     if (parameter != null) {
       if (!parameter.matches(dateRegex)) return -1;
     }
-    return countPurchaseDAO.count(parameter);
+    return purchaseDAO.count(parameter);
   }
 
   @Override
   public List<Purchase> listPurchaseService(HashMap<String, String> listattributes)
-      throws PageCountOutOfBoundsException, ApplicationErrorException {
+      throws ApplicationErrorException {
     List<Purchase> purchaseList;
-    PurchaseDAO listPurchaseDAO = new PurchaseDAOImplementation();
     if (Collections.frequency(listattributes.values(), null) == 0
         || Collections.frequency(listattributes.values(), null) == 1) {
       int pageLength = Integer.parseInt(listattributes.get("Pagelength"));
       int pageNumber = Integer.parseInt(listattributes.get("Pagenumber"));
       int offset = (pageLength * pageNumber) - pageLength;
       purchaseList =
-          listPurchaseDAO.list(
+          purchaseDAO.list(
               listattributes.get("Attribute"),
               listattributes.get("Searchtext"),
               pageLength,
@@ -65,7 +63,7 @@ public class PurchaseServiceImplementation implements PurchaseService {
       return purchaseList;
     } else if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 1
         && listattributes.get("Searchtext") != null) {
-      purchaseList = listPurchaseDAO.list(listattributes.get("Searchtext"));
+      purchaseList = purchaseDAO.list(listattributes.get("Searchtext"));
       return purchaseList;
     }
     return null;
@@ -73,7 +71,6 @@ public class PurchaseServiceImplementation implements PurchaseService {
 
   @Override
   public int deletePurchaseService(String invoice) throws ApplicationErrorException {
-    PurchaseDAO purchaseDeletDAO = new PurchaseDAOImplementation();
-    return purchaseDeletDAO.delete(Integer.parseInt(invoice));
+    return purchaseDAO.delete(Integer.parseInt(invoice));
   }
 }

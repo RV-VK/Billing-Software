@@ -149,8 +149,7 @@ public class SalesCLI {
     }
   }
 
-  public void salesListCLI(List<String> arguments)
-      throws PageCountOutOfBoundsException, ApplicationErrorException {
+  public void salesListCLI(List<String> arguments) {
     listAttributesMap.put("Pagelength", null);
     listAttributesMap.put("Pagenumber", null);
     listAttributesMap.put("Attribute", null);
@@ -299,12 +298,16 @@ public class SalesCLI {
     }
   }
 
-  private void listHelper(HashMap<String, String> listAttributesMap)
-      throws PageCountOutOfBoundsException, ApplicationErrorException {
+  private void listHelper(HashMap<String, String> listAttributesMap) {
     try{
     salesList = salesService.listSalesService(listAttributesMap);
-    if (salesList.size() == 0) {
-      System.out.println(">> Given SearchText does not exist!!!");
+    if (salesList == null) {
+        if (!listAttributesMap.get("Searchtext").equals("id")) {
+          System.out.println(">> Given SearchText does not exist!!!");
+          return;
+        }
+      else
+        return;
     }
       System.out.println(salesList);
     for (Sales sales : salesList) {

@@ -54,7 +54,7 @@ public class ProductDAOImplementation implements ProductDAO {
     } catch (SQLException e) {
       productConnection.rollback();
       if (e.getSQLState().equals("23503")) {
-        throw new UnitCodeViolationException(">> The unit Code you have entered already Exists!!");
+        throw new UnitCodeViolationException(">> The unit Code you have entered  does not Exists!!");
       } else if (e.getSQLState().equals("23505")) {
         if (e.getMessage().contains("product_name"))
           throw new UniqueConstraintException(

@@ -111,7 +111,7 @@ public class SalesDAOImplementation implements SalesDAO {
   @Override
   public List list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException {
-    int count;
+    int count=Integer.MAX_VALUE;
     try {
       String EntryCount="SELECT COUNT(*) OVER() FROM SALES WHERE "
               + attribute
@@ -142,8 +142,9 @@ public class SalesDAOImplementation implements SalesDAO {
         countStatement.setDate(1,Date.valueOf(searchText));
       }
       ResultSet countResultSet=countStatement.executeQuery();
-      countResultSet.next();
-      count=countResultSet.getInt(1);
+      if(countResultSet.next())
+        count=countResultSet.getInt(1);
+      else return null;
       if(count<offset)
         throw new PageCountOutOfBoundsException(">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "+((count/pageLength)+1));
       ResultSet listResultSet = listStatement.executeQuery();

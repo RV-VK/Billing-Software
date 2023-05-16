@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PurchaseDAOImplementation implements PurchaseDAO {
-  private Connection purchaseConnection = DBHelper.getConnection();
+  private final Connection purchaseConnection = DBHelper.getConnection();
   private List<Purchase> purchaseList = new ArrayList<>();
 
 
@@ -73,6 +73,8 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
       return purchaseEntry;
     } catch (SQLException e) {
       purchaseConnection.rollback();
+      if(e.getSQLState().equals("23503"))
+        throw new ApplicationErrorException(">> The Product code you have entered doesnt exists!");
       throw new ApplicationErrorException(e.getMessage());
     }
   }
@@ -103,7 +105,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
   @Override
   public List list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException {
-    int count;
+    int count = Integer.MAX_VALUE;
     try {
       String EntryCount="SELECT COUNT(*) OVER() FROM PURCHASE WHERE "
               + attribute
@@ -136,8 +138,10 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
         countStatement.setDate(1,Date.valueOf(searchText));
       }
       ResultSet countResultSet=countStatement.executeQuery();
-      countResultSet.next();
-      count=countResultSet.getInt(1);
+      if (countResultSet.next()) {
+        count = countResultSet.getInt(1);
+      }
+      else return null;
       if(count<offset)
         throw new PageCountOutOfBoundsException(">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "+((count/pageLength)+1));
       ResultSet listResultSet = listStatement.executeQuery();
@@ -167,6 +171,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
   }
 
   private List<Purchase> listHelper(ResultSet resultSet) throws SQLException {
+
     while (resultSet.next()) {
       Purchase listedPurchase = new Purchase();
       listedPurchase.setId(resultSet.getInt(1));
