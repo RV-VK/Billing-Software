@@ -53,7 +53,7 @@ public class AdminMain {
               productCLI.list(commandlist);
               break;
             case "edit":
-              productCLI.edit(commandlist);
+              productCLI.edit(commandlist,command);
               break;
             case "delete":
               productCLI.delete(commandlist);

@@ -324,8 +324,8 @@ public class ProductCLI {
    *
    * @param arguments - List of Command arguments
    */
-  public void edit(List<String> arguments) {
-    Scanner scanner = new Scanner(System.in);
+  public void edit(List<String> arguments,String command) {
+    final String editCommandRegex="^id:\\s*(\\d+)(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?$";
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
       System.out.println(
           ">> Edit product using following template. Copy the product data from the list, edit the attribute values. \n"
@@ -351,17 +351,13 @@ public class ProductCLI {
     } else if (arguments.size() == 2) {
       System.out.print("> ");
       String parameters = scanner.nextLine();
-      String[] productAttributes = parameters.split(",");
-      List<String> splitAttributes = new ArrayList<>();
-      for (String string : productAttributes) {
-        if (string.contains(":")) {
-          String[] keyValues = string.split(":");
-          splitAttributes.add(keyValues[0]);
-          splitAttributes.add(keyValues[1]);
-        }
-        else System.out.println(">> Invalid Format! Edit Attibutes must be split as Key Value Pair!\n>> Try \"product edit help\" for syntax");
+      if (!parameters.matches(editCommandRegex)) {
+        System.out.println(
+            ">> Invalid command Format!\n>> Try \"product edit help for proper syntax!");
+        return;
       }
-      editHelper(splitAttributes);
+      List<String> productAttributes = List.of(parameters.split("[,:]"));
+      editHelper(productAttributes);
     } else if (arguments.size() > 14) {
       System.out.println(">>Too many Arguments for command \"product edit\"");
     } else if (arguments.size() < 6) {
@@ -371,6 +367,12 @@ public class ProductCLI {
       System.out.println(">> For every Edit operation the first argument must be product's ID");
       System.out.println(">> Try \"product edit help\" for proper syntax");
     } else {
+      if(!command.substring(13).matches(editCommandRegex))
+      {
+        System.out.println(
+                ">> Invalid command Format!\n>> Try \"product edit help for proper syntax!");
+        return;
+      }
       editHelper(arguments.subList(2, arguments.size()));
     }
   }
@@ -394,17 +396,19 @@ public class ProductCLI {
       System.out.println(">> Try \"product edit help\" for proper Syntax");
       return;
     }
+    System.out.println(editAttributes);
     for (int index = 2; index < editAttributes.size(); index = index + 2) {
-      if (editAttributes.get(index).contains("name")) {
+      try{
+      if (editAttributes.get(index).trim().equals("name")) {
         product.setName(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("code")
+      } else if (editAttributes.get(index).trim().equals("code")
           && !editAttributes.get(index).contains("unitcode")) {
         product.setCode(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("unitcode")) {
+      } else if (editAttributes.get(index).trim().equals("unitcode")) {
         product.setunitcode(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("type")) {
+      } else if (editAttributes.get(index).trim().equals("type")) {
         product.setType(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("price")) {
+      } else if (editAttributes.get(index).trim().equals("price")) {
         float price;
         try {
           price = Float.parseFloat(editAttributes.get(index + 1));
@@ -418,6 +422,11 @@ public class ProductCLI {
         System.out.println(">> Try \"product edit help\" for proper syntax");
         return;
       }
+      }catch(IndexOutOfBoundsException e)
+      {
+        System.out.println(">> Edit Attributes should be separated with \":\"\n Try \"product edit help\" for syntax");
+        return;
+      }
     }
     int statusCode;
     try {
@@ -428,7 +437,7 @@ public class ProductCLI {
       return;
     }
     if (statusCode == 1) {
-      System.out.println(">> Product Edited Succesfully");
+      System.out.println(">> Product Edited Successfully");
     } else if (statusCode == -1) {
       System.out.println(">> Product edit failed!!!");
       System.out.println(">>Please check the Id you have entered!!!");

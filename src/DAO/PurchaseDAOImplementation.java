@@ -149,6 +149,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
     }
   }
 
+
   @Override
   public List list(String searchText) throws ApplicationErrorException {
     try {
