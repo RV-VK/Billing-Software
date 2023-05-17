@@ -59,6 +59,13 @@ public class ProductDAOImplementation implements ProductDAO {
     }
 
   }
+
+  /**
+   * Private Method to assist Product Construction from ResultSet.
+   * @param resultSet - Product ResultSet.
+   * @return Product
+   * @throws SQLException Exception thrown based on SQL syntax.
+   */
   private Product getProductFromResultSet(ResultSet resultSet) throws SQLException {
     return new Product(resultSet.getInt(1),
             resultSet.getString(2),
