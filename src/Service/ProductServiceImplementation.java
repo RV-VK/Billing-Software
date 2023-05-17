@@ -17,11 +17,11 @@ public class ProductServiceImplementation implements ProductService {
   /**
    * This method invokes the ProductDAO object and serves the Product creation.
    *
-   * @param product
+   * @param product Input product
    * @return Product
-   * @throws SQLException
-   * @throws ApplicationErrorException
-   * @throws UniqueConstraintException
+   * @throws SQLException Exception thrown based on SQL syntax.
+   * @throws ApplicationErrorException Exception thrown due to Persistence problems.
+   * @throws UniqueConstraintException Custom Exception to convey Unique constraint Violation in SQL table.
    */
   public Product create(Product product)
       throws SQLException,
@@ -35,7 +35,7 @@ public class ProductServiceImplementation implements ProductService {
   /**
    * This method invokes the ProductDAO object and serves the Count function.
    * @return count - Integer
-   * @throws ApplicationErrorException
+   * @throws ApplicationErrorException Exception thrown due to Persistence problems.
    */
   public int count() throws ApplicationErrorException {
     return productDAO.count();
@@ -43,10 +43,10 @@ public class ProductServiceImplementation implements ProductService {
 
   /**
    * This method invokes the ProductDAO object and serves the List function.
-   * @param listattributes
+   * @param listattributes Key Value Pairs(Map) of List function attributes.
    * @return List - Products
-   * @throws ApplicationErrorException
-   * @throws PageCountOutOfBoundsException
+   * @throws ApplicationErrorException Exception thrown due to Persistence problems.
+   * @throws PageCountOutOfBoundsException Custom Exception thrown when a non-existing page is given as input in Pageable List.
    */
   public List<Product> list(HashMap<String, String> listattributes)
       throws ApplicationErrorException, PageCountOutOfBoundsException {
@@ -73,12 +73,12 @@ public class ProductServiceImplementation implements ProductService {
 
   /**
    * This method invokes the Product DAO object and serves the edit function.
-   * @param product
+   * @param product Edited Product
    * @return resultCode - Integer
-   * @throws SQLException
-   * @throws ApplicationErrorException
-   * @throws UniqueConstraintException
-   * @throws UnitCodeViolationException
+   * @throws SQLException Exception thrown based on SQL syntax.
+   * @throws ApplicationErrorException Exception thrown due to Persistence problems.
+   * @throws UniqueConstraintException Custom Exception to convey Unique constraint Violation in SQL table.
+   * @throws UnitCodeViolationException Custom Exception to convey Foreign Key Violation in Product table.
    */
   public int edit(Product product)
       throws SQLException,
@@ -96,20 +96,34 @@ public class ProductServiceImplementation implements ProductService {
 
   /**
    *This method invokes the ProductDAO object and serves the delete function
-   * @param parameter
+   * @param parameter Input parameter for delete function.(Code/Id)
    * @return resultCode - Integer
-   * @throws ApplicationErrorException
+   * @throws ApplicationErrorException Exception thrown due to Persistence problems.
    */
   public int delete(String parameter) throws ApplicationErrorException {
     return productDAO.delete(parameter);
   }
 
+  /**
+   *
+   * @param code Product Code
+   * @param stock updated Stock
+   * @return statusCode - Integer
+   * @throws ApplicationErrorException Exception thrown due to Persistence problems.
+   */
   public int updateStock(String code,String stock) throws ApplicationErrorException {
     if (stock.matches(NUMBER_REGEX) && code.matches(CODE_REGEX))
       return productDAO.updateStock(code, Float.parseFloat(stock));
     else return -1;
   }
 
+  /**
+   *
+   * @param code Product code
+   * @param price updated Price
+   * @return statusCode - Integer
+   * @throws ApplicationErrorException Exception thrown due to Persistence problems.
+   */
   public int updatePrice(String code,String price) throws ApplicationErrorException{
     if(price.matches(NUMBER_REGEX) && code.matches(CODE_REGEX))
       return productDAO.updatePrice(code,Double.parseDouble(price));
@@ -118,7 +132,7 @@ public class ProductServiceImplementation implements ProductService {
   }
   /**
    * This method validates the Product attributes.
-   * @param product
+   * @param product Product to be Validated
    * @return status - Boolean.
    */
   private boolean validate(Product product) {
