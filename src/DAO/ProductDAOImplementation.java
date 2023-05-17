@@ -338,7 +338,7 @@ public class ProductDAOImplementation implements ProductDAO {
     }
   }
 
-  /**
+  /**This method updates the Stock column of Product based on given product code.
    *
    * @param code Product code
    * @param stock Stock to be updated
@@ -354,10 +354,10 @@ public class ProductDAOImplementation implements ProductDAO {
     }
   }
 
-  /**
+  /**This method updates the Price column of Product based on given product code.
    *
    * @param code Product code
-   * @param price Stock to be updated
+   * @param price Price to be updated
    * @return updated Price - Double
    * @throws ApplicationErrorException Exception thrown due to Persistence problems.
    */

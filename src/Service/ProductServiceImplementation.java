@@ -104,7 +104,7 @@ public class ProductServiceImplementation implements ProductService {
     return productDAO.delete(parameter);
   }
 
-  /**
+  /**This method invokes the ProductDAO and serves the stock Update function.
    *
    * @param code Product Code
    * @param stock updated Stock
@@ -117,7 +117,7 @@ public class ProductServiceImplementation implements ProductService {
     else return -1;
   }
 
-  /**
+  /**This method invokes the ProductDAO and serves the Price Update function.
    *
    * @param code Product code
    * @param price updated Price
