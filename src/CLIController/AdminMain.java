@@ -113,7 +113,7 @@ public class AdminMain {
               unitCLI.unitListCLI(commandlist);
               break;
             case "edit":
-              unitCLI.unitEditCLI(commandlist);
+              unitCLI.unitEditCLI(commandlist,command);
               break;
             case "delete":
               unitCLI.unitDeleteCLI(commandlist);

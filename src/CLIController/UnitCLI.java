@@ -106,7 +106,8 @@ public class UnitCLI {
     }
   }
 
-  public void unitEditCLI(List<String> arguments) {
+  public void unitEditCLI(List<String> arguments,String command) {
+    final String editCommandRegex="^id:\\s*(\\d+)(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?$";
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
       System.out.println(
           ">> Edit unit using the following template\n"
@@ -125,14 +126,13 @@ public class UnitCLI {
     } else if (arguments.size() == 2) {
       System.out.print("> ");
       String parameters = scanner.nextLine();
-      String[] unitAttributes = parameters.split("\\,");
-      List<String> splitAttributes = new ArrayList<>();
-      for (String string : unitAttributes) {
-        String[] keyValues = string.split(":");
-        splitAttributes.add(keyValues[0]);
-        splitAttributes.add(keyValues[1]);
+      if (!parameters.matches(editCommandRegex)) {
+        System.out.println(
+                ">> Invalid command Format!\n>> Try \"unit edit help for proper syntax!");
+        return;
       }
-      editHelper(splitAttributes);
+      List<String> unitAttributes = List.of(parameters.split("[,:]"));
+      editHelper(unitAttributes);
     } else if (arguments.size() > 12) {
       System.out.println(">> Too many Arguments for command \"unit edit\"");
       System.out.println(">> Try \"unit edit help\" for proper syntax");
@@ -144,6 +144,12 @@ public class UnitCLI {
       System.out.println(">> For every Edit operation the first argument must be unit's ID");
       System.out.println(">> Try \"unit edit help\" for proper syntax");
     } else {
+      if(!command.substring(10).matches(editCommandRegex))
+      {
+        System.out.println(
+                ">> Invalid command Format!\n>> Try \"user edit help for proper syntax!");
+        return;
+      }
       editHelper(arguments.subList(2, arguments.size()));
     }
   }
@@ -160,13 +166,13 @@ public class UnitCLI {
     }
     unit.setId(id);
     for (int index = 2; index < editAttributes.size(); index = index + 2) {
-      if (editAttributes.get(index).contains("name")) {
+      if (editAttributes.get(index).trim().equals("name")) {
         unit.setName(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("code")) {
+      } else if (editAttributes.get(index).trim().equals("code")) {
         unit.setCode(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("description")) {
+      } else if (editAttributes.get(index).trim().equals("description")) {
         unit.setDescription(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("isdividable")) {
+      } else if (editAttributes.get(index).trim().equals("isdividable")) {
         boolean isDividable;
         try {
           isDividable = Boolean.parseBoolean(editAttributes.get(index + 1).trim());
@@ -179,7 +185,7 @@ public class UnitCLI {
       } else {
         System.out.println(">> Invalid attribute given!!!: " + editAttributes.get(index));
         System.out.println(">> Try \"unit edit help\" for proper Syntax");
-        break;
+        return;
       }
     }
     int statusCode;
