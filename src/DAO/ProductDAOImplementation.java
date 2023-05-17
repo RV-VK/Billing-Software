@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAOImplementation implements ProductDAO {
-  private Connection productConnection = DBHelper.getConnection();
+  private final Connection productConnection = DBHelper.getConnection();
   private List<Product> productList = new ArrayList<>();
 
   /**
@@ -15,9 +15,9 @@ public class ProductDAOImplementation implements ProductDAO {
    *
    * @param product - Input product
    * @return product - Entered product
-   * @throws ApplicationErrorException - Exception thrown due to Persistence problems.
-   * @throws SQLException - Exception thrown based on SQL syntax.
-   * @throws UniqueConstraintException - Custom Exception to convey Unique constraint Violation in SQL table
+   * @throws ApplicationErrorException Exception thrown due to Persistence problems.
+   * @throws SQLException Exception thrown based on SQL syntax.
+   * @throws UniqueConstraintException Custom Exception to convey Unique constraint Violation in SQL table
    */
   @Override
   public Product create(Product product)
@@ -39,15 +39,14 @@ public class ProductDAOImplementation implements ProductDAO {
       ResultSet productCreateResultSet = productCreateStatement.executeQuery();
       productCreateResultSet.next();
       Product createdProduct =
-          new Product(
-              productCreateResultSet.getInt(1),
-              productCreateResultSet.getString(2),
-              productCreateResultSet.getString(3),
-              productCreateResultSet.getString(4),
-              productCreateResultSet.getString(5),
-              productCreateResultSet.getFloat(6),
-              productCreateResultSet.getDouble(7),
-              productCreateResultSet.getDouble(8));
+          new Product(productCreateResultSet.getInt(1),
+                  productCreateResultSet.getString(2),
+                  productCreateResultSet.getString(3),
+                  productCreateResultSet.getString(4),
+                  productCreateResultSet.getString(5),
+                  productCreateResultSet.getFloat(6),
+                  productCreateResultSet.getDouble(7),
+                  productCreateResultSet.getDouble(8));
       productConnection.commit();
       productConnection.setAutoCommit(true);
       return createdProduct;
@@ -73,7 +72,7 @@ public class ProductDAOImplementation implements ProductDAO {
    * This Method returns the number of entries in the Product table.
    *
    * @return count
-   * @throws ApplicationErrorException - Exception thrown due to Persistence problems.
+   * @throws ApplicationErrorException Exception thrown due to Persistence problems.
    */
   @Override
   public int count() throws ApplicationErrorException {
@@ -133,7 +132,7 @@ public class ProductDAOImplementation implements ProductDAO {
    * @param pageLength The number of entries that must be listed.
    * @param offset The Page number that has to be listed
    * @return List - Products
-   * @throws ApplicationErrorException - Exception thrown due to Persistence problems.
+   * @throws ApplicationErrorException  Exception thrown due to Persistence problems.
    */
   @Override
   public List<Product> list(String attribute, String searchText, int pageLength, int offset)
@@ -186,9 +185,9 @@ public class ProductDAOImplementation implements ProductDAO {
 
   /**
    * This method serves the ListDAO function.
-   * @param resultSet
+   * @param resultSet ListQuery results.
    * @return List - Product
-   * @throws SQLException - Exception thrown based on SQL syntax.
+   * @throws SQLException Exception thrown based on SQL syntax.
    */
   private List<Product> listHelper(ResultSet resultSet) throws SQLException {
     while (resultSet.next()) {
@@ -267,7 +266,7 @@ public class ProductDAOImplementation implements ProductDAO {
   /**
    * This method deletes an entry in the Product table based on the given parameter.
    *
-   * @param parameter
+   * @param parameter - Input Parameter to delete.
    * @return resultCode - Integer
    * @throws ApplicationErrorException Exception thrown due to Persistence problems.
    */
@@ -310,7 +309,7 @@ public class ProductDAOImplementation implements ProductDAO {
   /**
    * This method finds the Product by its product code attribute.
    *
-   * @param code
+   * @param code Input product code.
    * @return Product
    * @throws ApplicationErrorException Exception thrown due to Persistence problems.
    */
