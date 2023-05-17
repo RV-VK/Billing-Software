@@ -279,7 +279,8 @@ public class UserCLI {
     }
   }
 
-  public void userEditCLI(List<String> arguments) {
+  public void userEditCLI(List<String> arguments,String command) {
+    final String editCommandRegex="^id:\\s*(\\d+)(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?$";
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
       System.out.println(
           ">> Edit user using following template. Copy the user data from the list, edit the attribute values. \n"
@@ -301,14 +302,13 @@ public class UserCLI {
     } else if (arguments.size() == 2) {
       System.out.print("> ");
       String parameters = scanner.nextLine();
-      String[] userAttributes = parameters.split("\\,");
-      List<String> splitAttributes = new ArrayList<>();
-      for (String string : userAttributes) {
-        String[] keyValues = string.split(":");
-        splitAttributes.add(keyValues[0].trim());
-        splitAttributes.add(keyValues[1].trim());
+      if (!parameters.matches(editCommandRegex)) {
+        System.out.println(
+                ">> Invalid command Format!\n>> Try \"user edit help for proper syntax!");
+        return;
       }
-      editHelper(splitAttributes);
+      List<String> userAttributes = List.of(parameters.split("[,:]"));
+      editHelper(userAttributes);
     } else if (arguments.size() > 16) {
       System.out.println(">> Too many Arguments for command \"product edit\"");
     } else if (arguments.size() < 6) {
@@ -318,6 +318,12 @@ public class UserCLI {
       System.out.println(">> For every Edit operation the first argument must be user's ID");
       System.out.println(">> Try \"user edit help\" for proper syntax");
     } else {
+      if(!command.substring(10).matches(editCommandRegex))
+      {
+        System.out.println(
+                ">> Invalid command Format!\n>> Try \"user edit help for proper syntax!");
+        return;
+      }
       editHelper(arguments.subList(2, arguments.size()));
     }
   }
@@ -332,17 +338,17 @@ public class UserCLI {
     }
     user.setId(id);
     for (int index = 2; index < editAttributes.size(); index = index + 2) {
-      if (editAttributes.get(index).contains("username")) {
+      if (editAttributes.get(index).trim().equals("username")) {
         user.setUserName(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("usertype")) {
+      } else if (editAttributes.get(index).trim().equals("usertype")) {
         user.setUserType(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("password")) {
+      } else if (editAttributes.get(index).trim().equals("password")) {
         user.setPassWord(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("firstname")) {
+      } else if (editAttributes.get(index).trim().equals("firstname")) {
         user.setFirstName(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("lastname")) {
+      } else if (editAttributes.get(index).trim().equals("lastname")) {
         user.setLastName(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("phonenumber")) {
+      } else if (editAttributes.get(index).trim().equals("phonenumber")) {
         try {
           phoneNumber = Long.parseLong(editAttributes.get(index + 1).trim());
         } catch (NumberFormatException e) {

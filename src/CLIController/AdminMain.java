@@ -76,7 +76,7 @@ public class AdminMain {
               userCLI.userListCLI(commandlist);
               break;
             case "edit":
-              userCLI.userEditCLI(commandlist);
+              userCLI.userEditCLI(commandlist,command);
               break;
             case "delete":
               userCLI.userDeleteCLI(commandlist);

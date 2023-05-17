@@ -396,7 +396,6 @@ public class ProductCLI {
       System.out.println(">> Try \"product edit help\" for proper Syntax");
       return;
     }
-    System.out.println(editAttributes);
     for (int index = 2; index < editAttributes.size(); index = index + 2) {
       try{
       if (editAttributes.get(index).trim().equals("name")) {
