@@ -29,7 +29,7 @@ public class UnitServiceImplementation implements UnitService {
   @Override
   public int editUnitService(Unit unit)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
-    if (validate(unit)) {
+    if (!validate(unit)) {
       return 0;
     }
     return unitDAO.edit(unit);

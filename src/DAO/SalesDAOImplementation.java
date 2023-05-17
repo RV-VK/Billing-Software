@@ -136,8 +136,14 @@ public class SalesDAOImplementation implements SalesDAO {
       if(countResultSet.next())
         count=countResultSet.getInt(1);
       else return null;
-      if(count<offset)
-        throw new PageCountOutOfBoundsException(">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "+((count/pageLength)+1));
+      if(count<=offset){
+        int pageCount;
+        if (count % pageLength == 0)
+          pageCount=count/pageLength;
+        else
+          pageCount=(count/pageLength)+1;
+        throw new PageCountOutOfBoundsException(">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "+pageCount);
+    }
       ResultSet listResultSet = listStatement.executeQuery();
       return listHelper(listResultSet);
     } catch (Exception e) {

@@ -133,10 +133,16 @@ public class UserDAOImplementation implements UserDAO {
       ResultSet countResultSet = countStatement.executeQuery();
       countResultSet.next();
       count = countResultSet.getInt(1);
-      if (count < offset)
+      if (count <= offset) {
+        int pageCount;
+        if (count % pageLength == 0)
+          pageCount=count/pageLength;
+        else
+          pageCount=(count/pageLength)+1;
         throw new PageCountOutOfBoundsException(
             ">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "
-                + ((count / pageLength) + 1));
+                + pageCount);
+        }
       ResultSet listResultSet = listStatement.executeQuery();
       return listHelper(listResultSet);
     } catch (Exception e) {
