@@ -13,19 +13,11 @@ public class SalesDAOImplementation implements SalesDAO {
   public Sales create(Sales sales) throws ApplicationErrorException, SQLException {
     try {
       salesConnection.setAutoCommit(false);
-      String salesEntryQuery = "INSERT INTO SALES(DATE,GRANDTOTAL) VALUES(?,?) RETURNING *";
-      String salesItemInsertQuery =
-          "INSERT INTO SALESITEMS (ID, PRODUCTCODE, QUANTITY, SALESPRICE) VALUES (?,?,?,?) RETURNING *";
-      String salesPriceQuery = "SELECT PRICE,STOCK,NAME FROM PRODUCT WHERE CODE=?";
-      String stockUpdateQuery = "UPDATE PRODUCT SET STOCK=STOCK-? WHERE CODE=?";
-      String grandTotalUpdateQuery = "UPDATE SALES SET GRANDTOTAL=? WHERE ID=?";
-      PreparedStatement salesEntryStatement = salesConnection.prepareStatement(salesEntryQuery);
-      PreparedStatement salesItemInsertStatement =
-          salesConnection.prepareStatement(salesItemInsertQuery);
-      PreparedStatement salesPriceStatement = salesConnection.prepareStatement(salesPriceQuery);
-      PreparedStatement stockUpdateStatement = salesConnection.prepareStatement(stockUpdateQuery);
-      PreparedStatement grandTotalUpdateStatement =
-          salesConnection.prepareStatement(grandTotalUpdateQuery);
+      PreparedStatement salesEntryStatement = salesConnection.prepareStatement("INSERT INTO SALES(DATE,GRANDTOTAL) VALUES(?,?) RETURNING *");
+      PreparedStatement salesItemInsertStatement = salesConnection.prepareStatement( "INSERT INTO SALESITEMS (ID, PRODUCTCODE, QUANTITY, SALESPRICE) VALUES (?,?,?,?) RETURNING *");
+      PreparedStatement salesPriceStatement = salesConnection.prepareStatement("SELECT PRICE,STOCK,NAME FROM PRODUCT WHERE CODE=?");
+      PreparedStatement stockUpdateStatement = salesConnection.prepareStatement("UPDATE PRODUCT SET STOCK=STOCK-? WHERE CODE=?");
+      PreparedStatement grandTotalUpdateStatement = salesConnection.prepareStatement("UPDATE SALES SET GRANDTOTAL=? WHERE ID=?");
       salesEntryStatement.setDate(1, Date.valueOf(sales.getDate()));
       salesEntryStatement.setDouble(2, sales.getGrandTotal());
       ResultSet salesEntryResultSet = salesEntryStatement.executeQuery();
@@ -88,16 +80,15 @@ public class SalesDAOImplementation implements SalesDAO {
   public int count(String parameter) throws ApplicationErrorException {
     int count;
     try {
-      Statement countStatement = salesConnection.createStatement();
 
       if (parameter == null) {
-        ResultSet countResultSet = countStatement.executeQuery("SELECT COUNT(ID) FROM SALES");
+        ResultSet countResultSet = salesConnection.createStatement().executeQuery("SELECT COUNT(ID) FROM SALES");
         countResultSet.next();
         count = countResultSet.getInt(1);
         return count;
       } else {
         ResultSet countResultSet =
-            countStatement.executeQuery(
+                salesConnection.createStatement().executeQuery(
                 "SELECT COUNT(*) FROM PURCHASE WHERE CAST(DATE AS TEXT) ILIKE'" + parameter + "'");
         countResultSet.next();
         count = countResultSet.getInt(1);
@@ -157,7 +148,6 @@ public class SalesDAOImplementation implements SalesDAO {
   @Override
   public List list(String searchText) throws ApplicationErrorException {
     try {
-      Statement listStatement = salesConnection.createStatement();
       String listQuery =
           "SELECT * FROM SALES WHERE CAST(ID AS TEXT) '"
               + searchText
@@ -166,7 +156,7 @@ public class SalesDAOImplementation implements SalesDAO {
               + "' OR CAST (INVOICE AS TEXT) ILIKE '"
               + searchText
               + "'";
-      ResultSet listResultSet = listStatement.executeQuery(listQuery);
+      ResultSet listResultSet = salesConnection.createStatement().executeQuery(listQuery);
       return listHelper(listResultSet);
     } catch (Exception e) {
       throw new ApplicationErrorException(e.getMessage());
@@ -203,15 +193,13 @@ public class SalesDAOImplementation implements SalesDAO {
   @Override
   public int delete(int id) throws ApplicationErrorException {
     try {
-      Statement deleteStatement = salesConnection.createStatement();
       int salesItemUpdatedCount =
-          deleteStatement.executeUpdate("DELETE FROM SALESITEMS WHERE ID='" + id + "'");
+              salesConnection.createStatement().executeUpdate("DELETE FROM SALESITEMS WHERE ID='" + id + "'");
       int salesUpdatedCount =
-          deleteStatement.executeUpdate("DELETE FROM SALES WHERE ID='" + id + "'");
+              salesConnection.createStatement().executeUpdate("DELETE FROM SALES WHERE ID='" + id + "'");
       if (salesItemUpdatedCount > 0 && salesUpdatedCount > 0) {
         return 1;
       } else return -1;
-
     } catch (Exception e) {
       throw new ApplicationErrorException(e.getMessage());
     }

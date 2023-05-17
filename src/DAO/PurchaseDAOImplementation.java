@@ -17,18 +17,9 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
   public Purchase create(Purchase purchase) throws ApplicationErrorException, SQLException {
     try {
       purchaseConnection.setAutoCommit(false);
-      String purchaseEntryQuery =
-          "INSERT INTO PURCHASE(DATE,INVOICE,GRANDTOTAL) VALUES(?,?,?) RETURNING *";
-      String purchaseItemInsertQuery =
-          "INSERT INTO PURCHASEITEMS(INVOICE,PRODUCTCODE,QUANTITY,COSTPRICE) VALUES(?,?,?,?) RETURNING *";
-      String stockUpdateQuery = "UPDATE PRODUCT SET STOCK=STOCK+? WHERE CODE=?";
-      String productNameQuery = "SELECT NAME FROM PRODUCT WHERE CODE=?";
-      PreparedStatement stockUpdateStatement =
-          purchaseConnection.prepareStatement(stockUpdateQuery);
-      PreparedStatement purchaseEntryStatement =
-          purchaseConnection.prepareStatement(purchaseEntryQuery);
-      PreparedStatement productNameStatement =
-          purchaseConnection.prepareStatement(productNameQuery);
+      PreparedStatement stockUpdateStatement = purchaseConnection.prepareStatement("UPDATE PRODUCT SET STOCK=STOCK+? WHERE CODE=?");
+      PreparedStatement purchaseEntryStatement = purchaseConnection.prepareStatement("INSERT INTO PURCHASE(DATE,INVOICE,GRANDTOTAL) VALUES(?,?,?) RETURNING *");
+      PreparedStatement productNameStatement = purchaseConnection.prepareStatement("SELECT NAME FROM PRODUCT WHERE CODE=?");
       purchaseEntryStatement.setDate(1, Date.valueOf(purchase.getDate()));
       purchaseEntryStatement.setInt(2, purchase.getInvoice());
       purchaseEntryStatement.setDouble(3, purchase.getGrandTotal());
@@ -42,7 +33,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
       }
       List<PurchaseItem> purchaseItemList = new ArrayList<>();
       PreparedStatement purchaseItemInsertStatement =
-          purchaseConnection.prepareStatement(purchaseItemInsertQuery);
+          purchaseConnection.prepareStatement("INSERT INTO PURCHASEITEMS(INVOICE,PRODUCTCODE,QUANTITY,COSTPRICE) VALUES(?,?,?,?) RETURNING *");
       ResultSet purchaseItemInsertResultSet;
       for (PurchaseItem purchaseItem : purchase.getPurchaseItemList()) {
         purchaseItemInsertStatement.setInt(1, purchase.getInvoice());
@@ -83,15 +74,14 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
   public int count(String parameter) throws ApplicationErrorException {
     int count;
     try {
-      Statement countStatement = purchaseConnection.createStatement();
       if (parameter == null) {
-        ResultSet countResultSet = countStatement.executeQuery("SELECT COUNT(ID) FROM PURCHASE");
+        ResultSet countResultSet =purchaseConnection.createStatement().executeQuery("SELECT COUNT(ID) FROM PURCHASE");
         countResultSet.next();
         count = countResultSet.getInt(1);
         return count;
       } else {
         ResultSet countResultSet =
-            countStatement.executeQuery(
+                purchaseConnection.createStatement().executeQuery(
                 "SELECT COUNT(*) FROM PURCHASE WHERE CAST(DATE AS TEXT) ILIKE'" + parameter + "'");
         countResultSet.next();
         count = countResultSet.getInt(1);
@@ -105,7 +95,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
   @Override
   public List list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException {
-    int count = Integer.MAX_VALUE;
+    int count;
     try {
       String EntryCount="SELECT COUNT(*) OVER() FROM PURCHASE WHERE "
               + attribute
@@ -154,7 +144,6 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
   @Override
   public List list(String searchText) throws ApplicationErrorException {
     try {
-      Statement listStatement = purchaseConnection.createStatement();
       String listQuery =
           "SELECT * FROM PURCHASE WHERE CAST(ID AS TEXT) ILIKE '"
               + searchText
@@ -163,7 +152,7 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
               + "' OR CAST(INVOICE AS TEXT) ILIKE '"
               + searchText
               + "'";
-      ResultSet listResultSet = listStatement.executeQuery(listQuery);
+      ResultSet listResultSet = purchaseConnection.createStatement().executeQuery(listQuery);
       return listHelper(listResultSet);
     } catch (Exception e) {
       throw new ApplicationErrorException(e.getMessage());
@@ -171,7 +160,6 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
   }
 
   private List<Purchase> listHelper(ResultSet resultSet) throws SQLException {
-
     while (resultSet.next()) {
       Purchase listedPurchase = new Purchase();
       listedPurchase.setId(resultSet.getInt(1));
@@ -201,12 +189,10 @@ public class PurchaseDAOImplementation implements PurchaseDAO {
   }
   @Override
   public int delete(int invoice) throws ApplicationErrorException {
-    Connection deleteConnection = DBHelper.getConnection();
     try {
-      Statement deleteStatement = deleteConnection.createStatement();
-      if (deleteStatement.executeUpdate("DELETE FROM PURCHASEITEMS WHERE INVOICE='" + invoice + "'")
+      if ( purchaseConnection.createStatement().executeUpdate("DELETE FROM PURCHASEITEMS WHERE INVOICE='" + invoice + "'")
               > 0
-          && deleteStatement.executeUpdate("DELETE FROM PURCHASE WHERE INVOICE='" + invoice + "'")
+          &&  purchaseConnection.createStatement().executeUpdate("DELETE FROM PURCHASE WHERE INVOICE='" + invoice + "'")
               > 0) {
         return 1;
       } else return -1;
