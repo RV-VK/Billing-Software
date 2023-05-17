@@ -307,7 +307,11 @@ public class ProductCLI {
    *
    * @throws ApplicationErrorException - Exception thrown due to Persistence problem.
    */
-  public void count() throws ApplicationErrorException {
+  public void count(List<String> arguments) throws ApplicationErrorException {
+    if (arguments.size() > 2) {
+      System.out.println(">> Invalid Command!! Try \"product count help\"");
+      return;
+    }
     ProductService countProduct = new ProductServiceImplementation();
     int productCount = countProduct.count();
     System.out.println(">> ProductCount " + productCount);

@@ -93,7 +93,11 @@ public class UserCLI {
     }
   }
 
-  public void userCountCLI() throws ApplicationErrorException {
+  public void userCountCLI(List<String> arguments) throws ApplicationErrorException {
+    if (arguments.size() > 2) {
+      System.out.println(">> Invalid Command!! Try \"help\"");
+      return;
+    }
     int userCount = userService.countUserService();
     System.out.println(">> User Count " + userCount);
   }

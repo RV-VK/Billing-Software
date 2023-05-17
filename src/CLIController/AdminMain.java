@@ -47,7 +47,7 @@ public class AdminMain {
               productCLI.Create(commandlist);
               break;
             case "count":
-              productCLI.count();
+              productCLI.count(commandlist);
               break;
             case "list":
               productCLI.list(commandlist);
@@ -70,7 +70,7 @@ public class AdminMain {
               userCLI.userCreateCLI(commandlist);
               break;
             case "count":
-              userCLI.userCountCLI();
+              userCLI.userCountCLI(commandlist);
               break;
             case "list":
               userCLI.userListCLI(commandlist);
