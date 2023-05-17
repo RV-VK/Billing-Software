@@ -12,7 +12,7 @@ import java.util.List;
 public class UnitServiceImplementation implements UnitService {
   private UnitDAO unitDAO = new UnitDAOImplementation();
   private final String NAME_REGEX = "^[a-zA-Z\\s]{1,30}$";
-  private final String CODE_REGEX = "^[a-zA-Z]{0,4}$";
+  private final String CODE_REGEX = "^[a-zA-Z]{1,4}$";
 
   @Override
   public Unit createUnitService(Unit unit)
