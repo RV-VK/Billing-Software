@@ -38,18 +38,9 @@ public class ProductDAOImplementation implements ProductDAO {
       productCreateStatement.setFloat(6, product.getAvailableQuantity());
       ResultSet productCreateResultSet = productCreateStatement.executeQuery();
       productCreateResultSet.next();
-      Product createdProduct =
-          new Product(productCreateResultSet.getInt(1),
-                  productCreateResultSet.getString(2),
-                  productCreateResultSet.getString(3),
-                  productCreateResultSet.getString(4),
-                  productCreateResultSet.getString(5),
-                  productCreateResultSet.getFloat(6),
-                  productCreateResultSet.getDouble(7),
-                  productCreateResultSet.getDouble(8));
       productConnection.commit();
       productConnection.setAutoCommit(true);
-      return createdProduct;
+      return getProductFromResultSet(productCreateResultSet);
     } catch (SQLException e) {
       productConnection.rollback();
       if (e.getSQLState().equals("23503")) {
@@ -66,7 +57,19 @@ public class ProductDAOImplementation implements ProductDAO {
             ">> Application has went into an Error!!!\n>>Please Try again");
       }
     }
+
   }
+  private Product getProductFromResultSet(ResultSet resultSet) throws SQLException {
+    return new Product(resultSet.getInt(1),
+            resultSet.getString(2),
+            resultSet.getString(3),
+            resultSet.getString(4),
+            resultSet.getString(5),
+            resultSet.getFloat(6),
+            resultSet.getDouble(7),
+            resultSet.getDouble(8));
+  }
+
 
   /**
    * This Method returns the number of entries in the Product table.
@@ -178,7 +181,7 @@ public class ProductDAOImplementation implements ProductDAO {
           pageCount=count/pageLength;
         else
           pageCount=(count/pageLength)+1;
-          throw new PageCountOutOfBoundsException(
+        throw new PageCountOutOfBoundsException(
               ">> Requested Page doesnt Exist!!\n>> Existing Pagecount with given pagination "
                   + pageCount);
       }
@@ -197,17 +200,7 @@ public class ProductDAOImplementation implements ProductDAO {
    */
   private List<Product> listHelper(ResultSet resultSet) throws SQLException {
     while (resultSet.next()) {
-      Product listedProduct =
-              new Product(
-                      resultSet.getInt(1),
-                      resultSet.getString(2),
-                      resultSet.getString(3),
-                      resultSet.getString(4),
-                      resultSet.getString(5),
-                      resultSet.getFloat(6),
-                      resultSet.getDouble(7),
-                      resultSet.getDouble(8));
-      productList.add(listedProduct);
+      productList.add(getProductFromResultSet(resultSet));
     }
     return productList;
   }
@@ -325,20 +318,8 @@ public class ProductDAOImplementation implements ProductDAO {
       Statement getProductStatement = productConnection.createStatement();
       ResultSet getProductResultSet =
           getProductStatement.executeQuery("SELECT * FROM PRODUCT  WHERE CODE='" + code + "'");
-      Product product = null;
-      while (getProductResultSet.next()) {
-        product =
-            new Product(
-                getProductResultSet.getInt(1),
-                getProductResultSet.getString(2),
-                getProductResultSet.getString(3),
-                getProductResultSet.getString(4),
-                getProductResultSet.getString(5),
-                getProductResultSet.getFloat(6),
-                getProductResultSet.getDouble(7),
-                getProductResultSet.getDouble(8));
-      }
-      return product;
+      getProductResultSet.next();
+      return getProductFromResultSet(getProductResultSet);
     } catch (Exception e) {
       throw new ApplicationErrorException(e.getMessage());
     }

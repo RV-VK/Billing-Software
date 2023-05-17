@@ -110,7 +110,7 @@ public class ProductCLI {
       System.out.println(">> Try \"product create help\" for proper syntax");
     } else if (createdProduct != null) {
       System.out.println(">> Product Creation Successfull!!");
-      System.out.println(product);
+      System.out.println(createdProduct);
     }
   }
 
