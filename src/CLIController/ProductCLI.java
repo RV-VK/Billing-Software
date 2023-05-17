@@ -148,6 +148,7 @@ public class ProductCLI {
         } catch (Exception e) {
           System.out.println(">> Invalid page Size input");
           System.out.println(">> Try \"product list help\" for proper syntax");
+          return;
         }
         listAttributesMap.put("Pagelength", String.valueOf(pageLength));
         listAttributesMap.put("Pagenumber", String.valueOf(1));
@@ -186,8 +187,9 @@ public class ProductCLI {
           listAttributesMap.put("Pagenumber", String.valueOf(1));
           listHelper(listAttributesMap);
         } else {
-          System.out.println("Given attribute is not a searchable attribute!!");
-          System.out.println("Try \"product list help\" for proper syntax");
+          System.out.println(">> Given attribute is not a searchable attribute!!");
+          System.out.println(">> Searchable Attributes are :"+productAttributes);
+          System.out.println(">> Try \"product list help\" for proper syntax");
         }
       } else {
         System.out.println(">> Invalid Extension given");
@@ -214,11 +216,12 @@ public class ProductCLI {
             listHelper(listAttributesMap);
           } else {
             System.out.println(">> Invalid Command Extension format !!!");
-            System.out.println("Try \"product list help\" for proper syntax");
+            System.out.println(">> Try \"product list help\" for proper syntax");
           }
         } else {
-          System.out.println("Given attribute is not a searchable attribute!!");
-          System.out.println("Try \"product list help\" for proper syntax");
+          System.out.println(">> Given attribute is not a searchable attribute!!");
+          System.out.println(">> Searchable Attributes are :"+productAttributes);
+          System.out.println(">> Try \"product list help\" for proper syntax");
         }
       } else {
         System.out.println(">> Invalid Extension given");
@@ -245,12 +248,13 @@ public class ProductCLI {
             listAttributesMap.put("Pagenumber", String.valueOf(pageNumber));
             listHelper(listAttributesMap);
           } else {
-            System.out.println("Invalid Extension Given!!!");
-            System.out.println("Try \"product list help\" for proper syntax");
+            System.out.println(">> Invalid Extension Given!!!");
+            System.out.println(">> Try \"product list help\" for proper syntax");
           }
         } else {
-          System.out.println("Given attribute is not a searchable attribute!!");
-          System.out.println("Try \"product list help\" for proper syntax");
+          System.out.println(">> Given attribute is not a searchable attribute!!");
+          System.out.println(">> Searchable Attributes are :"+productAttributes);
+          System.out.println(">> Try \"product list help\" for proper syntax");
         }
       } else {
         System.out.println(">> Invalid Extension given");
@@ -291,9 +295,7 @@ public class ProductCLI {
               + ", stock: "
               + resultProduct.getAvailableQuantity()
               + ", price: "
-              + resultProduct.getPrice()
-              + ", costprice: "
-              + resultProduct.getCostPrice());
+              + resultProduct.getPrice());
     }
     }
     catch(Exception e)
@@ -309,7 +311,7 @@ public class ProductCLI {
    */
   public void count(List<String> arguments) throws ApplicationErrorException {
     if (arguments.size() > 2) {
-      System.out.println(">> Invalid Command!! Try \"product count help\"");
+      System.out.println(">> Invalid Command!! Try \"help\"");
       return;
     }
     ProductService countProduct = new ProductServiceImplementation();
@@ -457,14 +459,14 @@ public class ProductCLI {
                 + "\n"
                 + "> product delete <id>");
       } else if (arguments.get(2).matches(numberRegex)) {
-        deleteHelper(arguments);
+        deleteHelper(arguments.get(2));
       } else {
         System.out.println(">> Invalid format for id!!!");
         System.out.println("Try \"product delete help\" for proper syntax");
       }
     } else if (arguments.size() == 4 && arguments.get(2).equals("-c")) {
       if (arguments.get(3).matches(productcodeRegex)) {
-        deleteHelper(arguments);
+        deleteHelper(arguments.get(3));
       } else {
         System.out.println(">> Invalid format for product Code!!!");
         System.out.println("Try \"product delete help\" for proper syntax");
@@ -478,20 +480,20 @@ public class ProductCLI {
   /**
    * This method serves the Delete function
    *
-   * @param arguments
+   * @param parameter
    * @throws ApplicationErrorException
    */
-  private void deleteHelper(List<String> arguments) throws ApplicationErrorException {
+  private void deleteHelper(String parameter) throws ApplicationErrorException {
     System.out.println(">> Are you sure want to delete the product y/n ? : ");
     String prompt = scanner.nextLine();
     if (prompt.equals("y")) {
-      if (productService.delete(arguments.get(2)) == 1) {
+      if (productService.delete(parameter) == 1) {
         System.out.println("Product Deletion Successfull!!!");
-      } else if (productService.delete(arguments.get(2)) == -1) {
+      } else if (productService.delete(parameter) == -1) {
         System.out.println(">> Product Deletion Failed!!!");
-        System.out.println(">> Please check the Id  you have entered!!!");
-        System.out.println("Try \"product delete help\" for proper syntax");
-      } else if (productService.delete(arguments.get(2)) == 0) {
+        System.out.println(">> Please check the Id (or) Code you have entered!!!");
+        System.out.println(">> Try \"product delete help\" for proper syntax");
+      } else if (productService.delete(parameter) == 0) {
         System.out.println(">> Product cannot be deleted!!!");
         System.out.println(">>Selected Product has stock left and should not be deleted!!!");
         System.out.println(">>Please check the selected product to be deleted!!!");
@@ -499,7 +501,7 @@ public class ProductCLI {
     } else if (prompt.equals("n")) {
       System.out.println(">> Delete operation cancelled");
     } else {
-      System.out.println("Invalid delete prompt!!! Please select between y/n");
+      System.out.println(">> Invalid delete prompt!!! Please select between y/n");
     }
   }
 }

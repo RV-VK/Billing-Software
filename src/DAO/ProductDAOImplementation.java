@@ -73,8 +73,7 @@ public class ProductDAOImplementation implements ProductDAO {
             resultSet.getString(4),
             resultSet.getString(5),
             resultSet.getFloat(6),
-            resultSet.getDouble(7),
-            resultSet.getDouble(8));
+            resultSet.getDouble(7));
   }
 
 
@@ -109,7 +108,7 @@ public class ProductDAOImplementation implements ProductDAO {
   public List<Product> list(String searchText) throws ApplicationErrorException {
     try {
       String listQuery =
-          "SELECT * FROM PRODUCT WHERE NAME ILIKE '"
+          "SELECT * FROM PRODUCT WHERE ( NAME ILIKE '"
               + searchText
               + "' OR CODE ILIKE '"
               + searchText
@@ -123,7 +122,7 @@ public class ProductDAOImplementation implements ProductDAO {
               + searchText
               + "' OR CAST(PRICE AS TEXT) ILIKE '"
               + searchText
-              + "'";
+              + "' )"+" AND ISDELETED=FALSE";
       ResultSet listresultSet =productConnection.createStatement().executeQuery(listQuery);
       return listHelper(listresultSet);
     } catch (SQLException e) {
@@ -147,21 +146,21 @@ public class ProductDAOImplementation implements ProductDAO {
   @Override
   public List<Product> list(String attribute, String searchText, int pageLength, int offset)
       throws ApplicationErrorException, PageCountOutOfBoundsException {
-    int count;
+    int count = Integer.MAX_VALUE;
     try {
       String EntryCount="SELECT COUNT(*) OVER() FROM PRODUCT WHERE "
               + attribute
               + "= COALESCE(?,"
               + attribute
               + ")"
-              + " ORDER BY ID";
+              + "AND ISDELETED=FALSE ORDER BY ID";
       String listQuery =
           "SELECT * FROM PRODUCT WHERE "
               + attribute
               + "= COALESCE(?,"
               + attribute
               + ")"
-              + " ORDER BY ID LIMIT "
+              + "AND ISDELETED=FALSE ORDER BY ID LIMIT "
               + pageLength
               + "  OFFSET "
               + offset;
@@ -180,8 +179,8 @@ public class ProductDAOImplementation implements ProductDAO {
         countStatement.setString(1,searchText);
       }
       ResultSet countResultSet=countStatement.executeQuery();
-      countResultSet.next();
-      count=countResultSet.getInt(1);
+      if(countResultSet.next())
+        count=countResultSet.getInt(1);
       if (count <= offset) {
         int pageCount;
         if (count % pageLength == 0)
