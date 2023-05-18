@@ -33,6 +33,7 @@ public class StoreCLI {
       String parameters = scanner.nextLine();
       List<String> storeAttributes = List.of(parameters.split("\\,"));
       createHelper(storeAttributes);
+      return;
     }
     createHelper(arguments.subList(2, arguments.size()));
   }
@@ -76,9 +77,8 @@ public class StoreCLI {
       System.out.println(">> Template Mismatch!!");
     }
   }
-
   public void storeEditCLI(List<String> arguments,String command) {
-    final String editCommandRegex = "^name:\\s*([A-Za-z]+)(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?$";
+    final String editCommandRegex = "^name:\\s*([A-Za-z\\s]+)(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?$";
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
       System.out.println(
           ">> Edit store uing the following template\t\n"
