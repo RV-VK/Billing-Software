@@ -93,7 +93,7 @@ public class AdminMain {
               storeCLI.storeCreateCLI(commandlist);
               break;
             case "edit":
-              storeCLI.storeEditCLI(commandlist);
+              storeCLI.storeEditCLI(commandlist,command);
               break;
             case "delete":
               storeCLI.storeDeleteCLI(commandlist);

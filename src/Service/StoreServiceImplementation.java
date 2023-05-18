@@ -8,7 +8,7 @@ import Entity.Store;
 import java.sql.SQLException;
 
 public class StoreServiceImplementation implements StoreService {
- private StoreDAO storeDAO = new StoreDAOImplementation();
+ private final StoreDAO storeDAO = new StoreDAOImplementation();
   private final String NAME_REGEX = "^[a-zA-Z\\s]{1,30}$";
   private final String PHONE_NUMBER_REGEX = "^[6789]\\d{9}$";
   private final String GST_NUMBER_REGEX = "^[a-zA-Z0-9]{15}$";
@@ -21,7 +21,7 @@ public class StoreServiceImplementation implements StoreService {
 
   @Override
   public int editStoreService(Store store) throws SQLException, ApplicationErrorException {
-    if (validate(store)) {
+    if (!validate(store)) {
       return 0;
     }
     return storeDAO.edit(store);
@@ -35,7 +35,7 @@ public class StoreServiceImplementation implements StoreService {
   private boolean validate(Store store) {
     if ((store.getName()!=null&&!store.getName().matches(NAME_REGEX))
         || (store.getPhoneNumber()!=0&&!String.valueOf(store.getPhoneNumber()).matches(PHONE_NUMBER_REGEX))
-        || (store.getGstCode()!=null&&!String.valueOf(store.getGstCode()).matches(GST_NUMBER_REGEX))) return true;
-    else return false;
+        || (store.getGstCode()!=null&&!String.valueOf(store.getGstCode()).matches(GST_NUMBER_REGEX))) return false;
+    else return true;
   }
 }

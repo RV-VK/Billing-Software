@@ -35,7 +35,7 @@ public class StoreDAOImplementation implements StoreDAO {
         return null;
       else
         throw new ApplicationErrorException(
-          "Application has went into an Error!!!\n Please Try again");
+          e.getMessage());
     }
   }
 

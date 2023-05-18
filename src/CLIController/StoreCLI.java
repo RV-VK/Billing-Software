@@ -77,7 +77,8 @@ public class StoreCLI {
     }
   }
 
-  public void storeEditCLI(List<String> arguments) {
+  public void storeEditCLI(List<String> arguments,String command) {
+    final String editCommandRegex = "^name:\\s*([A-Za-z]+)(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?(?:,\\s*([A-Za-z]+):\\s*([^,]+))?$";
     if (arguments.size() == 3 && arguments.get(2).equals("help")) {
       System.out.println(
           ">> Edit store uing the following template\t\n"
@@ -91,14 +92,13 @@ public class StoreCLI {
     } else if (arguments.size() == 2) {
       System.out.print("> ");
       String parameters = scanner.nextLine();
-      String[] storeAttributes = parameters.split("\\,");
-      List<String> splitAttributes = new ArrayList<>();
-      for (String string : storeAttributes) {
-        String[] keyValues = string.split(":");
-        splitAttributes.add(keyValues[0]);
-        splitAttributes.add(keyValues[1]);
+      if (!parameters.matches(editCommandRegex)) {
+        System.out.println(
+                ">> Invalid command Format!\n>> Try \"unit edit help for proper syntax!");
+        return;
       }
-      editHelper(splitAttributes);
+      List<String> storeAttributes = List.of(parameters.split("[,:]"));
+      editHelper(storeAttributes);
     } else if (arguments.size() > 10) {
       System.out.println(">> Too many Arguments for command \"store edit\"");
       System.out.println(">> Try \"store edit help\" for proper syntax");
@@ -106,6 +106,12 @@ public class StoreCLI {
       System.out.println(">> Insufficient arguments for command \"store edit\"");
       System.out.println(">> Try \"store edit help\" for proper syntax");
     } else {
+      if(!command.substring(11).matches(editCommandRegex))
+      {
+        System.out.println(
+                ">> Invalid command Format!\n>> Try \"user edit help for proper syntax!");
+        return;
+      }
       editHelper(arguments.subList(2, arguments.size()));
     }
   }
@@ -113,27 +119,26 @@ public class StoreCLI {
   private void editHelper(List<String> editAttributes) {
     Store store = new Store();
     for (int index = 0; index < editAttributes.size(); index = index + 2) {
-      if (editAttributes.get(index).contains("name")) {
+      if (editAttributes.get(index).trim().equals("name")) {
         store.setName(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("phonenumber")) {
+      } else if (editAttributes.get(index).trim().equals("phonenumber")) {
         try {
-          phoneNumber = Integer.parseInt(editAttributes.get(index + 1).trim());
+          phoneNumber = Long.parseLong(editAttributes.get(index+1).trim());
         } catch (NumberFormatException e) {
           System.out.println(">> PhoneNumber must be numeric!!");
           System.out.println(">> Try \"store edit help\" for proper syntax!!");
           return;
         }
         store.setPhoneNumber(phoneNumber);
-      } else if (editAttributes.get(index).contains("address")) {
+      } else if (editAttributes.get(index).trim().equals("address")) {
         store.setAddress(editAttributes.get(index + 1).trim());
-      } else if (editAttributes.get(index).contains("gstnumber")) {
-
+      } else if (editAttributes.get(index).trim().equals("gstnumber")) {
           GSTNumber = editAttributes.get(index + 1).trim();
           store.setGstCode(GSTNumber);
       } else {
         System.out.println(">> Invalid attribute given!!!: " + editAttributes.get(index));
         System.out.println(">> Try \"store edit help\" for proper Syntax");
-        break;
+        return;
       }
     }
     int statusCode;
