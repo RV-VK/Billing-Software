@@ -10,6 +10,15 @@ public class UserDAOImplementation implements UserDAO {
   private Connection userConnection = DBHelper.getConnection();
   private List<User> userList = new ArrayList<>();
 
+
+  /**
+   * This method Creates a User Entry in the User table
+   * @param user
+   * @return
+   * @throws SQLException
+   * @throws ApplicationErrorException
+   * @throws UniqueConstraintException
+   */
   @Override
   public User create(User user)
       throws SQLException, ApplicationErrorException, UniqueConstraintException {
