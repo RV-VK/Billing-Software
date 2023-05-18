@@ -321,9 +321,9 @@ public class ProductDAOImplementation implements ProductDAO {
   @Override
   public Product findByCode(String code) throws ApplicationErrorException {
     try {
-      Statement getProductStatement = productConnection.createStatement();
       ResultSet getProductResultSet =
-          getProductStatement.executeQuery("SELECT * FROM PRODUCT  WHERE CODE='" + code + "'");
+              productConnection.createStatement()
+                      .executeQuery("SELECT * FROM PRODUCT  WHERE CODE='" + code + "'");
       getProductResultSet.next();
       return getProductFromResultSet(getProductResultSet);
     } catch (Exception e) {
