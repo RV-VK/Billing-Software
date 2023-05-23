@@ -221,10 +221,10 @@ public class UnitCLI {
         if (prompt.equals("y")) {
           if (unitService.deleteUnitService(arguments.get(2)) == 1) {
             System.out.println(">> Unit deleted Successfully!!!");
-          } else if (unitService.deleteUnitService(arguments.get(2)) == -1) {
+          } else if (unitService.deleteUnitService(arguments.get(2)) == 0) {
             System.out.println(">> Unit deletion failed!!!");
             System.out.println(">> Please check the unitcode you have entered!!!");
-            System.out.println("Try \"unit delete help\" for proper syntax");
+            System.out.println(">> Try \"unit delete help\" for proper syntax");
           }
         } else if (prompt.equals("n")) {
           System.out.println(">> Delete operation cancelled");

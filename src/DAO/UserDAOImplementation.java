@@ -275,7 +275,8 @@ public class UserDAOImplementation implements UserDAO {
   }
 
   public int checkIfInitialSetup() throws SQLException {
-    //    ResultSet resultSet =
+    //
+    //   ResultSet resultSet =
     //        userConnection.createStatement().executeQuery("SELECT COUNT(ID) FROM USERS WHERE
     // USERTYPE='Admin'");
     //    resultSet.next();
@@ -309,7 +310,8 @@ public class UserDAOImplementation implements UserDAO {
     sqlSession = sqlSessionFactory.openSession();
     userMapper = sqlSession.getMapper(UserDAO.class);
     User user=userMapper.login(userName,passWord);
-    if(user.getPassWord().equals(passWord))
+
+    if(user!=null && user.getPassWord().equals(passWord))
       return user;
     else
       return new User();

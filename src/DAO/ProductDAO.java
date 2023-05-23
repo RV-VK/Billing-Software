@@ -40,7 +40,7 @@ public interface ProductDAO {
   List<Product> searchList(@Param("searchText") String searchText) throws ApplicationErrorException;
 
 
-  @Update("UPDATE PRODUCT SET CODE= COALESCE(#{code},CODE),NAME= COALESCE(#{name},NAME),UNITCODE= COALESCE(#{unitcode},UNITCODE),TYPE= COALESCE(#{type},TYPE),PRICE= COALESCE(#{price},PRICE) WHERE ID=#{id} ")
+  @Update("UPDATE PRODUCT SET CODE= COALESCE(#{code},CODE),NAME= COALESCE(#{name},NAME),UNITCODE= COALESCE(#{unitcode},UNITCODE),TYPE= COALESCE(#{type},TYPE),PRICE= COALESCE(NULLIF(#{price},0),PRICE) WHERE ID=#{id} ")
   boolean edit(Product product)
       throws SQLException,
           ApplicationErrorException,

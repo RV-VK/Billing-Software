@@ -98,7 +98,7 @@ public class LoginCLI {
     catch(Exception e)
     {
       System.out.println(e.getMessage());
-      return;
+      e.printStackTrace();
     }
     if(userType!=null)
     {

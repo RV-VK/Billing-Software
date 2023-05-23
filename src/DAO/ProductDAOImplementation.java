@@ -295,7 +295,6 @@ public class ProductDAOImplementation implements ProductDAO {
     sqlSessionFactory= MyBatisSession.getSqlSessionFactory();
     sqlSession=sqlSessionFactory.openSession();
     productMapper=sqlSession.getMapper(ProductDAO.class);
-    product.setPrice(Double.parseDouble(null));
     boolean status= productMapper.edit(product);
     sqlSession.commit();
     sqlSession.close();
