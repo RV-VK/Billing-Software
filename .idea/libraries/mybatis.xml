@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="mybatis" type="repository">
+    <properties maven-id="org.mybatis:mybatis:3.5.13" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/mybatis/mybatis/3.5.13/mybatis-3.5.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
