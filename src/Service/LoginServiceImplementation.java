@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class LoginServiceImplementation implements  LoginService{
     private UserDAO userDAO=new UserDAOImplementation();
     @Override
-    public boolean checkIfInitialSetup() throws SQLException {
+    public int checkIfInitialSetup() throws SQLException {
         return userDAO.checkIfInitialSetup();
     }
 
@@ -24,7 +24,7 @@ public class LoginServiceImplementation implements  LoginService{
   @Override
   public String login(String userName, String passWord)
       throws SQLException, ApplicationErrorException {
-        return userDAO.login(userName,passWord);
+        return userDAO.login(userName,passWord).getUserType();
     }
 
 

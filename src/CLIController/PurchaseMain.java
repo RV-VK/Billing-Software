@@ -79,7 +79,7 @@ public class PurchaseMain {
                             productCLI.list(commandlist);
                             break;
                         default:
-                            System.out.println("Invalid operation for command \""+commandString+"\"");
+                            System.out.println("Invalid (or) Non-permitted operation for command \""+commandString+"\"");
                             System.out.println("Try \"Help\" for proper syntax");
                     }
                 case "help":

@@ -43,7 +43,7 @@ public class UserServiceImplementation implements UserService {
       return userList;
     } else if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 1
         && listattributes.get("Searchtext") != null) {
-      userList = userDAO.list(listattributes.get("Searchtext"));
+      userList = userDAO.searchList(listattributes.get("Searchtext"));
       return userList;
     }
     return null;

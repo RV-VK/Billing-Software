@@ -1,15 +1,12 @@
 package Entity;
 
-import DBConnection.DBHelper;
-import java.sql.*;
-
 public class Product {
   private int id;
   private String code;
   private String name;
   private String unitcode;
   private String type;
-  private float availableQuantity;
+  private float stock;
   private double price;
 
   public Product() {}
@@ -27,7 +24,7 @@ public class Product {
     this.name = name;
     this.unitcode = unitcode;
     this.type = type;
-    this.availableQuantity = availableQuantity;
+    this.stock = availableQuantity;
     this.price = price;
   }
 
@@ -43,7 +40,7 @@ public class Product {
     this.name = name;
     this.unitcode = unitcode;
     this.type = type;
-    this.availableQuantity = availableQuantity;
+    this.stock = availableQuantity;
     this.price = price;
   }
 
@@ -58,7 +55,7 @@ public class Product {
     this.name = name;
     this.unitcode = unitcode;
     this.type = type;
-    this.availableQuantity = availableQuantity;
+    this.stock = availableQuantity;
     this.price = price;
   }
 
@@ -111,12 +108,12 @@ public class Product {
     this.type = type;
   }
 
-  public float getAvailableQuantity() {
-    return availableQuantity;
+  public float getStock() {
+    return stock;
   }
 
-  public void setAvailableQuantity(float availableQuantity) {
-    this.availableQuantity = availableQuantity;
+  public void setStock(float stock) {
+    this.stock = stock;
   }
 
   public double getPrice() {
@@ -148,7 +145,7 @@ public class Product {
         + type
         + '\''
         + ", availableQuantity="
-        + availableQuantity
+        + stock
         + ", price="
         + price+
         '}';

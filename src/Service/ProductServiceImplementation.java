@@ -2,6 +2,8 @@ package Service;
 
 import DAO.*;
 import Entity.Product;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,7 +29,7 @@ public class ProductServiceImplementation implements ProductService {
       throws SQLException,
           ApplicationErrorException,
           UniqueConstraintException,
-          UnitCodeViolationException {
+          UnitCodeViolationException, IOException {
     if (validate(product)) return productDAO.create(product);
     else return null;
   }
@@ -65,7 +67,7 @@ public class ProductServiceImplementation implements ProductService {
       return productList;
     } else if (Collections.frequency(listattributes.values(), null) == listattributes.size() - 1
         && listattributes.get("Searchtext") != null) {
-      productList = productDAO.list(listattributes.get("Searchtext"));
+      productList = productDAO.searchList(listattributes.get("Searchtext"));
       return productList;
     }
     return null;

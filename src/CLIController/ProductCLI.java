@@ -102,6 +102,7 @@ public class ProductCLI {
     try {
       createdProduct = productService.create(product);
     } catch (Exception e) {
+      e.printStackTrace();
       System.out.println(e.getMessage());
       return;
     }
@@ -293,7 +294,7 @@ public class ProductCLI {
               + ", unitcode: "
               + resultProduct.getunitcode()
               + ", stock: "
-              + resultProduct.getAvailableQuantity()
+              + resultProduct.getStock()
               + ", price: "
               + resultProduct.getPrice());
     }
@@ -497,14 +498,9 @@ public class ProductCLI {
     if (prompt.equals("y")) {
       if (productService.delete(parameter) == 1) {
         System.out.println("Product Deletion Successfull!!!");
-      } else if (productService.delete(parameter) == -1) {
-        System.out.println(">> Product Deletion Failed!!!");
-        System.out.println(">> Please check the Id (or) Code you have entered!!!");
-        System.out.println(">> Try \"product delete help\" for proper syntax");
       } else if (productService.delete(parameter) == 0) {
         System.out.println(">> Product cannot be deleted!!!");
-        System.out.println(">>Selected Product has stock left and should not be deleted!!!");
-        System.out.println(">>Please check the selected product to be deleted!!!");
+        System.out.println(">>Please check the selected product to be deleted!! Whether it exists or it has any stock left!!");
       }
     } else if (prompt.equals("n")) {
       System.out.println(">> Delete operation cancelled");

@@ -2,6 +2,8 @@ package Service;
 
 import DAO.*;
 import Entity.Product;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +13,7 @@ public interface ProductService {
       throws SQLException,
           ApplicationErrorException,
           UniqueConstraintException,
-          UnitCodeViolationException;
+          UnitCodeViolationException, IOException;
 
   int count() throws ApplicationErrorException;
 

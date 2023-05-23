@@ -23,7 +23,7 @@ public class LoginCLI {
           UniqueConstraintException,
           ApplicationErrorException,
           PageCountOutOfBoundsException {
-    if (loginService.checkIfInitialSetup()) {
+    if (loginService.checkIfInitialSetup()==0) {
 
         System.out.println(
                           "\t\t\t\t\t\t*********************************************************\n"
@@ -91,7 +91,7 @@ public class LoginCLI {
     userName=scanner.nextLine();
     System.out.print(">> Enter the Password: ");
     passWord=scanner.nextLine();
-    String userType;
+    String userType=null;
     try{
      userType=loginService.login(userName,passWord);
     }
@@ -114,7 +114,7 @@ public class LoginCLI {
         PurchaseMain.PurchaseView();
     }
     else{
-      System.out.println(">> Login credentials invalid ! You should try with a valid user name and password. If you have any issues contact software administrator.");
+      System.out.println(">> Login credentials invalid ! You should try with a valid user name and password. If you have any issues contact software administrator.\n");
     }
     }while(true);
   }

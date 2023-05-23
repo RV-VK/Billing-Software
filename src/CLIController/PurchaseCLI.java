@@ -79,9 +79,9 @@ public class PurchaseCLI {
       } catch (Exception e) {
         System.out.println(e.getMessage());
       }
-      if(createdPurchase.getDate()==null)
-        System.out.println(">> The product code you have entered do not exist!! Please check the product codes");
-      else if (createdPurchase != null) {
+      if(createdPurchase==null)
+        System.out.println(">> Not a dividable Entity!!Please check the quantities you have entered");
+      else if (createdPurchase.getDate()!= null) {
         System.out.println(
             "**********************************************************************************");
         System.out.println(
@@ -112,7 +112,7 @@ public class PurchaseCLI {
             "----------------------------------------------------------------------------------");
       }
       else{
-        System.out.println(">> Not a dividable Entity!!Please check the quantity you have entered");
+        System.out.println(">> The product code you have entered do not exist!! Please check the product codes");
       }
     }
   }
